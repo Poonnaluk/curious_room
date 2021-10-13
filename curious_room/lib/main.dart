@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:curious_room/firstpage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
@@ -112,24 +113,16 @@ class _LoginPageState extends State<LoginPage> {
                     height: screenh * 0.05,
                     child: SignInButton(
                       Buttons.Google,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FirstPage()));
+                      },
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
                     ),
                   ),
-                  // SizedBox(
-                  //   height: screenh * 0.02,
-                  // ),
-                  // TextButton(
-                  //   onPressed: () {},
-                  //   child: const Text(
-                  //     'Admin Login',
-                  //     style: TextStyle(
-                  //         color: Colors.black,
-                  //         decoration: TextDecoration.underline,
-                  //         fontSize: 15),
-                  //   ),
-                  // ),
                 ],
               ),
             ],

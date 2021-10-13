@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "289230766485",
+    "project_id": "curious-room",
+    "storage_bucket": "curious-room.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289230766485:android:24b8672ab39136fb63769c",
+        "android_client_info": {
+          "package_name": "com.example.curious_room"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "289230766485-pf0v0hirug8vlraklv12otq6rhsb9i0r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.curious_room",
+            "certificate_hash": "e1673dd3f94a0a60951294833b422d852aa9b213"
+          }
+        },
+        {
+          "client_id": "289230766485-7memkjaj0a2q1lued2smkbcbo18a3t4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCd-U-b_2ixwsNTWWwUB5UWd06bBynu0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "289230766485-7memkjaj0a2q1lued2smkbcbo18a3t4f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
