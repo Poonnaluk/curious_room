@@ -69,6 +69,7 @@ flutter:
   - family: Prompt
     fonts:
       - asset: assets/fonts/Prompt/Prompt-Light.ttf
+        weight: 800
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
