@@ -1,8 +1,13 @@
 import 'dart:ui';
 
 import 'package:curious_room/firstpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:curious_room/Models/UserModel.dart';
 
 void main() {
   runApp(Login());
@@ -31,6 +36,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late double screenw;
   late double screenh;
+  late String email;
+  late String name;
+  late List<UserModel> _user;
+  late List<UserModel> user;
+  late UserModel _regisToGbase;
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
@@ -114,10 +124,11 @@ class _LoginPageState extends State<LoginPage> {
                     child: SignInButton(
                       Buttons.Google,
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FirstPage()));
+                        processSignInWithGooggle();
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => FirstPage()));
                       },
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
@@ -141,5 +152,66 @@ class _LoginPageState extends State<LoginPage> {
     return SizedBox(
       width: screenw * w,
     );
+  }
+
+  Future<Null> processSignInWithGooggle() async {
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+
+    await Firebase.initializeApp().then((value) async {
+      await _googleSignIn.signIn().then((value) async {
+        //ดึงค่าจาก googleชื่อ และอีเมล
+        name = value.displayName;
+        email = value.email;
+        print('Login With Google success value Name = $name,email = $email');
+
+        await value.authentication.then((value2) async {
+          AuthCredential authCredential = GoogleAuthProvider.credential(
+            idToken: value2.idToken,
+            accessToken: value2.accessToken,
+          );
+          await FirebaseAuth.instance
+              .signInWithCredential(authCredential)
+              .then((value3) {
+            String uid = value3.user!.uid;
+            print('uid = $uid');
+          });
+        });
+        user = (await regischeck(email))!;
+        setState(() {
+          _user = user;
+          print(_user);
+        });
+        // ignore: unnecessary_null_comparison
+        if (_user == null) {
+          UserModel? i = await createUser(name, email);
+          print(i);
+          setState(() {
+            _regisToGbase = i!;
+          });
+          // ignore: unnecessary_null_comparison
+          _regisToGbase == null
+              ? print('ไม่ผ่านจ้า')
+              : Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return FirstPage();
+                  },
+                ));
+        } else {
+          print(_user.first);
+          // ignore: unused_local_variable
+          var userResult = _user.first;
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) {
+              return FirstPage();
+            },
+          ));
+        }
+      });
+    });
   }
 }

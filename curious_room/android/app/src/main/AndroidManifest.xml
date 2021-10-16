@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.curious_room">
+   <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="curious_room"
         android:icon="@mipmap/ic_launcher">
