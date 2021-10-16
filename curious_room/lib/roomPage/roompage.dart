@@ -8,8 +8,29 @@ class RoomPage extends StatefulWidget {
 }
 
 class _RoomPageState extends State<RoomPage> {
+  late double screenw;
+  late double screenh;
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    screenw = MediaQuery.of(context).size.width;
+    screenh = MediaQuery.of(context).size.height;
+    {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          toolbarHeight: screenh * 0.08,
+          title: new Text('roomPage'),
+          titleTextStyle: const TextStyle(
+              color: Colors.black, fontSize: 26, fontFamily: 'Prompt'),
+          leading: Icon(
+            Icons.menu,
+            color: Colors.red,
+            size: 50,
+          ),
+        ),
+      );
+    }
   }
 }
