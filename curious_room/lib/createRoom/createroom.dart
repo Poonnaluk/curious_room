@@ -1,4 +1,4 @@
-import 'package:curious_room/roomPage/roompage.dart';
+import 'package:curious_room/room/roompage.dart';
 import 'package:flutter/material.dart';
 
 class CreatRoomPage extends StatefulWidget {
