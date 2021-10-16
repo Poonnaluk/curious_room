@@ -1,3 +1,4 @@
+import 'package:curious_room/roomPage/roompage.dart';
 import 'package:flutter/material.dart';
 
 class CreatRoomPage extends StatefulWidget {
@@ -12,6 +13,8 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
 
   late String code;
   TextEditingController codeController = TextEditingController();
+
+  bool isTextFiledFocus = false;
 
   late double screenw;
   late double screenh;
@@ -29,7 +32,7 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
           fontWeight: FontWeight.bold,
           fontSize: 18,
         ),
-        contentPadding: EdgeInsets.all(30.0),
+        contentPadding: EdgeInsets.all(15.0),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -42,11 +45,12 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
 
   Widget _buildButtonCreate() {
     return Container(
-      //  , margin: EdgeInsets.fromLTRB(450.0, 8.0, 10.0, 8.0)
       alignment: Alignment.centerRight,
       child: TextButton(
         style: TextButton.styleFrom(
-            backgroundColor: Color.fromRGBO(237, 237, 237, 1),
+            backgroundColor: !isTextFiledFocus
+                ? Color.fromRGBO(237, 237, 237, 1)
+                : Color.fromRGBO(69, 171, 157, 1),
             padding: const EdgeInsets.all(16.0),
             primary: Colors.white,
             textStyle: const TextStyle(fontSize: 22, fontFamily: 'Prompt'),
@@ -58,6 +62,8 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('สร้างห้องสำเร็จ')),
             );
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => RoomPage()));
           }
         },
         child: const Text('สร้างห้อง'),
@@ -98,17 +104,17 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      // Text(
-                      //   ' ชื่อห้อง',
-                      //   style: TextStyle(fontSize: 26),
-                      // ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        height: 68.0,
-                        child: inputField(codeController),
-                      ),
+                      Focus(
+                        child: Container(
+                          height: 68.0,
+                          child: inputField(codeController),
+                        ),
+                        onFocusChange: (hasvalue) {
+                          setState(() {
+                            isTextFiledFocus = hasvalue;
+                          });
+                        },
+                      )
                     ]))),
       );
     }
