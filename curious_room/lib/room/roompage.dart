@@ -1,3 +1,4 @@
+import 'package:curious_room/Post/createPost.dart';
 import 'package:flutter/material.dart';
 
 class RoomPage extends StatefulWidget {
@@ -100,9 +101,29 @@ class _RoomPageState extends State<RoomPage> {
           'แชร์สิ่งที่กำลังสัยอยู่...',
           style: TextStyle(fontSize: 18),
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(_createRoute());
+        },
       ),
     );
+  }
+
+  Route _createRoute() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => CreatePost(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        });
   }
 
   Widget _buttonNew(String textbutton, bool button) {
