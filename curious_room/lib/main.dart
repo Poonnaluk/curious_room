@@ -124,11 +124,11 @@ class _LoginPageState extends State<LoginPage> {
                     child: SignInButton(
                       Buttons.Google,
                       onPressed: () {
-                        processSignInWithGooggle();
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => FirstPage()));
+                        // processSignInWithGooggle();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FirstPage()));
                       },
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
