@@ -11,8 +11,8 @@ class CreatRoomPage extends StatefulWidget {
 class _CreatRoomPageState extends State<CreatRoomPage> {
   final _formKey = new GlobalKey<FormState>();
 
-  late String code;
-  TextEditingController codeController = TextEditingController();
+  late String name;
+  TextEditingController nameController = TextEditingController();
 
   bool isTextFiledFocus = false;
 
@@ -21,7 +21,7 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
 
   Widget inputField(TextEditingController controller) {
     return TextFormField(
-      onChanged: (value) => code = value.trim(),
+      onChanged: (value) => name = value.trim(),
       controller: controller,
       keyboardType: TextInputType.text,
       style: TextStyle(fontSize: 26),
@@ -60,10 +60,22 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('สร้างห้องสำเร็จ')),
+              const SnackBar(
+                  backgroundColor: Color.fromRGBO(119, 192, 182, 1),
+                  content: Text(
+                    'สร้างห้องสำเร็จ',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Prompt',
+                        fontSize: 26),
+                    textAlign: TextAlign.center,
+                  )),
             );
+            print(name);
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => RoomPage()));
+                context,
+                MaterialPageRoute(
+                    builder: (context) => RoomPage(projectName: name)));
           }
         },
         child: const Text('สร้างห้อง'),
@@ -102,12 +114,11 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             child: Form(
                 key: _formKey,
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Focus(
                         child: Container(
                           height: 68.0,
-                          child: inputField(codeController),
+                          child: inputField(nameController),
                         ),
                         onFocusChange: (hasvalue) {
                           setState(() {

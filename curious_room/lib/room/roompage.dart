@@ -2,13 +2,15 @@ import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 
 class RoomPage extends StatefulWidget {
-  const RoomPage({Key? key}) : super(key: key);
+  final String projectName;
+  const RoomPage({Key? key, required this.projectName}) : super(key: key);
 
   @override
   _RoomPageState createState() => _RoomPageState();
 }
 
 class _RoomPageState extends State<RoomPage> {
+  // resposive
   late double screenw;
   late double screenh;
 
@@ -24,9 +26,11 @@ class _RoomPageState extends State<RoomPage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           toolbarHeight: screenh * 0.08,
-          title: new Text('roomPage'),
+          title: new Text(
+            widget.projectName,
+          ),
           titleTextStyle: const TextStyle(
-              color: Colors.black, fontSize: 26, fontFamily: 'Prompt'),
+             color: Colors.black, fontSize: 28, fontFamily: 'Prompt'),
           leading: IconButton(
             onPressed: () => _key.currentState!.openDrawer(), //,
             icon: Image.asset(
@@ -35,6 +39,21 @@ class _RoomPageState extends State<RoomPage> {
             ),
             iconSize: 50,
           ),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Image.asset(
+                'assets/icons/stat_icon.png',
+              ),
+              iconSize: 40,
+            ),
+            IconButton(
+                onPressed: () {},
+                icon: Image.asset('assets/icons/about_icon.png')),
+            SizedBox(
+              width: screenw * 0.02,
+            )
+          ],
         ),
         drawer: MyMenu(),
       );
