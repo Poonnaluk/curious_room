@@ -113,20 +113,19 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             padding: const EdgeInsets.fromLTRB(100, 200, 100, 0),
             child: Form(
                 key: _formKey,
-                child: Column(
-                    children: <Widget>[
-                      Focus(
-                        child: Container(
-                          height: 68.0,
-                          child: inputField(nameController),
-                        ),
-                        onFocusChange: (hasvalue) {
-                          setState(() {
-                            isTextFiledFocus = hasvalue;
-                          });
-                        },
-                      )
-                    ]))),
+                child: Column(children: <Widget>[
+                  Focus(
+                    child: Container(
+                      height: 68.0,
+                      child: inputField(nameController),
+                    ),
+                    onFocusChange: (hasvalue) {
+                      setState(() {
+                        isTextFiledFocus = hasvalue;
+                      });
+                    },
+                  )
+                ]))),
       );
     }
   }
