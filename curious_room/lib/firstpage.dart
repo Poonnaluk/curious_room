@@ -1,4 +1,5 @@
 import 'package:curious_room/createRoom/createroom.dart';
+import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 
 // void main(List<String> args) {
@@ -28,12 +29,14 @@ class FirstPage extends StatefulWidget {
 class _FirstPageState extends State<FirstPage> {
   late double screenw;
   late double screenh;
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
     {
       return Scaffold(
+          key: _key,
           appBar: AppBar(
             shadowColor: Color.fromRGBO(233, 160, 151, 1),
             backgroundColor: Colors.white,
@@ -43,10 +46,13 @@ class _FirstPageState extends State<FirstPage> {
               style: TextStyle(
                   fontSize: 50, color: Color.fromRGBO(176, 162, 148, 1)),
             ),
-            leading: Icon(
-              Icons.menu,
-              color: Colors.red,
-              size: 50,
+            leading: IconButton(
+              onPressed: () => _key.currentState!.openDrawer(), //,
+              icon: Image.asset(
+                'assets/images/menu2.png',
+                fit: BoxFit.cover,
+              ),
+              iconSize: 50,
             ),
             actions: [
               IconButton(
@@ -68,6 +74,7 @@ class _FirstPageState extends State<FirstPage> {
                 borderRadius:
                     BorderRadius.only(bottomRight: Radius.circular(50))),
           ),
+          drawer: MyMenu(),
           body: SafeArea(
             child: Container(
                 //   decoration: BoxDecoration(border: Border(),
