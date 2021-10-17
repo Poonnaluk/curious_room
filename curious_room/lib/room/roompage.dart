@@ -1,3 +1,4 @@
+import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 
 class RoomPage extends StatefulWidget {
@@ -15,8 +16,10 @@ class _RoomPageState extends State<RoomPage> {
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
+    final GlobalKey<ScaffoldState> _key = GlobalKey();
     {
       return Scaffold(
+        key: _key,
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -24,12 +27,16 @@ class _RoomPageState extends State<RoomPage> {
           title: new Text('roomPage'),
           titleTextStyle: const TextStyle(
               color: Colors.black, fontSize: 26, fontFamily: 'Prompt'),
-          leading: Icon(
-            Icons.menu,
-            color: Colors.red,
-            size: 50,
+          leading: IconButton(
+            onPressed: () => _key.currentState!.openDrawer(), //,
+            icon: Image.asset(
+              'assets/images/menu2.png',
+              fit: BoxFit.cover,
+            ),
+            iconSize: 50,
           ),
         ),
+        drawer: MyMenu(),
       );
     }
   }
