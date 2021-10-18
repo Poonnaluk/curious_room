@@ -47,8 +47,7 @@ class UserModel {
 Future<List<UserModel>?> regischeck(String uEmail) async {
   //นำค่าเเป็น Params
 
-  final pramsUrl =
-      "xxxx";
+  final pramsUrl = "xxxx";
 
   final res = await http.post(
     Uri.parse(pramsUrl),
@@ -69,18 +68,16 @@ Future<List<UserModel>?> regischeck(String uEmail) async {
 }
 
 Future<UserModel?> createUser(String fName, String email) async {
-    final String apiUrl = "xxx";
-    final bodyregis = jsonEncode({"uFullName": fName, "u_Email": email});
-    final response = await http.post(Uri.parse(apiUrl) ,
-        body: bodyregis,
-        headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
-    if (response.statusCode != 201) {
-      return null;
-    }
-
-    final String responseString = response.body;
-    print(responseString);
-    return userModelFromJson(responseString);
+  final String apiUrl = "xxx";
+  final bodyregis = jsonEncode({"uFullName": fName, "u_Email": email});
+  final response = await http.post(Uri.parse(apiUrl),
+      body: bodyregis,
+      headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
+  if (response.statusCode != 201) {
+    return null;
   }
 
-
+  final String responseString = response.body;
+  print(responseString);
+  return userModelFromJson(responseString);
+}
