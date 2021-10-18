@@ -1,6 +1,6 @@
+import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/room/roompage.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class CreatRoomPage extends StatefulWidget {
   const CreatRoomPage({Key? key}) : super(key: key);
@@ -11,8 +11,11 @@ class CreatRoomPage extends StatefulWidget {
 
 class _CreatRoomPageState extends State<CreatRoomPage> {
   final _formKey = new GlobalKey<FormState>();
+  late Future<RoomModel> _futureRoom;
 
   late String name;
+  late int userid = 1;
+  late String message;
   TextEditingController nameController = TextEditingController();
 
   bool isTextFiledFocus = false;
@@ -62,11 +65,19 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             )),
         onPressed: () {
           if (_formKey.currentState!.validate()) {
+            setState(() {
+              _futureRoom = createRoom(name, userid);
+              _futureRoom.then((value) {
+                name = value.name;
+                userid = value.userId;
+              });
+              print("project name=" + name + "userid=" + userid.toString());
+            });
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                   backgroundColor: Color.fromRGBO(119, 192, 182, 1),
                   content: Text(
-                    'สร้างห้องสำเร็จ',
+                    'สร้างห่องสำเร็จ',
                     style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'Prompt',
@@ -74,11 +85,13 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
                     textAlign: TextAlign.center,
                   )),
             );
-            print(name);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => RoomPage(projectName: name)));
+                    builder: (context) => RoomPage(
+                          projectName: name,
+                          userid: userid,
+                        )));
           }
         },
         child: const Text('สร้างห้อง'),
