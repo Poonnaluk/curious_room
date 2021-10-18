@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class CreatePost extends StatefulWidget {
   CreatePost({Key? key}) : super(key: key);
@@ -76,6 +77,18 @@ class _CreatePostState extends State<CreatePost> {
         child: const Text('โพสต์'),
       ),
     );
+  }
+
+  getUsers() async {
+    final response = await http.get(
+        Uri.parse('http://192.168.43.94:8000/user/610107030011@dpu.ac.th'));
+    print(response.body);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUsers();
   }
 
   @override
