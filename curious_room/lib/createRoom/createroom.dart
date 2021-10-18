@@ -1,5 +1,6 @@
 import 'package:curious_room/room/roompage.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class CreatRoomPage extends StatefulWidget {
   const CreatRoomPage({Key? key}) : super(key: key);
@@ -24,19 +25,21 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
       onChanged: (value) => name = value.trim(),
       controller: controller,
       keyboardType: TextInputType.text,
-      style: TextStyle(fontSize: 26),
+      style: TextStyle(fontSize: 24),
       decoration: InputDecoration(
-        hintText: 'กรุณากรอกชื่อห้องของคุณ',
-        errorStyle: TextStyle(
-          color: Colors.red[400],
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-        contentPadding: EdgeInsets.all(15.0),
-      ),
+          errorStyle: TextStyle(
+            color: Colors.red[400],
+            fontSize: 18,
+          ),
+          contentPadding: EdgeInsets.all(20.0),
+          filled: true,
+          fillColor: Colors.white,
+          labelText: 'ชื่อห้องของคุณ...',
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(15.0))),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'คุณยังไม่ได้กรอกชื่อห้อง';
+          return 'กรุณากรอกชื่อห้อง';
         }
         return null;
       },
@@ -115,10 +118,7 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
                 key: _formKey,
                 child: Column(children: <Widget>[
                   Focus(
-                    child: Container(
-                      height: 68.0,
-                      child: inputField(nameController),
-                    ),
+                    child: inputField(nameController),
                     onFocusChange: (hasvalue) {
                       setState(() {
                         isTextFiledFocus = hasvalue;
@@ -129,14 +129,4 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
       );
     }
   }
-
-  // BoxDecoration boxInput() {
-  //   return BoxDecoration(
-  //       color: Colors.white,
-  //       boxShadow: [
-  //         BoxShadow(
-  //             color: Color(0xFF000000), blurRadius: 4, offset: Offset(0.0, 1.0))
-  //       ],
-  //       borderRadius: BorderRadius.circular(20.0));
-  // }
 }
