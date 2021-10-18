@@ -1,5 +1,6 @@
 import 'package:curious_room/room/roompage.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class CreatRoomPage extends StatefulWidget {
   const CreatRoomPage({Key? key}) : super(key: key);
@@ -128,14 +129,4 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
       );
     }
   }
-
-  // BoxDecoration boxInput() {
-  //   return BoxDecoration(
-  //       color: Colors.white,
-  //       boxShadow: [
-  //         BoxShadow(
-  //             color: Color(0xFF000000), blurRadius: 4, offset: Offset(0.0, 1.0))
-  //       ],
-  //       borderRadius: BorderRadius.circular(20.0));
-  // }
 }
