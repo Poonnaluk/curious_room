@@ -1,10 +1,18 @@
 import 'package:curious_room/Post/createPost.dart';
+import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 
 class RoomPage extends StatefulWidget {
-  final String projectName;
+  final int roomid;
+  final String roomName;
+  final String code;
   final int userid;
-  const RoomPage({Key? key, required this.projectName, required this.userid})
+  const RoomPage(
+      {Key? key,
+      required this.roomid,
+      required this.roomName,
+      required this.code,
+      required this.userid})
       : super(key: key);
 
   @override
@@ -12,6 +20,8 @@ class RoomPage extends StatefulWidget {
 }
 
 class _RoomPageState extends State<RoomPage> {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   // resposive
   late double screenw;
   late double screenh;
@@ -25,25 +35,31 @@ class _RoomPageState extends State<RoomPage> {
     screenh = MediaQuery.of(context).size.height;
     {
       return Scaffold(
+        key: _key,
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           toolbarHeight: screenh * 0.08,
           title: new Text(
-            widget.projectName,
+            widget.roomName,
           ),
           titleTextStyle: const TextStyle(
               color: Color.fromRGBO(176, 162, 148, 1),
               fontSize: 28,
               fontFamily: 'Prompt'),
-          leading: Icon(
-            Icons.menu,
-            color: Colors.red,
-            size: 50,
+          leading: IconButton(
+            onPressed: () => _key.currentState!.openDrawer(), //,
+            icon: Image.asset(
+              'assets/images/menu2.png',
+              fit: BoxFit.cover,
+            ),
+            iconSize: 50,
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                // Navigator.of(context).push();
+              },
               icon: Image.asset(
                 'assets/icons/stat_icon.png',
               ),
@@ -57,6 +73,7 @@ class _RoomPageState extends State<RoomPage> {
             )
           ],
         ),
+        drawer: MyMenu(),
         body: SafeArea(
             child: Center(
           child: Container(
@@ -69,7 +86,7 @@ class _RoomPageState extends State<RoomPage> {
               Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.fromLTRB(35, 5, 10, 0),
+                    padding: EdgeInsets.fromLTRB(31, 0, 10, 0),
                     child: _buttonNew('ล่าสุด', chooseNew),
                   ),
                   _buttonHots('ยอดนิยม', chooseHots),
@@ -85,14 +102,14 @@ class _RoomPageState extends State<RoomPage> {
   Widget _buildButtonCreate() {
     return Container(
       margin: EdgeInsets.fromLTRB(
-          screenw * 0.010, screenh * 0.02, screenw * 0.010, screenh * 0.01),
+          screenw * 0.005, screenh * 0.02, screenw * 0.005, screenh * 0.015),
       alignment: Alignment.center,
       child: TextButton(
         style: TextButton.styleFrom(
             primary: Color.fromRGBO(107, 103, 98, 1),
             backgroundColor: Colors.white,
             padding: const EdgeInsets.only(
-                left: 66.5, top: 42.5, right: 306.5, bottom: 42.5),
+                left: 31.0, top: 22.5, right: 160.5, bottom: 22.5),
             shadowColor: Color.fromRGBO(176, 162, 148, 1),
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -101,7 +118,7 @@ class _RoomPageState extends State<RoomPage> {
                     color: Color.fromRGBO(176, 162, 148, 1), width: 1))),
         child: Text(
           'แชร์สิ่งที่กำลังสัยอยู่...',
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 16),
         ),
         onPressed: () {
           Navigator.of(context).push(_createRoute());
@@ -135,7 +152,7 @@ class _RoomPageState extends State<RoomPage> {
             primary: Color.fromRGBO(107, 103, 98, 1),
             backgroundColor: Colors.white,
             padding: const EdgeInsets.only(
-                left: 32.5, top: 21, right: 32.5, bottom: 21),
+                left: 20.5, top: 18, right: 20.5, bottom: 18),
             shadowColor: Color.fromRGBO(176, 162, 148, 1),
             elevation: 5,
             shape: RoundedRectangleBorder(
@@ -147,7 +164,7 @@ class _RoomPageState extends State<RoomPage> {
                     width: 3))),
         child: Text(
           textbutton,
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 16),
         ),
         onPressed: () {
           setState(() {
@@ -166,7 +183,7 @@ class _RoomPageState extends State<RoomPage> {
             primary: Color.fromRGBO(107, 103, 98, 1),
             backgroundColor: Colors.white,
             padding: const EdgeInsets.only(
-                left: 32.5, top: 21, right: 32.5, bottom: 21),
+                left: 20.5, top: 18, right: 20.5, bottom: 18),
             shadowColor: Color.fromRGBO(176, 162, 148, 1),
             elevation: 5,
             shape: RoundedRectangleBorder(
@@ -178,7 +195,7 @@ class _RoomPageState extends State<RoomPage> {
                     width: 3))),
         child: Text(
           textbutton,
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 16),
         ),
         onPressed: () {
           setState(() {

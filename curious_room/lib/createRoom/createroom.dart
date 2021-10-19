@@ -11,10 +11,12 @@ class CreatRoomPage extends StatefulWidget {
 
 class _CreatRoomPageState extends State<CreatRoomPage> {
   final _formKey = new GlobalKey<FormState>();
-  late Future<RoomModel> _futureRoom;
+  late RoomModel room;
 
   late String name;
   late int userid = 1;
+  late String code;
+  late int id;
   late String message;
   TextEditingController nameController = TextEditingController();
 
@@ -49,6 +51,11 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
     );
   }
 
+
+  Future<void> createroom(String name, int) async {
+    room = await createRoom(name, userid);
+  }
+
   Widget _buildButtonCreate() {
     return Container(
       alignment: Alignment.centerRight,
@@ -63,16 +70,9 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
             )),
-        onPressed: () {
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            setState(() {
-              _futureRoom = createRoom(name, userid);
-              _futureRoom.then((value) {
-                name = value.name;
-                userid = value.userId;
-              });
-              print("project name=" + name + "userid=" + userid.toString());
-            });
+            await createroom(name, userid);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                   backgroundColor: Color.fromRGBO(119, 192, 182, 1),
@@ -85,12 +85,19 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
                     textAlign: TextAlign.center,
                   )),
             );
+            print("project name = " +
+                room.name +
+                " userid = " +
+                room.userId.toString());
+            print("code = " + room.code + " roomid = " + room.id.toString());
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => RoomPage(
-                          projectName: name,
-                          userid: userid,
+                          roomid: room.id,
+                          roomName: room.name,
+                          code: room.code,
+                          userid: room.userId,
                         )));
           }
         },
