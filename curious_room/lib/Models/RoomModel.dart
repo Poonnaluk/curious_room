@@ -42,7 +42,7 @@ class RoomModel {
 }
 
 Future<RoomModel> createRoom(String name, int userid) async {
-  final String apiUrl = "http://192.168.43.94:8000/room";
+  // final String apiUrl = "http://192.168.43.94:8000/room";
   final body = jsonEncode({
     "room": {"name": name, "userId": userid}
   });
