@@ -2,34 +2,32 @@ import 'package:curious_room/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:one_time_dialog/one_time_dialog.dart';
 
 //dialog อันเดียวกับการาจ
-Future<Null> normalDialog(
-    BuildContext context, String string1, String string2, int time) async {
-  showDialog(
-    context: context,
-    builder: (context) => OneTimeDialog(
-      amountOfTimesToShow: time,
-      title: ListTile(
-        title: Text(
-          string1,
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Text(string2),
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
-      ],
-      context: context,
-      id: 'AUniqueID',
-    ),
-  );
-}
+// Future<Null> normalDialog(
+//     BuildContext context, String string1, String string2, int time) async {
+//   showDialog(
+//     context: context,
+//     builder: (context) => OneTimeDialog(
+//       amountOfTimesToShow: time,
+//       title: ListTile(
+//         title: Text(
+//           string1,
+//           style: TextStyle(
+//             color: Colors.red,
+//             fontWeight: FontWeight.bold,
+//           ),
+//         ),
+//         subtitle: Text(string2),
+//       ),
+//       actions: [
+//         TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
+//       ],
+//       context: context,
+//       id: 'AUniqueID',
+//     ),
+//   );
+// }
 
 //เมนูบาร์
 // ignore: non_constant_identifier_names
