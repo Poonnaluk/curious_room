@@ -1,4 +1,5 @@
 import 'package:curious_room/Post/createPost.dart';
+import 'package:curious_room/room/aboutRoomPage.dart';
 import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +39,7 @@ class _RoomPageState extends State<RoomPage> {
         key: _key,
         backgroundColor: Colors.white,
         appBar: AppBar(
+          elevation: 1,
           backgroundColor: Colors.white,
           toolbarHeight: screenh * 0.08,
           title: new Text(
@@ -63,13 +65,24 @@ class _RoomPageState extends State<RoomPage> {
               icon: Image.asset(
                 'assets/icons/stat_icon.png',
               ),
-              iconSize: 40,
+              iconSize: 35,
             ),
             IconButton(
-                onPressed: () {},
-                icon: Image.asset('assets/icons/about_icon.png')),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AboutRoomPage(
+                              roomid: widget.roomid,
+                              roomName: widget.roomName,
+                              code: widget.code,
+                              userid: widget.userid,
+                            )));
+              },
+              icon: Image.asset('assets/icons/about_icon.png'),
+            ),
             SizedBox(
-              width: screenw * 0.02,
+              width: screenw * 0.005,
             )
           ],
         ),

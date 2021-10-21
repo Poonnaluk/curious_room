@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class CreatePost extends StatefulWidget {
   CreatePost({Key? key}) : super(key: key);
