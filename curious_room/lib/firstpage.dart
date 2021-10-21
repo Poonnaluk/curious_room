@@ -1,4 +1,4 @@
-import 'package:curious_room/createRoom/createroom.dart';
+import 'package:curious_room/room/createroom.dart';
 import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 

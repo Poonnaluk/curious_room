@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:curious_room/firstpage.dart';
+import 'package:curious_room/room/roompage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,12 @@ class Login extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
       theme: ThemeData(fontFamily: 'Prompt'),
+      initialRoute: '/',
+      routes: {
+        '/firstpage': (context) => FirstPage(),
+        '/roompage': (context) =>
+            RoomPage(roomid: 0, roomName: '', code: '', userid: 0),
+      },
     );
   }
 }
