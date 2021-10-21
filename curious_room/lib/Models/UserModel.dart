@@ -6,22 +6,22 @@ String userModelToJson(UserModel data) => json.encode(data.toJson());
 
 class UserModel {
   UserModel({
-    required this.id,
-    required this.name,
-    required this.email,
+    this.id,
+    this.name,
+    this.email,
     this.display,
-    required this.role,
-    required this.createdAt,
-    required this.updatedAt,
+    this.role,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  int id;
-  String name;
-  String email;
+  int? id;
+  String? name;
+  String? email;
   dynamic display;
-  String role;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String? role;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         id: json["id"],
@@ -39,44 +39,36 @@ class UserModel {
         "email": email,
         "display": display,
         "role": role,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        "createdAt": createdAt!.toIso8601String(),
+        "updatedAt": updatedAt!.toIso8601String(),
       };
 }
 
-Future<List<UserModel>?> regischeck(String uEmail) async {
+Future<dynamic> regischeck(String uEmail) async {
   //นำค่าเเป็น Params
-
-  final pramsUrl = "xxxx";
-
-  final res = await http.post(
-    Uri.parse(pramsUrl),
-    body: {'email': uEmail},
-  );
-
+  final pramsUrl = Uri.parse('http://192.168.1.48:8000/user/${uEmail}');
+  print(pramsUrl);
+  final res = await http.post(pramsUrl);
   if (res.statusCode == 200) {
-    Iterable l = json.decode(res.body);
-    List<UserModel> userModels = l.map((g) => UserModel.fromJson(g)).toList();
-    if (userModels.isEmpty) {
-      return null;
-    } else {
-      return userModels;
-    }
-  } else {
+    return UserModel.fromJson(jsonDecode(res.body));
+  } else if (res.statusCode == 500) {
     return null;
+  } else {
+    throw Exception('Failed to check');
   }
 }
 
-Future<UserModel?> createUser(String fName, String email) async {
-  final String apiUrl = "xxx";
-  final bodyregis = jsonEncode({"uFullName": fName, "u_Email": email});
+Future<UserModel?> createUser(String googleName, String email) async {
+  final String apiUrl = "http://192.168.1.48:8000/user";
+  final bodyregis = jsonEncode({
+    "user": {"name": googleName, "email": email}
+  });
   final response = await http.post(Uri.parse(apiUrl),
       body: bodyregis,
       headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
   if (response.statusCode != 201) {
     return null;
   }
-
   final String responseString = response.body;
   print(responseString);
   return userModelFromJson(responseString);
