@@ -29,11 +29,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_signin_button: ^2.0.0
-  firebase_core: ^1.7.0
-  google_sign_in: ^4.5.9
-  firebase_auth: ^3.1.3
+  # firebase_core: ^1.7.0
+  google_sign_in: ^5.1.1
+  # firebase_auth: ^3.1.3
   http: ^0.13.3
-  one_time_dialog: ^0.1.1
+  get: ^4.3.8
+  
+  
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +74,10 @@ flutter:
     fonts:
       - asset: assets/fonts/Prompt/Prompt-Regular.ttf
         weight: 400
+  - family: Promptligth
+    fonts:
+      - asset: assets/fonts/Promptligth/Prompt-Light.ttf
+        
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
