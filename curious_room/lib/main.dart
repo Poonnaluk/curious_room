@@ -1,7 +1,6 @@
 // ignore_for_file: unused_element
 
 import 'dart:ui';
-
 import 'package:curious_room/firstpage.dart';
 import 'package:curious_room/room/roompage.dart';
 
@@ -17,7 +16,7 @@ import 'package:curious_room/Models/UserModel.dart';
 import 'controllers/loginController.dart';
 
 void main() {
-  runApp(Login());
+  runApp( Login());
 }
 
 class Login extends StatelessWidget {

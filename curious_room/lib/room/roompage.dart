@@ -8,13 +8,13 @@ class RoomPage extends StatefulWidget {
   final String roomName;
   final String code;
   final int userid;
-  const RoomPage(
-      {Key? key,
-      required this.roomid,
-      required this.roomName,
-      required this.code,
-      required this.userid})
-      : super(key: key);
+  const RoomPage({
+    Key? key,
+    required this.roomid,
+    required this.roomName,
+    required this.code,
+    required this.userid,
+  }) : super(key: key);
 
   @override
   _RoomPageState createState() => _RoomPageState();

@@ -11,8 +11,7 @@ class CreatRoomPage extends StatefulWidget {
 
 class _CreatRoomPageState extends State<CreatRoomPage> {
   final _formKey = new GlobalKey<FormState>();
-  late RoomModel room;
-
+  late RoomModel roomModel;
   late String name;
   late int userid = 1;
   late String code;
@@ -52,7 +51,8 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
   }
 
   Future<void> createroom(String name, int) async {
-    room = await createRoom(name, userid);
+    roomModel = await createRoom(name, userid);
+    print("Owner name >> " + roomModel.userModel.name);
   }
 
   Widget _buildButtonCreate() {
@@ -86,17 +86,20 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
                   )),
             );
             print("project name = " +
-                room.name +
+                roomModel.name +
                 " userid = " +
-                room.userId.toString());
-            print("code = " + room.code + " roomid = " + room.id.toString());
+                roomModel.userId.toString());
+            print("code = " +
+                roomModel.code +
+                " roomid = " +
+                roomModel.id.toString());
             Navigator.of(context).pushReplacement(new MaterialPageRoute(
                 settings: const RouteSettings(name: '/roompage'),
                 builder: (context) => new RoomPage(
-                      roomid: room.id,
-                      roomName: room.name,
-                      code: room.code,
-                      userid: room.userId,
+                      roomid: roomModel.id,
+                      roomName: roomModel.name,
+                      code: roomModel.code,
+                      userid: roomModel.userId,
                     )));
           }
         },
