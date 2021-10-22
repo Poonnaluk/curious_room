@@ -58,10 +58,13 @@ Future<dynamic> regischeck(String uEmail) async {
   }
 }
 
-Future<UserModel?> createUser(String googleName, String email) async {
+// ignore: non_constant_identifier_names
+Future<UserModel?> createUser(String googleName, String email,String GimageUrl) async {
   final String apiUrl = "http://192.168.1.48:8000/user";
   final bodyregis = jsonEncode({
-    "user": {"name": googleName, "email": email}
+    "name": googleName,
+    "email": email,
+    "display": GimageUrl
   });
   final response = await http.post(Uri.parse(apiUrl),
       body: bodyregis,
