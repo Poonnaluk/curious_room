@@ -1,7 +1,6 @@
 // ignore_for_file: unused_element
 
 import 'dart:ui';
-
 import 'package:curious_room/firstpage.dart';
 import 'package:curious_room/room/roompage.dart';
 import 'package:curious_room/login/loginController.dart';
@@ -15,12 +14,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:curious_room/Models/UserModel.dart';
 
 void main() {
-  runApp(Login());
+  runApp( Login());
 }
 
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
