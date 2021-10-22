@@ -1,7 +1,9 @@
+import 'package:curious_room/login/loginController.dart';
 import 'package:curious_room/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 
 //dialog อันเดียวกับการาจ
 // Future<Null> normalDialog(
@@ -38,6 +40,7 @@ class MyMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(LoginController());
     late double screenw;
     late double screenh;
     screenw = MediaQuery.of(context).size.width;
@@ -64,16 +67,23 @@ class MyMenu extends StatelessWidget {
                   children: [
                     Container(
                       child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            "https://images.workpointnews.com/workpointnews/2019/05/31123711/1559281027_83580_cd86115188a0c135bb67874d342a9be80_14286846_181229_0003.jpg"),
-                        radius: 25.0,
+                        backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+                        backgroundImage:
+                            controller.googleAccount.value!.photoUrl == null
+                                ? AssetImage("assets/images/logoIcon.png")
+                                : Image.network(controller
+                                        .googleAccount.value!.photoUrl
+                                        .toString())
+                                    .image,
+                        radius: 25,
                       ),
                     ),
                     SizedBox(
                       width: screenw * 0.01,
                     ),
                     Text(
-                      'UserName',
+                      controller.googleAccount.value!.displayName ??
+                          "User Name",
                       style: textStyle(),
                     )
                   ],
@@ -124,9 +134,12 @@ class MyMenu extends StatelessWidget {
               ),
               // selected: true,
               // selectedTileColor: Color.fromRGBO(117, 195, 185, 1),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+              onTap: () async {
+                await controller.signout();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    (Route<dynamic> route) => false);
               },
             ),
             Divider(

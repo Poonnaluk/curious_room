@@ -8,4 +8,8 @@ class LoginController extends GetxController {
   login() async {
     googleAccount.value = await _googleSignin.signIn();
   }
+
+  signout() async {
+    await _googleSignin.disconnect();
+  }
 }

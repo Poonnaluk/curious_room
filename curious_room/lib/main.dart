@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'dart:ui';
 
 import 'package:curious_room/firstpage.dart';
@@ -57,6 +59,18 @@ class _LoginPageState extends State<LoginPage> {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
     print('$screenh ,$screenw');
+
+    @override
+    void initState() {
+      super.initState();
+      if (controller.googleAccount.value != null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => FirstPage()),
+            (Route<dynamic> route) => false);
+      }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -141,21 +155,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Column success() {
-    return Column(
-      children: [
-        CircleAvatar(
-          backgroundImage:
-              Image.network(controller.googleAccount.value?.photoUrl ?? '')
-                  .image,
-          radius: 100,
-        ),
-        Text(controller.googleAccount.value?.displayName ?? ''),
-        Text(controller.googleAccount.value?.email ?? ''),
-      ],
-    );
-  }
-
   Container googleButton() {
     return Container(
       width: screenw * 0.7,
@@ -164,7 +163,25 @@ class _LoginPageState extends State<LoginPage> {
         Buttons.Google,
         onPressed: () async {
           await controller.login();
-          check(controller.googleAccount.value!.email);
+
+          await check(controller.googleAccount.value!.email);
+          if (user == null) {
+            print('${controller.googleAccount.value?.photoUrl}');
+            await createUser(
+                controller.googleAccount.value!.displayName.toString(),
+                controller.googleAccount.value!.email,
+                controller.googleAccount.value!.photoUrl.toString());
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => FirstPage()),
+                (Route<dynamic> route) => false);
+          } else {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => FirstPage()),
+                (Route<dynamic> route) => false);
+            // }
+          }
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
@@ -188,21 +205,5 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> check(String email) async {
     user = (await regischeck(email));
-    if (user == null) {
-      print(
-          '${controller.googleAccount.value!.displayName.toString()} and ${controller.googleAccount.value!.email}');
-      await createUser(controller.googleAccount.value!.displayName.toString(),
-          controller.googleAccount.value!.email);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => FirstPage()),
-          (Route<dynamic> route) => false);
-    } else {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => FirstPage()),
-          (Route<dynamic> route) => false);
-      // }
-    }
   }
 }
