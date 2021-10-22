@@ -1,11 +1,15 @@
+// ignore_for_file: unused_element
+
 import 'dart:ui';
 import 'package:curious_room/firstpage.dart';
 import 'package:curious_room/room/roompage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:curious_room/login/loginController.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-// ignore: import_of_legacy_library_into_null_safe
+import 'package:get/get.dart';
+// ignore: import_of_legacy_library_into_null_safe, unused_import
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:curious_room/Models/UserModel.dart';
 
@@ -44,14 +48,28 @@ class _LoginPageState extends State<LoginPage> {
   late double screenh;
   late String email;
   late String name;
-  late List<UserModel> _user;
-  late List<UserModel> user;
-  late UserModel _regisToGbase;
+  // late UserModel _user;
+  late dynamic user;
+  // late UserModel _regisToGbase;
+  final controller = Get.put(LoginController());
+
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
     print('$screenh ,$screenw');
+
+    @override
+    void initState() {
+      super.initState();
+      if (controller.googleAccount.value != null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => FirstPage()),
+            (Route<dynamic> route) => false);
+      }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -120,26 +138,13 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           color: Color.fromRGBO(69, 171, 157, 1),
                           letterSpacing: 10,
-                          fontSize: 30)),
+                          fontSize: 25,
+                          fontWeight: FontWeight.w300,
+                          fontFamily: 'Promptligth')),
                   SizedBox(
                     height: screenh * 0.25,
                   ),
-                  Container(
-                    width: screenw * 0.7,
-                    height: screenh * 0.05,
-                    child: SignInButton(
-                      Buttons.Google,
-                      onPressed: () {
-                        // processSignInWithGooggle();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FirstPage()));
-                      },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                  ),
+                  googleButton()
                 ],
               ),
             ],
@@ -149,9 +154,46 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Container googleButton() {
+    return Container(
+      width: screenw * 0.7,
+      height: screenh * 0.05,
+      child: SignInButton(
+        Buttons.Google,
+        onPressed: () async {
+          await controller.login();
+
+          await check(controller.googleAccount.value!.email);
+          if (user == null) {
+            print('${controller.googleAccount.value?.photoUrl}');
+            await createUser(
+                controller.googleAccount.value!.displayName.toString(),
+                controller.googleAccount.value!.email,
+                controller.googleAccount.value!.photoUrl.toString());
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => FirstPage()),
+                (Route<dynamic> route) => false);
+          } else {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => FirstPage()),
+                (Route<dynamic> route) => false);
+            // }
+          }
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+    );
+  }
+
   // ignore: non_constant_identifier_names
   TextStyle Style(int r, int g, int b, double o) {
-    return TextStyle(color: Color.fromRGBO(r, g, b, o), fontSize: 30);
+    return TextStyle(
+        color: Color.fromRGBO(r, g, b, o),
+        fontSize: 25,
+        fontWeight: FontWeight.w300,
+        fontFamily: 'Promptligth');
   }
 
   SizedBox paddingLogo(double w) {
@@ -160,64 +202,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<Null> processSignInWithGooggle() async {
-    GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: [
-        'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
-      ],
-    );
-
-    await Firebase.initializeApp().then((value) async {
-      await _googleSignIn.signIn().then((value) async {
-        //ดึงค่าจาก googleชื่อ และอีเมล
-        name = value.displayName;
-        email = value.email;
-        print('Login With Google success value Name = $name,email = $email');
-
-        await value.authentication.then((value2) async {
-          AuthCredential authCredential = GoogleAuthProvider.credential(
-            idToken: value2.idToken,
-            accessToken: value2.accessToken,
-          );
-          await FirebaseAuth.instance
-              .signInWithCredential(authCredential)
-              .then((value3) {
-            String uid = value3.user!.uid;
-            print('uid = $uid');
-          });
-        });
-        user = (await regischeck(email))!;
-        setState(() {
-          _user = user;
-          print(_user);
-        });
-        // ignore: unnecessary_null_comparison
-        if (_user == null) {
-          UserModel? i = await createUser(name, email);
-          print(i);
-          setState(() {
-            _regisToGbase = i!;
-          });
-          // ignore: unnecessary_null_comparison
-          _regisToGbase == null
-              ? print('ไม่ผ่านจ้า')
-              : Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return FirstPage();
-                  },
-                ));
-        } else {
-          print(_user.first);
-          // ignore: unused_local_variable
-          var userResult = _user.first;
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) {
-              return FirstPage();
-            },
-          ));
-        }
-      });
-    });
+  Future<void> check(String email) async {
+    user = (await regischeck(email));
   }
 }
