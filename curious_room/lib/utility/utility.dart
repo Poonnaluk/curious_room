@@ -1,4 +1,10 @@
-import 'package:curious_room/login/loginController.dart';
+// ignore: duplicate_ignore
+// ignore: unused_import
+// ignore_for_file: unused_import
+
+import 'package:curious_room/Models/UserModel.dart';
+import 'package:curious_room/controllers/loginController.dart';
+
 import 'package:curious_room/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,11 +43,11 @@ class MyMenu extends StatelessWidget {
   const MyMenu({
     Key? key,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(LoginController());
     late double screenw;
+    // ignore: unused_local_variable
     late double screenh;
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;

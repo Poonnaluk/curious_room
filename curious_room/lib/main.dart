@@ -3,7 +3,7 @@
 import 'dart:ui';
 import 'package:curious_room/firstpage.dart';
 import 'package:curious_room/room/roompage.dart';
-import 'package:curious_room/login/loginController.dart';
+
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +13,14 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:curious_room/Models/UserModel.dart';
 
+import 'controllers/loginController.dart';
+
 void main() {
   runApp( Login());
 }
 
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
-  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -163,23 +164,31 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () async {
           await controller.login();
 
-          await check(controller.googleAccount.value!.email);
-          if (user == null) {
-            print('${controller.googleAccount.value?.photoUrl}');
-            await createUser(
-                controller.googleAccount.value!.displayName.toString(),
-                controller.googleAccount.value!.email,
-                controller.googleAccount.value!.photoUrl.toString());
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => FirstPage()),
-                (Route<dynamic> route) => false);
+          if (controller.googleAccount.value!.email == "%@dpu.ac.th") {
+            await check(controller.googleAccount.value!.email);
+            if (user == null) {
+              print('${controller.googleAccount.value?.photoUrl}');
+              await createUser(
+                  controller.googleAccount.value!.displayName.toString(),
+                  controller.googleAccount.value!.email,
+                  controller.googleAccount.value!.photoUrl.toString());
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => FirstPage()),
+                  (Route<dynamic> route) => false);
+            } else {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => FirstPage()),
+                  (Route<dynamic> route) => false);
+              // }
+            }
           } else {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => FirstPage()),
-                (Route<dynamic> route) => false);
-            // }
+            controller.signout();
+            final snackBar = SnackBar(
+              content: const Text('โปรดใช้อีเมลของ DPU '),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
