@@ -1,17 +1,15 @@
-// ignore_for_file: unused_element
+// ignore_for_file: non_constant_identifier_names
 
 import 'dart:ui';
 import 'package:curious_room/firstpage.dart';
 import 'package:curious_room/room/roompage.dart';
-import 'package:curious_room/controllers/loginController.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:get/get.dart';
-// ignore: import_of_legacy_library_into_null_safe, unused_import
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+
+import 'controllers/loginController.dart';
 
 import 'Models/RoomModel.dart';
 
@@ -21,14 +19,17 @@ void main() {
 
 // ignore: must_be_immutable
 class Login extends StatelessWidget {
+
   Login({Key? key}) : super(key: key);
   late RoomModel roomModel;
   late UserModel ownerModel;
-
+  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    return ResponsiveSizer(
+      builder: (BuildContext, Orientation, ScreenType) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
       home: LoginPage(),
       theme: ThemeData(fontFamily: 'Prompt'),
       initialRoute: '/',
@@ -36,6 +37,8 @@ class Login extends StatelessWidget {
         '/firstpage': (context) => FirstPage(),
         '/roompage': (context) =>
             RoomPage(roomModel: roomModel, ownerModel: ownerModel),
+          },
+        );
       },
     );
   }
@@ -57,23 +60,23 @@ class _LoginPageState extends State<LoginPage> {
   late dynamic user;
   // late UserModel _regisToGbase;
   final controller = Get.put(LoginController());
+  late UserModel Info;
+  @override
+  void initState() {
+    super.initState();
+    if (controller.googleAccount.value != null) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => FirstPage()),
+          (Route<dynamic> route) => false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
     print('$screenh ,$screenw');
-
-    @override
-    void initState() {
-      super.initState();
-      if (controller.googleAccount.value != null) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => FirstPage()),
-            (Route<dynamic> route) => false);
-      }
-    }
 
     return Scaffold(
       body: SafeArea(
@@ -143,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           color: Color.fromRGBO(69, 171, 157, 1),
                           letterSpacing: 10,
-                          fontSize: 25,
+                          fontSize: 21.sp,
                           fontWeight: FontWeight.w300,
                           fontFamily: 'Promptligth')),
                   SizedBox(
@@ -167,24 +170,41 @@ class _LoginPageState extends State<LoginPage> {
         Buttons.Google,
         onPressed: () async {
           await controller.login();
-
-          await check(controller.googleAccount.value!.email);
-          if (user == null) {
-            print('${controller.googleAccount.value?.photoUrl}');
-            await createUser(
-                controller.googleAccount.value!.displayName.toString(),
-                controller.googleAccount.value!.email,
-                controller.googleAccount.value!.photoUrl.toString());
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => FirstPage()),
-                (Route<dynamic> route) => false);
+          bool substring =
+              controller.googleAccount.value!.email.contains("@dpu.ac.th");
+          if (substring == true) {
+            await check(controller.googleAccount.value!.email);
+            if (user == null) {
+              print('${controller.googleAccount.value?.photoUrl}');
+              await createUser(
+                  controller.googleAccount.value!.displayName.toString(),
+                  controller.googleAccount.value!.email,
+                  controller.googleAccount.value!.photoUrl.toString());
+              await check(controller.googleAccount.value!.email);
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FirstPage(
+                            info: Info,
+                          )),
+                  (Route<dynamic> route) => false);
+            } else {
+              print(Info.display);
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FirstPage(
+                            info: Info,
+                          )),
+                  (Route<dynamic> route) => false);
+              // }
+            }
           } else {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => FirstPage()),
-                (Route<dynamic> route) => false);
-            // }
+            controller.signout();
+            final snackBar = SnackBar(
+              content: const Text('โปรดใช้อีเมลของ DPU '),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -192,11 +212,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // ignore: non_constant_identifier_names
+
   TextStyle Style(int r, int g, int b, double o) {
     return TextStyle(
         color: Color.fromRGBO(r, g, b, o),
-        fontSize: 25,
+        fontSize: 21.sp,
         fontWeight: FontWeight.w300,
         fontFamily: 'Promptligth');
   }
@@ -209,5 +229,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> check(String email) async {
     user = (await regischeck(email));
+    if (user != null) {
+      Info = user;
+    }
   }
 }

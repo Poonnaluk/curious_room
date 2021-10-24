@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -32,6 +34,8 @@ class UserModel {
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
+
+  set value(UserModel? value) {}
 
   Map<String, dynamic> toJson() => {
         "id": id,
