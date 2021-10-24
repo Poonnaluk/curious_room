@@ -3,7 +3,7 @@
 import 'dart:ui';
 import 'package:curious_room/firstpage.dart';
 import 'package:curious_room/room/roompage.dart';
-import 'package:curious_room/login/loginController.dart';
+import 'package:curious_room/controllers/loginController.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +13,18 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:curious_room/Models/UserModel.dart';
 
+import 'Models/RoomModel.dart';
+
 void main() {
-  runApp( Login());
+  runApp(Login());
 }
 
+// ignore: must_be_immutable
 class Login extends StatelessWidget {
-  const Login({Key? key}) : super(key: key);
-  
+  Login({Key? key}) : super(key: key);
+  late RoomModel roomModel;
+  late UserModel ownerModel;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,7 +35,7 @@ class Login extends StatelessWidget {
       routes: {
         '/firstpage': (context) => FirstPage(),
         '/roompage': (context) =>
-            RoomPage(roomid: 0, roomName: '', code: '', userid: 0),
+            RoomPage(roomModel: roomModel, ownerModel: ownerModel),
       },
     );
   }

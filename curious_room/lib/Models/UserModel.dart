@@ -46,7 +46,7 @@ class UserModel {
 
 Future<dynamic> regischeck(String uEmail) async {
   //นำค่าเเป็น Params
-  final pramsUrl = Uri.parse('http://192.168.43.94:8000/user/${uEmail}');
+  final pramsUrl = Uri.parse('http://192.168.43.94:8000/user/$uEmail');
   //final pramsUrl = Uri.parse('http://192.168.1.48:8000/user/${uEmail}');
   print(pramsUrl);
   final res = await http.post(pramsUrl);
@@ -61,11 +61,11 @@ Future<dynamic> regischeck(String uEmail) async {
 
 // ignore: non_constant_identifier_names
 Future<UserModel?> createUser(
-    String googleName, String email, String GimageUrl) async {
+    String googleName, String email, String imageUrl) async {
   final String apiUrl = "http://192.168.43.94:8000/user";
   //final String apiUrl = "http://192.168.1.48:8000/user";
   final bodyregis =
-      jsonEncode({"name": googleName, "email": email, "display": GimageUrl});
+      jsonEncode({"name": googleName, "email": email, "display": imageUrl});
   final response = await http.post(Uri.parse(apiUrl),
       body: bodyregis,
       headers: {'Content-Type': 'application/json', 'Accept': '*/*'});

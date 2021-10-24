@@ -1,19 +1,17 @@
+import 'package:curious_room/Models/RoomModel.dart';
+import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/Post/createPost.dart';
 import 'package:curious_room/room/aboutRoomPage.dart';
 import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 
 class RoomPage extends StatefulWidget {
-  final int roomid;
-  final String roomName;
-  final String code;
-  final int userid;
+  final RoomModel roomModel;
+  final UserModel ownerModel;
   const RoomPage({
     Key? key,
-    required this.roomid,
-    required this.roomName,
-    required this.code,
-    required this.userid,
+    required this.roomModel,
+    required this.ownerModel,
   }) : super(key: key);
 
   @override
@@ -43,7 +41,7 @@ class _RoomPageState extends State<RoomPage> {
           backgroundColor: Colors.white,
           toolbarHeight: screenh * 0.08,
           title: new Text(
-            widget.roomName,
+            widget.roomModel.name,
           ),
           titleTextStyle: const TextStyle(
               color: Color.fromRGBO(176, 162, 148, 1),
@@ -73,10 +71,12 @@ class _RoomPageState extends State<RoomPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => AboutRoomPage(
-                              roomid: widget.roomid,
-                              roomName: widget.roomName,
-                              code: widget.code,
-                              userid: widget.userid,
+                              roomid: widget.roomModel.id,
+                              roomName: widget.roomModel.name,
+                              code: widget.roomModel.code,
+                              ownerid: widget.roomModel.userId,
+                              ownerName: widget.ownerModel.name,
+                              ownerDisplay: widget.ownerModel.display,
                             )));
               },
               icon: Image.asset('assets/icons/about_icon.png'),
