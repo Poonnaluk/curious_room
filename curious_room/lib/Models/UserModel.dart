@@ -35,6 +35,8 @@ class UserModel {
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
 
+  set value(UserModel? value) {}
+
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,

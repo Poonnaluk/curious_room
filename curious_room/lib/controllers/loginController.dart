@@ -13,3 +13,4 @@ class LoginController extends GetxController {
     await _googleSignin.disconnect();
   }
 }
+

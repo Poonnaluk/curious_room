@@ -1,7 +1,6 @@
 // ignore: duplicate_ignore
 // ignore: unused_import
-// ignore_for_file: unused_import
-
+// ignore_for_file: unused_import, unused_local_variable
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/loginController.dart';
 
@@ -10,47 +9,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
-//dialog อันเดียวกับการาจ
-// Future<Null> normalDialog(
-//     BuildContext context, String string1, String string2, int time) async {
-//   showDialog(
-//     context: context,
-//     builder: (context) => OneTimeDialog(
-//       amountOfTimesToShow: time,
-//       title: ListTile(
-//         title: Text(
-//           string1,
-//           style: TextStyle(
-//             color: Colors.red,
-//             fontWeight: FontWeight.bold,
-//           ),
-//         ),
-//         subtitle: Text(string2),
-//       ),
-//       actions: [
-//         TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
-//       ],
-//       context: context,
-//       id: 'AUniqueID',
-//     ),
-//   );
-// }
 
 //เมนูบาร์
-// ignore: non_constant_identifier_names
+// ignore: non_constant_identifier_names, must_be_immutable
 class MyMenu extends StatelessWidget {
-  const MyMenu({
-    Key? key,
-  }) : super(key: key);
+  MyMenu({Key? key, this.url}) : super(key: key);
+  String? url;
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(LoginController());
     late double screenw;
-    // ignore: unused_local_variable
     late double screenh;
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
+    String ipTest = 'http://192.168.1.48:8000/null';
+    String image;
+    if (controller.googleAccount.value!.photoUrl.toString() != "null") {
+      image = controller.googleAccount.value!.photoUrl.toString();
+    } else if (url != ipTest) {
+      image = url.toString();
+    } else {
+      image = 'null';
+    }
+
     return SafeArea(
       child: Drawer(
         child: ListView(
@@ -71,18 +55,15 @@ class MyMenu extends StatelessWidget {
               child: ListTile(
                 title: Row(
                   children: [
-                    Container(
-                      child: CircleAvatar(
-                        backgroundColor: Color.fromRGBO(255, 255, 255, 0),
-                        backgroundImage:
-                            controller.googleAccount.value!.photoUrl == null
-                                ? AssetImage("assets/images/logoIcon.png")
-                                : Image.network(controller
-                                        .googleAccount.value!.photoUrl
-                                        .toString())
-                                    .image,
-                        radius: 25,
-                      ),
+                    CircleAvatar(
+                      backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+                      radius: 25,
+                      backgroundImage: image == "null"
+                          ? Image.asset('assets/images/logoIcon.png').image
+                          : Image.network('$image').image,
+                      onBackgroundImageError: (exception, context) {
+                        print('$image Cannot be loaded');
+                      },
                     ),
                     SizedBox(
                       width: screenw * 0.01,
@@ -129,7 +110,7 @@ class MyMenu extends StatelessWidget {
                       radius: 25.0,
                     ),
                     SizedBox(
-                      width: screenw * 0.01,
+                      width: screenw * 0.02,
                     ),
                     Text(
                       'Sign out',
@@ -160,7 +141,7 @@ class MyMenu extends StatelessWidget {
 
   TextStyle textStyle() {
     return TextStyle(
-        fontSize: 21,
+        fontSize: 18,
         color: Color.fromRGBO(176, 162, 148, 1),
         fontWeight: FontWeight.w600);
   }
