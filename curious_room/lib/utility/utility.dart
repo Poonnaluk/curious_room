@@ -1,7 +1,8 @@
-import 'package:curious_room/login/loginController.dart';
+import 'package:curious_room/controllers/loginController.dart';
 import 'package:curious_room/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 
@@ -42,9 +43,7 @@ class MyMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(LoginController());
     late double screenw;
-    late double screenh;
     screenw = MediaQuery.of(context).size.width;
-    screenh = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Drawer(
         child: ListView(
@@ -75,7 +74,7 @@ class MyMenu extends StatelessWidget {
                                         .googleAccount.value!.photoUrl
                                         .toString())
                                     .image,
-                        radius: 25,
+                        radius: 24,
                       ),
                     ),
                     SizedBox(
