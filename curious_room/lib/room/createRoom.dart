@@ -1,4 +1,4 @@
-import 'package:curious_room/Models/RoomModel.dart';
+import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/room/roompage.dart';
 import 'package:flutter/material.dart';
 
@@ -11,13 +11,11 @@ class CreatRoomPage extends StatefulWidget {
 
 class _CreatRoomPageState extends State<CreatRoomPage> {
   final _formKey = new GlobalKey<FormState>();
-  late RoomModel roomModel;
   late String name;
   late int userid = 1;
-  late String code;
-  late int id;
   late String message;
   TextEditingController nameController = TextEditingController();
+  RoomController roomController = RoomController();
 
   bool isTextFiledFocus = false;
 
@@ -50,10 +48,9 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
     );
   }
 
-  Future<void> createroom(String name, int) async {
-    roomModel = await createRoom(name, userid);
-    print("Owner name >> " + roomModel.userModel.name);
-  }
+  // Future<void> createroom(String name, int) async {
+  //   roomModel = await createRoom(name, userid);
+  // }
 
   Widget _buildButtonCreate() {
     return Container(
@@ -72,7 +69,8 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             )),
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            await createroom(name, userid);
+            await roomController.addRoom(name, userid);
+            print(roomController.roomModel.ownerModel.name);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                   backgroundColor: Color.fromRGBO(119, 192, 182, 1),
@@ -86,20 +84,18 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
                   )),
             );
             print("project name = " +
-                roomModel.name +
+                roomController.roomModel.name +
                 " userid = " +
-                roomModel.userId.toString());
+                roomController.roomModel.userId.toString());
             print("code = " +
-                roomModel.code +
+                roomController.roomModel.code +
                 " roomid = " +
-                roomModel.id.toString());
+                roomController.roomModel.id.toString());
             Navigator.of(context).pushReplacement(new MaterialPageRoute(
                 settings: const RouteSettings(name: '/roompage'),
                 builder: (context) => new RoomPage(
-                      roomid: roomModel.id,
-                      roomName: roomModel.name,
-                      code: roomModel.code,
-                      userid: roomModel.userId,
+                      roomModel: roomController.roomModel,
+                      ownerModel: roomController.roomModel.ownerModel,
                     )));
           }
         },

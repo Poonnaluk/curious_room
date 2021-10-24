@@ -1,26 +1,41 @@
+import 'package:curious_room/Models/ParticipateModel.dart';
+import 'package:curious_room/controllers/roomController.dart';
 import 'package:flutter/material.dart';
 
 class AboutRoomPage extends StatefulWidget {
   final int roomid;
   final String roomName;
   final String code;
-  final int userid;
-  AboutRoomPage(
-      {Key? key,
-      required this.roomid,
-      required this.roomName,
-      required this.code,
-      required this.userid})
-      : super(key: key);
+  final int ownerid;
+  final String ownerName;
+  final String ownerDisplay;
+  AboutRoomPage({
+    Key? key,
+    required this.roomid,
+    required this.code,
+    required this.ownerid,
+    required this.roomName,
+    required this.ownerName,
+    required this.ownerDisplay,
+  }) : super(key: key);
 
   @override
   _AboutRoomPageState createState() => _AboutRoomPageState();
 }
 
 class _AboutRoomPageState extends State<AboutRoomPage> {
+  RoomController roomController = RoomController();
+  late Future<List<ParticipateModel>> future;
+  late List<ParticipateModel>? value;
 // resposive
   late double screenw;
   late double screenh;
+
+  @override
+  void initState() {
+    super.initState();
+    future = getParticipate(widget.roomid);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +101,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     ],
                   ),
                   SizedBox(
-                    height: screenh * 0.02,
+                    height: screenh * 0.015,
                   ),
                   Row(
                     children: [
@@ -104,7 +119,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                         "เจ้าของ",
                         style: TextStyle(
                             color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 20),
+                            fontSize: 18),
                       ),
                     ],
                   ),
@@ -112,8 +127,95 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     height: screenh * 0.008,
                   ),
                   Container(
-                    height: 1,
+                    height: 1.5,
                     color: Color.fromRGBO(69, 171, 157, 1.0),
+                  ),
+                  SizedBox(
+                    height: screenh * 0.008,
+                  ),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+                        backgroundImage:
+                            Image.network(widget.ownerDisplay.toString()).image,
+                        radius: 15,
+                      ),
+                      SizedBox(
+                        width: screenw * 0.01,
+                      ),
+                      Text(
+                        widget.ownerName,
+                        style: TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenh * 0.03,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "เพื่อนร่วมห้อง",
+                        style: TextStyle(
+                            color: Color.fromRGBO(69, 171, 157, 1.0),
+                            fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenh * 0.008,
+                  ),
+                  Container(
+                    height: 1.5,
+                    color: Color.fromRGBO(69, 171, 157, 1.0),
+                  ),
+                  SizedBox(
+                    height: screenh * 0.008,
+                  ),
+                  Container(
+                    child: Expanded(
+                        child: FutureBuilder<List<ParticipateModel>>(
+                            future: future,
+                            builder: (context, snapshot) {
+                              if (snapshot.data.toString() == "[]") {
+                                return Text(
+                                  'ยังไม่มีสมาชิก',
+                                  style: TextStyle(
+                                      color:
+                                          Color.fromRGBO(176, 162, 148, 1.0)),
+                                );
+                              } else if (snapshot.hasData) {
+                                value = snapshot.data;
+                                print(value);
+                                return ListView.builder(
+                                    itemCount: value!.length,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        visualDensity: VisualDensity(
+                                            horizontal: -4, vertical: -4),
+                                        leading: CircleAvatar(
+                                          backgroundColor:
+                                              Color.fromRGBO(255, 255, 255, 0),
+                                          backgroundImage: Image.network(
+                                                  value?[index]
+                                                      .userParticipate
+                                                      ?.display)
+                                              .image,
+                                          radius: 15,
+                                        ),
+                                        title: Text((value?[index]
+                                                .userParticipate
+                                                ?.name)
+                                            .toString()),
+                                      );
+                                    });
+                              }
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            })),
                   ),
                 ],
               )),
