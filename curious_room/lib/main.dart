@@ -19,24 +19,23 @@ void main() {
 
 // ignore: must_be_immutable
 class Login extends StatelessWidget {
-
   Login({Key? key}) : super(key: key);
   late RoomModel roomModel;
   late UserModel ownerModel;
-  
+
   @override
   Widget build(BuildContext context) {
     return ResponsiveSizer(
       builder: (BuildContext, Orientation, ScreenType) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-      theme: ThemeData(fontFamily: 'Prompt'),
-      initialRoute: '/',
-      routes: {
-        '/firstpage': (context) => FirstPage(),
-        '/roompage': (context) =>
-            RoomPage(roomModel: roomModel, ownerModel: ownerModel),
+          home: LoginPage(),
+          theme: ThemeData(fontFamily: 'Prompt'),
+          initialRoute: '/',
+          routes: {
+            '/firstpage': (context) => FirstPage(),
+            '/roompage': (context) =>
+                RoomPage(roomModel: roomModel, ownerModel: ownerModel),
           },
         );
       },
@@ -61,16 +60,16 @@ class _LoginPageState extends State<LoginPage> {
   // late UserModel _regisToGbase;
   final controller = Get.put(LoginController());
   late UserModel Info;
-  @override
-  void initState() {
-    super.initState();
-    if (controller.googleAccount.value != null) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => FirstPage()),
-          (Route<dynamic> route) => false);
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (controller.googleAccount.value != null) {
+  //     Navigator.pushAndRemoveUntil(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => FirstPage()),
+  //         (Route<dynamic> route) => false);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +210,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
 
   TextStyle Style(int r, int g, int b, double o) {
     return TextStyle(
