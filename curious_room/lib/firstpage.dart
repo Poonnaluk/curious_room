@@ -2,6 +2,8 @@ import 'package:curious_room/room/createroom.dart';
 import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 
+import 'Models/UserModel.dart';
+
 // void main(List<String> args) {
 //   runApp(First());
 // }
@@ -20,8 +22,8 @@ import 'package:flutter/material.dart';
 // }
 
 class FirstPage extends StatefulWidget {
-  const FirstPage({Key? key}) : super(key: key);
-
+  const FirstPage({Key? key, this.info}) : super(key: key);
+  final UserModel? info;
   @override
   _FirstPageState createState() => _FirstPageState();
 }
