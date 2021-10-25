@@ -165,7 +165,7 @@ class _FirstPageState extends State<FirstPage> {
                       )),
                       IconButton(
                           onPressed: () {},
-                          icon: code.length < 7
+                          icon: !isTextFiledFocus
                               ? Image.asset('assets/icons/Join_button_gray.png')
                               : Image.asset(
                                   'assets/icons/Join_button_green.png'))
