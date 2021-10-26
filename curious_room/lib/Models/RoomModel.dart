@@ -29,14 +29,19 @@ class RoomModel {
   late UserModel ownerModel;
 
   factory RoomModel.fromJson(Map<String, dynamic> json) => RoomModel(
-        id: json["id"],
-        name: json["name"],
-        code: json["code"],
-        userId: json["userId"],
+        id: json["id"] == null ? 0 : json["id"],
+        name: json["name"] == null ? "" : json["name"],
+        code: json["code"] == null ? "" : json["code"],
+        userId: json["userId"] == null ? 0 : json["id"],
         statusRoom: json["statusRoom"] as String?,
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
-        ownerModel: UserModel.fromJson(json["user_room"]),
+        createdAt: DateTime.parse(json["createdAt"] == null
+            ? "1969-07-20 20:18:04Z"
+            : json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"] == null
+            ? "1969-07-20 20:18:04Z"
+            : json["updatedAt"]),
+        ownerModel: UserModel.fromJson(
+            json["user_room"] == null ? {} : json["user_room"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -52,8 +57,7 @@ class RoomModel {
 }
 
 Future<RoomModel> createRoom(String name, int userid) async {
-  final String apiUrl = "http://192.168.43.94:8000/room";
-  //final String apiUrl = "http://192.168.1.48:8000/room";
+  final String apiUrl = "http://147.182.209.40/room";
   final body = jsonEncode({
     "room": {"name": name, "userId": userid}
   });
@@ -70,7 +74,7 @@ Future<RoomModel> createRoom(String name, int userid) async {
 }
 
 Future<RoomModel> getRoom(int roomid) async {
-  final String apiUrl = "http://192.168.43.94:8000/room/$roomid";
+  final String apiUrl = "http://147.182.209.40/room/$roomid";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     return RoomModel.fromJson(jsonDecode(response.body));

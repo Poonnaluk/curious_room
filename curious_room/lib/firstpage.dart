@@ -1,10 +1,13 @@
+import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/room/createroom.dart';
+import 'package:curious_room/room/roompage.dart';
 import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import 'Models/ParticipateModel.dart';
 import 'controllers/loginController.dart';
 
 // void main(List<String> args) {
@@ -44,12 +47,23 @@ class _FirstPageState extends State<FirstPage> {
   late String code;
   dynamic room;
 
+  late Future<List<ParticipateModel>> _roomfuture;
+  late List<ParticipateModel>? value;
+
+  @override
+  void initState() {
+    super.initState();
+    _roomfuture = getRoomParticipate(widget.info!.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
+    bool isHovering = false;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       key: _key,
       appBar: AppBar(
         shadowColor: Color.fromRGBO(233, 160, 151, 1),
@@ -97,9 +111,104 @@ class _FirstPageState extends State<FirstPage> {
       ),
       drawer: MyMenu(url: ip + widget.info!.display),
       body: SafeArea(
-        child: Container(
-            //ห้องที่เข้าร่วมแล้ว
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+            child: Column(
+              children: [
+                Container(
+                  child: Expanded(
+                      child: FutureBuilder<List<ParticipateModel>>(
+                          future: _roomfuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.data.toString() == "[]") {
+                              return Text(
+                                'คุณยังไม่ได้เข้าร่วมห้อง',
+                                style: TextStyle(
+                                    color: Color.fromRGBO(176, 162, 148, 1.0)),
+                              );
+                            } else if (snapshot.hasData) {
+                              value = snapshot.data;
+                              return ListView.builder(
+                                  itemCount: value!.length,
+                                  itemBuilder: (context, index) {
+                                    return InkWell(
+                                        splashColor: Colors.blue.withAlpha(30),
+                                        onTap: () {
+                                          RoomModel roomModel = new RoomModel(
+                                              id: value![index]
+                                                  .roomParticipate!
+                                                  .id,
+                                              name: value![index]
+                                                  .roomParticipate!
+                                                  .name,
+                                              code: value![index]
+                                                  .roomParticipate!
+                                                  .code,
+                                              userId: value![index]
+                                                  .roomParticipate!
+                                                  .userId,
+                                              createdAt: value![index]
+                                                  .roomParticipate!
+                                                  .createdAt,
+                                              updatedAt: value![index]
+                                                  .roomParticipate!
+                                                  .updatedAt,
+                                              ownerModel: value![index]
+                                                  .roomParticipate!
+                                                  .ownerModel);
+                                          Navigator.of(context).push(
+                                              new MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      new RoomPage(
+                                                        roomModel: roomModel,
+                                                        ownerModel: roomModel
+                                                            .ownerModel,
+                                                      )));
+                                        },
+                                        onHover: (hovering) {
+                                          setState(() {
+                                            isHovering = hovering;
+                                            print("hovering now");
+                                          });
+                                        },
+                                        child: AnimatedContainer(
+                                          duration: Duration(milliseconds: 200),
+                                          curve: Curves.ease,
+                                          margin: EdgeInsets.only(
+                                              left: 0, top: 4.0),
+                                          padding: EdgeInsets.all(
+                                              isHovering ? 50 : 30),
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                            image: AssetImage(
+                                                'assets/images/card.png'),
+                                            fit: BoxFit.fill,
+                                            alignment: Alignment.topCenter,
+                                          )),
+                                          child: Text(
+                                            (value?[index]
+                                                    .roomParticipate
+                                                    ?.name)
+                                                .toString(),
+                                            style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    107, 103, 98, 1.0),
+                                                fontSize: 24),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ));
+                                  });
+                            }
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          })),
+                )
+              ],
             ),
+          ),
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(10.0),
