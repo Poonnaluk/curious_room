@@ -11,7 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-
 //เมนูบาร์
 // ignore: non_constant_identifier_names, must_be_immutable
 class MyMenu extends StatelessWidget {
@@ -25,7 +24,8 @@ class MyMenu extends StatelessWidget {
     late double screenh;
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
-    String ipTest = 'http://192.168.1.48:8000/null';
+    // String ipTest = 'http://192.168.1.48:8000/null';
+    String ipTest = 'http://192.168.43.94:8000/null';
     String image;
     if (controller.googleAccount.value!.photoUrl.toString() != "null") {
       image = controller.googleAccount.value!.photoUrl.toString();
