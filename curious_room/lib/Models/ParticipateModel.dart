@@ -3,6 +3,7 @@
 //     final participateModel = participateModelFromJson(jsonString);
 
 import 'dart:convert';
+import 'package:curious_room/Models/RoomModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:curious_room/Models/UserModel.dart';
 
@@ -22,6 +23,7 @@ class ParticipateModel {
     required this.createdAt,
     required this.updatedAt,
     this.userParticipate,
+    this.roomParticipate,
   });
 
   int id;
@@ -31,6 +33,7 @@ class ParticipateModel {
   DateTime createdAt;
   DateTime updatedAt;
   UserModel? userParticipate;
+  RoomModel? roomParticipate;
 
   factory ParticipateModel.fromJson(Map<String, dynamic> json) =>
       ParticipateModel(
@@ -40,7 +43,10 @@ class ParticipateModel {
         roomId: json["roomId"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
-        userParticipate: UserModel.fromJson(json["user_participate"]),
+        userParticipate: UserModel.fromJson(
+            json["user_participate"] == null ? {} : json["user_participate"]),
+        roomParticipate: RoomModel.fromJson(
+            json["room_participate"] == null ? {} : json["room_participate"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -50,12 +56,28 @@ class ParticipateModel {
         "roomId": roomId,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
-        "user_participate": userParticipate?.toJson(),
+        "user_participate":
+            userParticipate?.toJson() == null ? [] : userParticipate?.toJson(),
+        "room_participate":
+            roomParticipate?.toJson() == null ? [] : roomParticipate?.toJson(),
       };
 }
 
 Future<List<ParticipateModel>> getParticipate(int roomid) async {
-  final String apiUrl = "http://192.168.43.94:8000/participate/$roomid";
+  final String apiUrl = "http://147.182.209.40/participate/$roomid";
+  final response = await http.get(Uri.parse(apiUrl));
+  if (response.statusCode == 200) {
+    Iterable l = json.decode(response.body);
+    List<ParticipateModel> participateModels =
+        l.map((g) => ParticipateModel.fromJson(g)).toList();
+    return participateModels;
+  } else {
+    throw Exception('Failed to load participates');
+  }
+}
+
+Future<List<ParticipateModel>> getRoomParticipate(int userid) async {
+  final String apiUrl = "http://147.182.209.40/participate/room/$userid";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     Iterable l = json.decode(response.body);
@@ -63,6 +85,6 @@ Future<List<ParticipateModel>> getParticipate(int roomid) async {
         l.map((g) => ParticipateModel.fromJson(g)).toList();
     return garageModels;
   } else {
-    throw Exception('Failed to load participates');
+    throw Exception('Failed to load room participates');
   }
 }
