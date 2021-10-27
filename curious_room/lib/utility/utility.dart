@@ -122,10 +122,11 @@ class MyMenu extends StatelessWidget {
               // selectedTileColor: Color.fromRGBO(117, 195, 185, 1),
               onTap: () async {
                 await controller.signout();
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                    (Route<dynamic> route) => false);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => LoginPage()),
+                );
               },
             ),
             Divider(

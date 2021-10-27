@@ -47,7 +47,7 @@ class UserModel {
 Future<dynamic> regischeck(String uEmail) async {
   //นำค่าเเป็น Params
   // final pramsUrl = Uri.parse('http://192.168.43.94:8000/user/$uEmail');
-  final pramsUrl = Uri.parse('http://192.168.1.48:8000/user/${uEmail}');
+  final pramsUrl = Uri.parse('http://192.168.1.48:8000/user/$uEmail');
   print(pramsUrl);
   final res = await http.post(pramsUrl);
   if (res.statusCode == 200) {
