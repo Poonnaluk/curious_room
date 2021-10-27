@@ -65,8 +65,6 @@ Future<RoomModel> createRoom(String name, int userid) async {
       body: body,
       headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
   if (response.statusCode == 200) {
-    print(response.body);
-
     return RoomModel.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('Failed to create album.');
@@ -80,5 +78,20 @@ Future<RoomModel> getRoom(int roomid) async {
     return RoomModel.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('Failed to load about room');
+  }
+}
+
+Future<dynamic> getRoomByCode(String code) async {
+  final String apiUrl = "http://192.168.1.48:8000/room/$code";
+  final response = await http.get(Uri.parse(apiUrl));
+  if (response.statusCode == 200) {
+    Iterable l = json.decode(response.body);
+    List<RoomModel> roomWithOwnerUser =
+        l.map((g) => RoomModel.fromJson(g)).toList();
+    return roomWithOwnerUser;
+  } else if (response.statusCode == 500) {
+    return null;
+  } else {
+    throw Exception('Failed to load participates');
   }
 }

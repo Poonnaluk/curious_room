@@ -1,8 +1,11 @@
+import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
+// import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/room/createroom.dart';
 import 'package:curious_room/room/roompage.dart';
 import 'package:curious_room/utility/utility.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -29,8 +32,8 @@ import 'controllers/loginController.dart';
 
 // ignore: must_be_immutable
 class FirstPage extends StatefulWidget {
-  const FirstPage({Key? key, this.info}) : super(key: key);
-  final UserModel? info;
+  FirstPage({Key? key, this.info}) : super(key: key);
+  UserModel? info;
   @override
   _FirstPageState createState() => _FirstPageState();
 }
@@ -40,12 +43,9 @@ class _FirstPageState extends State<FirstPage> {
   late double screenh;
   String ip = 'http://192.168.1.48:8000/';
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-  final textCodeController = TextEditingController();
   bool isTextFiledFocus = false;
   final _formKey = new GlobalKey<FormState>();
   final controller = Get.put(LoginController());
-  late String code;
-  dynamic room;
 
   late Future<List<ParticipateModel>> _roomfuture;
   late List<ParticipateModel>? value;
@@ -216,7 +216,9 @@ class _FirstPageState extends State<FirstPage> {
           scale: 1.2,
           child: FloatingActionButton(
             onPressed: () {
-              joinRoom(context);
+              joinRoom(
+                context,
+              );
             },
             child: Image.asset(
               'assets/icons/join.png',
@@ -240,6 +242,13 @@ class _FirstPageState extends State<FirstPage> {
                 height: screenh * 0.2,
               ),
               StatefulBuilder(builder: (context, setState) {
+                List<RoomModel> roomWithOwnerUser;
+                dynamic future;
+                bool checkNull = true;
+                late String checktype;
+                dynamic code;
+                final textCodeController = TextEditingController();
+
                 return AlertDialog(
                   contentPadding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                   shape: RoundedRectangleBorder(
@@ -261,7 +270,21 @@ class _FirstPageState extends State<FirstPage> {
                             });
                           },
                           child: TextFormField(
-                            onChanged: (value) => code = value.trim(),
+                            onChanged: (value) async {
+                              code = value.trim();
+                              // if (value.length.toInt() == 7) {
+                              //   future = await getRoomByCode(value.toString());
+                              //   checktype = future.runtimeType.toString();
+                              //   if (checktype == "Null") {
+                              //     checkNull = true;
+                              //   } else {
+                              //     roomWithOwnerUser = future;
+                              //     print(roomWithOwnerUser.first);
+                              //     checkNull = false;
+
+                              //   }
+                              // }
+                            },
                             controller: textCodeController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -273,7 +296,34 @@ class _FirstPageState extends State<FirstPage> {
                         ),
                       )),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            print(textCodeController);
+                            if (_formKey.currentState!.validate()) {
+                              future = await (getRoomByCode(code.toString()));
+                              if (future == null) {
+                                final snackBar = SnackBar(
+                                  content: const Text('รหัสไม่ถูกต้อง'),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } else {
+                                roomWithOwnerUser = future;
+                                print(widget.info!.id.toString() +
+                                    roomWithOwnerUser[0].id.toString());
+                                await createParticipate(
+                                    widget.info!.id, roomWithOwnerUser[0].id);
+                                Navigator.of(context).pushReplacement(
+                                    new MaterialPageRoute(
+                                        settings: const RouteSettings(
+                                            name: '/roompage'),
+                                        builder: (context) => new RoomPage(
+                                              roomModel: roomWithOwnerUser[0],
+                                              ownerModel: roomWithOwnerUser[0]
+                                                  .ownerModel,
+                                            )));
+                              }
+                            }
+                          },
                           icon: !isTextFiledFocus
                               ? Image.asset('assets/icons/Join_button_gray.png')
                               : Image.asset(

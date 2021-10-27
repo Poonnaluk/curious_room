@@ -33,7 +33,9 @@ class Login extends StatelessWidget {
           theme: ThemeData(fontFamily: 'Prompt'),
           initialRoute: '/',
           routes: {
-            '/firstpage': (context) => FirstPage(),
+            '/firstpage': (context) => FirstPage(
+                  info: ownerModel,
+                ),
             '/roompage': (context) =>
                 RoomPage(roomModel: roomModel, ownerModel: ownerModel),
           },
@@ -63,11 +65,18 @@ class _LoginPageState extends State<LoginPage> {
   // @override
   // void initState() {
   //   super.initState();
+  //   print(controller.googleAccount.value);
+
   //   if (controller.googleAccount.value != null) {
-  //     Navigator.pushAndRemoveUntil(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => FirstPage()),
-  //         (Route<dynamic> route) => false);
+  //     check(controller.googleAccount.value!.email);
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (BuildContext context) => FirstPage(
+  //           info: Info,
+  //         ),
+  //       ),
+  //     );
   //   }
   // }
 
@@ -171,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
           await controller.login();
           bool substring =
               controller.googleAccount.value!.email.contains("@dpu.ac.th");
-          if (substring == true) {
+          if (substring == false) {
             await check(controller.googleAccount.value!.email);
             if (user == null) {
               print('${controller.googleAccount.value?.photoUrl}');
@@ -180,22 +189,24 @@ class _LoginPageState extends State<LoginPage> {
                   controller.googleAccount.value!.email,
                   controller.googleAccount.value!.photoUrl.toString());
               await check(controller.googleAccount.value!.email);
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => FirstPage(
-                            info: Info,
-                          )),
-                  (Route<dynamic> route) => false);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => FirstPage(
+                    info: Info,
+                  ),
+                ),
+              );
             } else {
               print(Info.display);
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => FirstPage(
-                            info: Info,
-                          )),
-                  (Route<dynamic> route) => false);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => FirstPage(
+                    info: Info,
+                  ),
+                ),
+              );
               // }
             }
           } else {
