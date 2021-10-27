@@ -199,9 +199,10 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                                           backgroundColor:
                                               Color.fromRGBO(255, 255, 255, 0),
                                           backgroundImage: Image.network(
-                                                  value?[index]
-                                                      .userParticipate
-                                                      ?.display)
+                                                  (value?[index]
+                                                          .userParticipate
+                                                          ?.display)
+                                                      .toString())
                                               .image,
                                           radius: 15,
                                         ),
