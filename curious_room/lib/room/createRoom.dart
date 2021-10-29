@@ -1,9 +1,11 @@
+import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/room/roompage.dart';
 import 'package:flutter/material.dart';
 
 class CreatRoomPage extends StatefulWidget {
-  const CreatRoomPage({Key? key}) : super(key: key);
+  final UserModel userModel;
+  const CreatRoomPage({Key? key, required this.userModel}) : super(key: key);
 
   @override
   _CreatRoomPageState createState() => _CreatRoomPageState();
@@ -12,7 +14,7 @@ class CreatRoomPage extends StatefulWidget {
 class _CreatRoomPageState extends State<CreatRoomPage> {
   final _formKey = new GlobalKey<FormState>();
   late String name;
-  late int userid = 1;
+  // late int userid = 1;
   late String message;
   TextEditingController nameController = TextEditingController();
   RoomController roomController = RoomController();
@@ -69,7 +71,7 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             )),
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            await roomController.addRoom(name, userid);
+            await roomController.addRoom(name, widget.userModel.id);
             print(roomController.roomModel.ownerModel.name);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -94,6 +96,7 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             Navigator.of(context).pushReplacement(new MaterialPageRoute(
                 settings: const RouteSettings(name: '/roompage'),
                 builder: (context) => new RoomPage(
+                      userModel: widget.userModel,
                       roomModel: roomController.roomModel,
                       ownerModel: roomController.roomModel.ownerModel,
                     )));

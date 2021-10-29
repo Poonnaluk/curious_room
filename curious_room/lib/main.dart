@@ -20,6 +20,7 @@ void main() {
 // ignore: must_be_immutable
 class Login extends StatelessWidget {
   Login({Key? key}) : super(key: key);
+  late UserModel userModel;
   late RoomModel roomModel;
   late UserModel ownerModel;
 
@@ -36,8 +37,10 @@ class Login extends StatelessWidget {
             '/firstpage': (context) => FirstPage(
                   info: ownerModel,
                 ),
-            '/roompage': (context) =>
-                RoomPage(roomModel: roomModel, ownerModel: ownerModel),
+            '/roompage': (context) => RoomPage(
+                userModel: userModel,
+                roomModel: roomModel,
+                ownerModel: ownerModel),
           },
         );
       },
