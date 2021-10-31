@@ -69,7 +69,7 @@ Future<RoomModel> createRoom(String name, int userid) async {
 
     return RoomModel.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Failed to create album.');
+    throw Exception('Failed to create room.');
   }
 }
 
@@ -80,5 +80,46 @@ Future<RoomModel> getRoom(int roomid) async {
     return RoomModel.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('Failed to load about room');
+  }
+}
+
+Future<List<RoomModel>> getMyRoom(int userid) async {
+  final String apiUrl = "http://147.182.209.40/room/user/$userid";
+  final response = await http.get(Uri.parse(apiUrl));
+  if (response.statusCode == 200) {
+    Iterable l = json.decode(response.body);
+    List<RoomModel> roomModels = l.map((g) => RoomModel.fromJson(g)).toList();
+    return roomModels;
+  } else {
+    throw Exception('Failed to load your rooms');
+  }
+}
+
+Future<RoomModel> updateRoom(String name, int id) async {
+  final String apiUrl = "http://147.182.209.40/room/$id";
+  final body = jsonEncode(<String, String>{
+    'name': name,
+  });
+  final response =
+      await http.put(Uri.parse(apiUrl), body: body, headers: <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+  });
+  if (response.statusCode == 200) {
+    print(response.body);
+    return RoomModel.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Failed to update room.');
+  }
+}
+
+Future<List<RoomModel>> getAllRooms() async {
+  final String apiUrl = "http://147.182.209.40/room";
+  final response = await http.get(Uri.parse(apiUrl));
+  if (response.statusCode == 200) {
+    Iterable l = json.decode(response.body);
+    List<RoomModel> roomModels = l.map((g) => RoomModel.fromJson(g)).toList();
+    return roomModels;
+  } else {
+    throw Exception('Failed to load room participates');
   }
 }

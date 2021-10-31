@@ -20,6 +20,7 @@ void main() {
 // ignore: must_be_immutable
 class Login extends StatelessWidget {
   Login({Key? key}) : super(key: key);
+  late UserModel userModel;
   late RoomModel roomModel;
   late UserModel ownerModel;
 
@@ -33,9 +34,13 @@ class Login extends StatelessWidget {
           theme: ThemeData(fontFamily: 'Prompt'),
           initialRoute: '/',
           routes: {
-            '/firstpage': (context) => FirstPage(),
-            '/roompage': (context) =>
-                RoomPage(roomModel: roomModel, ownerModel: ownerModel),
+            '/firstpage': (context) => FirstPage(
+                  info: userModel,
+                ),
+            '/roompage': (context) => RoomPage(
+                userModel: userModel,
+                roomModel: roomModel,
+                ownerModel: ownerModel),
           },
         );
       },

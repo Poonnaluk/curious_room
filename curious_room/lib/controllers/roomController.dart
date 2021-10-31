@@ -11,4 +11,8 @@ class RoomController {
   getAboutRoom(int id) async {
     aboutroom = await getRoom(id);
   }
+
+  updateRoomName(String name, int id) async {
+    roomModel = await updateRoom(name, id);
+  }
 }
