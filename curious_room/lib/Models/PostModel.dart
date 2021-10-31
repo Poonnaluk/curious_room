@@ -4,35 +4,39 @@
 
 import 'dart:convert';
 import 'dart:io';
-// import 'dart:html';
-
+import 'package:curious_room/Models/PostHistory.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-
 import 'package:mime/mime.dart';
+import 'UserModel.dart';
 
-PostModel postModelFromJson(String str) => PostModel.fromJson(json.decode(str));
+List<PostModel> postModelFromJson(String str) =>
+    List<PostModel>.from(json.decode(str).map((x) => PostModel.fromJson(x)));
 
-String postModelToJson(PostModel data) => json.encode(data.toJson());
+String postModelToJson(List<PostModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class PostModel {
-  PostModel({
-    this.id,
-    required this.userId,
-    required this.roomId,
-    this.statusPost,
-    this.createdAt,
-    this.updatedAt,
-    this.commentId,
-  });
+  PostModel(
+      {this.id,
+      required this.userId,
+      required this.roomId,
+      this.statusPost,
+      required this.createdAt,
+      this.updatedAt,
+      this.commentId,
+      required this.userPost,
+      required this.postHistory});
 
   int? id;
   int userId;
   int roomId;
   String? statusPost;
-  DateTime? createdAt;
+  DateTime createdAt;
   DateTime? updatedAt;
   int? commentId;
+  late UserModel userPost;
+  late List<PostHistoryModel> postHistory;
 
   factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
         id: json["id"],
@@ -42,6 +46,10 @@ class PostModel {
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         commentId: json["commentId"],
+        userPost: UserModel.fromJson(
+            json["user_post"] == null ? {} : json["user_post"]),
+        postHistory: List<PostHistoryModel>.from(
+            json["post_history"].map((x) => PostHistoryModel.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -49,10 +57,28 @@ class PostModel {
         "userId": userId,
         "roomId": roomId,
         "statusPost": statusPost,
-        "createdAt": createdAt!.toIso8601String(),
+        "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt!.toIso8601String(),
         "commentId": commentId,
+        "user_post": userPost.toJson(),
+        "post_history": List<dynamic>.from(postHistory.map((x) => x.toJson())),
       };
+}
+
+Future<List<PostModel>> getPost(int roomId) async {
+  final String url = "http://192.168.1.48:8000/post/$roomId";
+  // final String url = "http://147.182.209.40/post/$roomId";
+  print(url);
+  final res = await http.get(Uri.parse(url));
+  if (res.statusCode == 200) {
+    Iterable l = json.decode(res.body);
+    List<PostModel> postModel = l.map((g) => PostModel.fromJson(g)).toList();
+    return postModel;
+    // Map<String, dynamic> map = json.decode(res.body);
+    // List<dynamic> data = map["post_history"];
+  } else {
+    throw Exception('Failed to check');
+  }
 }
 
 Future<void> creatPost(int userId, int roomId, String content, File img) async {

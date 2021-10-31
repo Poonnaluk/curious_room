@@ -7,13 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:get/get.dart';
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-
 import 'controllers/loginController.dart';
 
 import 'Models/RoomModel.dart';
 
 void main() {
+  Intl.defaultLocale = "th";
+  initializeDateFormatting();
   runApp(Login());
 }
 
@@ -183,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
           await controller.login();
           bool substring =
               controller.googleAccount.value!.email.contains("@dpu.ac.th");
-          if (substring == false) {
+          if (substring == true) {
             await check(controller.googleAccount.value!.email);
             if (user == null) {
               print('${controller.googleAccount.value?.photoUrl}');
