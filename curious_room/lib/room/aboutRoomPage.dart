@@ -97,7 +97,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
           ],
         ),
         body: SafeArea(
-            child: Center(
+            child: SingleChildScrollView(
           child: Padding(
               padding: EdgeInsets.fromLTRB(30, 0, 50, 0),
               child: Column(
