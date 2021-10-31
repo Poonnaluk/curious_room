@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:curious_room/Models/UserModel.dart';
 
 PostHistoryModel userModelFromJson(String str) =>
     PostHistoryModel.fromJson(json.decode(str));
