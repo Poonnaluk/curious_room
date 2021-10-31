@@ -233,6 +233,12 @@ class _FirstPageState extends State<FirstPage> {
                               hintText: 'กรอกรหัสเพื่อเข้าร่วม',
                               contentPadding: EdgeInsets.all(5),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'กรุณากรอกรหัส';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                       )),
