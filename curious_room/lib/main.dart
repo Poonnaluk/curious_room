@@ -38,7 +38,7 @@ class Login extends StatelessWidget {
           initialRoute: '/',
           routes: {
             '/firstpage': (context) => FirstPage(
-                  info: ownerModel,
+                  info: userModel,
                 ),
             '/roompage': (context) => RoomPage(
                 userModel: userModel,

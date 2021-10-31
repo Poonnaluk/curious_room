@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class CreatRoomPage extends StatefulWidget {
   final UserModel userModel;
-  const CreatRoomPage({Key? key, required this.userModel}) : super(key: key);
+  CreatRoomPage({Key? key, required this.userModel}) : super(key: key);
 
   @override
   _CreatRoomPageState createState() => _CreatRoomPageState();
@@ -14,7 +14,6 @@ class CreatRoomPage extends StatefulWidget {
 class _CreatRoomPageState extends State<CreatRoomPage> {
   final _formKey = new GlobalKey<FormState>();
   late String name;
-  // late int userid = 1;
   late String message;
   TextEditingController nameController = TextEditingController();
   RoomController roomController = RoomController();
@@ -49,10 +48,6 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
       },
     );
   }
-
-  // Future<void> createroom(String name, int) async {
-  //   roomModel = await createRoom(name, userid);
-  // }
 
   Widget _buildButtonCreate() {
     return Container(

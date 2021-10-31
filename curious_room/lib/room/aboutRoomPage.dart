@@ -1,22 +1,21 @@
 import 'package:curious_room/Models/ParticipateModel.dart';
+import 'package:curious_room/Models/RoomModel.dart';
+import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/roomController.dart';
 import 'package:flutter/material.dart';
 
+import 'deleteParticipate.dart';
+import 'dialogs/editRoom.dart';
+
 class AboutRoomPage extends StatefulWidget {
-  final int roomid;
-  final String roomName;
-  final String code;
-  final int ownerid;
-  final String ownerName;
-  final String ownerDisplay;
+  final RoomModel roomModel;
+  final UserModel ownerModel;
+  final UserModel userModel;
   AboutRoomPage({
     Key? key,
-    required this.roomid,
-    required this.code,
-    required this.ownerid,
-    required this.roomName,
-    required this.ownerName,
-    required this.ownerDisplay,
+    required this.userModel,
+    required this.roomModel,
+    required this.ownerModel,
   }) : super(key: key);
 
   @override
@@ -30,17 +29,39 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
 // resposive
   late double screenw;
   late double screenh;
+  late bool userRole = false;
+  late bool owner = false;
+  late String roomName;
 
   @override
   void initState() {
     super.initState();
-    future = getParticipate(widget.roomid);
+    refreshData();
+    roomName = widget.roomModel.name;
+  }
+
+  void refreshData() {
+    future = getParticipate(widget.roomModel.id);
+  }
+
+  Future onGoBack(dynamic value) async {
+    refreshData();
+    setState(() {});
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
+    String image = widget.ownerModel.display.toString();
+    if (widget.userModel.id == widget.ownerModel.id ||
+        widget.userModel.role == "ADMIN") {
+      userRole = true;
+    }
+    if (widget.userModel.id == widget.ownerModel.id) {
+      owner = true;
+    }
     {
       return Scaffold(
         backgroundColor: Colors.white,
@@ -50,23 +71,26 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
           toolbarHeight: screenh * 0.08,
           title: new Text('เกี่ยวกับ'),
           titleTextStyle: const TextStyle(
-              color: Colors.black, fontSize: 24, fontFamily: 'Prompt'),
+              color: Color.fromRGBO(0, 0, 0, 0.6),
+              fontSize: 24,
+              fontFamily: 'Prompt'),
           leading: IconButton(
             icon: Icon(Icons.chevron_left),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, roomName),
             color: Color.fromRGBO(0, 0, 0, 25),
             iconSize: 50,
           ),
           actions: [
-            IconButton(
-              onPressed: () {
-                // Navigator.push();
-              },
-              icon: Image.asset(
-                'assets/icons/more_icon.png',
+            if (userRole)
+              IconButton(
+                onPressed: () async {
+                  _buildDialog(context);
+                },
+                icon: Image.asset(
+                  'assets/icons/more_icon.png',
+                ),
+                iconSize: 35,
               ),
-              iconSize: 35,
-            ),
             SizedBox(
               width: screenw * 0.005,
             )
@@ -85,14 +109,14 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        widget.roomName,
+                        roomName,
                         textAlign: TextAlign.left,
                         style: TextStyle(
                             color: Color.fromRGBO(69, 171, 157, 1.0),
                             fontSize: 22),
                       ),
                       Text(
-                        widget.code,
+                        widget.roomModel.code,
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             color: Color.fromRGBO(176, 162, 148, 1.0),
@@ -131,23 +155,29 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     color: Color.fromRGBO(69, 171, 157, 1.0),
                   ),
                   SizedBox(
-                    height: screenh * 0.008,
+                    height: screenh * 0.015,
                   ),
                   Row(
                     children: [
+                      SizedBox(
+                        width: screenw * 0.04,
+                      ),
                       CircleAvatar(
                         backgroundColor: Color.fromRGBO(255, 255, 255, 0),
-                        backgroundImage:
-                            Image.network(widget.ownerDisplay.toString()).image,
                         radius: 15,
+                        backgroundImage: image == "null"
+                            ? Image.asset('assets/images/logoIcon.png').image
+                            : Image.network(image).image,
+                        onBackgroundImageError: (exception, context) {
+                          print('$image Cannot be loaded');
+                        },
                       ),
                       SizedBox(
-                        width: screenw * 0.01,
+                        width: screenw * 0.045,
                       ),
                       Text(
-                        widget.ownerName,
-                        style: TextStyle(
-                            color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 18),
+                        widget.ownerModel.name,
+                        style: textStyle(),
                       ),
                     ],
                   ),
@@ -174,54 +204,154 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                   SizedBox(
                     height: screenh * 0.008,
                   ),
-                  Container(
-                    child: Expanded(
-                        child: FutureBuilder<List<ParticipateModel>>(
-                            future: future,
-                            builder: (context, snapshot) {
-                              if (snapshot.data.toString() == "[]") {
-                                return Text(
-                                  'ยังไม่มีสมาชิก',
-                                  style: TextStyle(
-                                      color:
-                                          Color.fromRGBO(176, 162, 148, 1.0)),
-                                );
-                              } else if (snapshot.hasData) {
-                                value = snapshot.data;
-                                print(value);
-                                return ListView.builder(
-                                    itemCount: value!.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        visualDensity: VisualDensity(
-                                            horizontal: -4, vertical: -4),
-                                        leading: CircleAvatar(
-                                          backgroundColor:
-                                              Color.fromRGBO(255, 255, 255, 0),
-                                          backgroundImage: Image.network(
-                                                  (value?[index]
-                                                          .userParticipate
-                                                          ?.display)
-                                                      .toString())
-                                              .image,
-                                          radius: 15,
-                                        ),
-                                        title: Text((value?[index]
-                                                .userParticipate
-                                                ?.name)
-                                            .toString()),
-                                      );
-                                    });
-                              }
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            })),
-                  ),
+                  Transform.scale(
+                    scale: 1,
+                    child: getParticipates(context),
+                  )
                 ],
               )),
         )),
       );
     }
+  }
+
+  _buildDialog(BuildContext context) {
+    return showGeneralDialog(
+      barrierDismissible: true,
+      transitionDuration: Duration(milliseconds: 500),
+      barrierLabel: "",
+      context: context,
+      pageBuilder: (context, a1, a2) {
+        return Dialog(
+            insetPadding: owner
+                ? EdgeInsets.only(top: screenh * 0.762)
+                : EdgeInsets.only(top: screenh * 0.85),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  owner
+                      ? InkWell(
+                          child: _buildSelections(
+                              iconAsset: 'assets/icons/edit_icon.png',
+                              name: "แก้ไขชื่อห้อง"),
+                          onTap: () async {
+                            showDialog(
+                                context: context,
+                                builder: (_) => EditRoom(
+                                      roomname: widget.roomModel.name,
+                                      roomid: widget.roomModel.id,
+                                    )).then((value) {
+                              if (value != null) {
+                                print('room name >> $value');
+                                setState(() {
+                                  roomName = value.toString();
+                                });
+                                Navigator.pop(context);
+                              }
+                            });
+                          },
+                        )
+                      : SizedBox(
+                          height: 0.0,
+                        ),
+                  InkWell(
+                    child: _buildSelections(
+                        iconAsset: 'assets/icons/delete_user_icon.png',
+                        name: "ลบสมาชิก"),
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(new MaterialPageRoute(
+                              builder: (context) => new DeleteParticipate(
+                                  roomid: widget.roomModel.id)))
+                          .then((onGoBack));
+                    },
+                  ),
+                  InkWell(
+                    child: _buildSelections(
+                        iconAsset: 'assets/icons/delete_icon.png',
+                        name: "ลบห้อง"),
+                    onTap: () {},
+                  )
+                ],
+              ),
+            ));
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position:
+              Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+          child: child,
+        );
+      },
+    );
+  }
+
+  Widget _buildSelections({String? iconAsset, String? name}) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 30),
+              Image.asset(
+                iconAsset.toString(),
+                height: 30,
+                width: 30,
+              ),
+              SizedBox(width: 20),
+              Text(name.toString(),
+                  style: TextStyle(
+                      color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 20)),
+            ],
+          ),
+          SizedBox(height: 20),
+          Container(height: 1, color: Color.fromRGBO(107, 103, 98, 1.0)),
+        ]);
+  }
+
+  TextStyle textStyle() {
+    return TextStyle(color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 16);
+  }
+
+  getParticipates(BuildContext context) {
+    return FutureBuilder<List<ParticipateModel>>(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.data.toString() == "[]") {
+            return Text(
+              'ยังไม่มีสมาชิก',
+              style: TextStyle(color: Color.fromRGBO(176, 162, 148, 1.0)),
+            );
+          } else if (snapshot.hasData) {
+            value = snapshot.data;
+            return ListView.builder(
+                shrinkWrap: true,
+                itemCount: value!.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                    leading: CircleAvatar(
+                      backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+                      backgroundImage: Image.network(
+                              (value?[index].userParticipate?.display)
+                                  .toString())
+                          .image,
+                      radius: 15,
+                    ),
+                    title: Text(
+                        (value?[index].userParticipate?.name).toString(),
+                        style: textStyle()),
+                  );
+                });
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
   }
 }

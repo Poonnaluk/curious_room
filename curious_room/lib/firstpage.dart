@@ -18,13 +18,16 @@ import 'controllers/loginController.dart';
 // }
 
 // class First extends StatelessWidget {
-//   const First({ Key? key }) : super(key: key);
+//   const First({Key? key, required this.info}) : super(key: key);
+//   final UserModel info;
 
 //   @override
 //   Widget build(BuildContext context) {
-//      return MaterialApp(
+//     return MaterialApp(
 //       debugShowCheckedModeBanner: false,
-//       home: FirstPage(),
+//       home: FirstPage(
+//         info: info,
+//       ),
 //       theme: ThemeData(fontFamily: 'Prompt'),
 //     );
 //   }
@@ -32,8 +35,9 @@ import 'controllers/loginController.dart';
 
 // ignore: must_be_immutable
 class FirstPage extends StatefulWidget {
-  FirstPage({Key? key, required this.info}) : super(key: key);
-  UserModel info;
+  const FirstPage({Key? key, required this.info}) : super(key: key);
+  final UserModel info;
+
   @override
   _FirstPageState createState() => _FirstPageState();
 }
@@ -46,20 +50,47 @@ class _FirstPageState extends State<FirstPage> {
   bool isTextFiledFocus = false;
   final _formKey = new GlobalKey<FormState>();
   final controller = Get.put(LoginController());
-  late Future<List<ParticipateModel>> _roomfuture;
-  late List<ParticipateModel>? value;
+
+  late String code;
+  dynamic room;
+
+  // late Future<List<ParticipateModel>>? _partifuture;
+  // late Future<List<RoomModel>>? _roomfuture;
+  Future<List<ParticipateModel>>? _partifuture =
+      Future.value(<ParticipateModel>[]);
+  Future<List<RoomModel>>? _roomfuture = Future.value(<RoomModel>[]);
+
+  late List<ParticipateModel>? value = [];
+  late List<RoomModel>? value2 = [];
+  bool isHovering = false;
 
   @override
   void initState() {
     super.initState();
-    _roomfuture = getRoomParticipate(widget.info.id);
+    refreshData();
+  }
+
+  void refreshData() {
+    if (widget.info.role == 'USER') {
+      _partifuture = getRoomParticipate(widget.info.id);
+      _roomfuture = null;
+      value2 = null;
+    } else {
+      _roomfuture = getAllRooms();
+      _partifuture = null;
+      value = null;
+    }
+  }
+
+  Future onGoBack(dynamic value) async {
+    refreshData();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
-    bool isHovering = false;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -77,7 +108,7 @@ class _FirstPageState extends State<FirstPage> {
           scale: 0.7,
           child: IconButton(
             onPressed: () {
-              print(ip + widget.info.display);
+              print(widget.info.display);
               _key.currentState!.openDrawer();
             }, //,
             icon: Image.asset(
@@ -115,7 +146,7 @@ class _FirstPageState extends State<FirstPage> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(bottomRight: Radius.circular(50))),
       ),
-      drawer: MyMenu(url: ip + widget.info.display),
+      drawer: MyMenu(userModel: widget.info),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -123,99 +154,11 @@ class _FirstPageState extends State<FirstPage> {
             child: Column(
               children: [
                 Container(
-                  child: Expanded(
-                      child: FutureBuilder<List<ParticipateModel>>(
-                          future: _roomfuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.data.toString() == "[]") {
-                              return Text(
-                                'คุณยังไม่ได้เข้าร่วมห้อง',
-                                style: TextStyle(
-                                    color: Color.fromRGBO(176, 162, 148, 1.0)),
-                              );
-                            } else if (snapshot.hasData) {
-                              value = snapshot.data;
-                              return ListView.builder(
-                                  itemCount: value!.length,
-                                  itemBuilder: (context, index) {
-                                    return InkWell(
-                                        splashColor: Colors.blue.withAlpha(30),
-                                        onTap: () {
-                                          RoomModel roomModel = new RoomModel(
-                                              id: value![index]
-                                                  .roomParticipate!
-                                                  .id,
-                                              name: value![index]
-                                                  .roomParticipate!
-                                                  .name,
-                                              code: value![index]
-                                                  .roomParticipate!
-                                                  .code,
-                                              userId: value![index]
-                                                  .roomParticipate!
-                                                  .userId,
-                                              createdAt: value![index]
-                                                  .roomParticipate!
-                                                  .createdAt,
-                                              updatedAt: value![index]
-                                                  .roomParticipate!
-                                                  .updatedAt,
-                                              ownerModel: value![index]
-                                                  .roomParticipate!
-                                                  .ownerModel);
-                                          Navigator.of(context).push(
-                                              new MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      new RoomPage(
-                                                        userModel: widget.info,
-                                                        roomModel: roomModel,
-                                                        ownerModel: roomModel
-                                                            .ownerModel,
-                                                      )));
-                                        },
-                                        onHover: (hovering) {
-                                          setState(() {
-                                            isHovering = hovering;
-                                            print("hovering now");
-                                          });
-                                        },
-                                        child: AnimatedContainer(
-                                          height: 17.5.h,
-                                          duration: Duration(milliseconds: 200),
-                                          curve: Curves.ease,
-                                          margin: EdgeInsets.only(
-                                              left: 10,
-                                              top: 4.0,
-                                              right: 10,
-                                              bottom: 4),
-                                          padding: EdgeInsets.all(
-                                              isHovering ? 50 : 30),
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/images/card.png'),
-                                            fit: BoxFit.fill,
-                                            alignment: Alignment.topCenter,
-                                          )),
-                                          child: Text(
-                                            (value?[index]
-                                                    .roomParticipate
-                                                    ?.name)
-                                                .toString(),
-                                            style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    107, 103, 98, 1.0),
-                                                fontSize: 26.sp),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ));
-                                  });
-                            }
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          })),
-                )
+                    child: Expanded(
+                  child: widget.info.role == 'USER'
+                      ? getMyRooms(context)
+                      : getAllRoom(context),
+                ))
               ],
             ),
           ),
@@ -346,5 +289,139 @@ class _FirstPageState extends State<FirstPage> {
         });
   }
 
+  getMyRooms(BuildContext context) {
+    return FutureBuilder<List<ParticipateModel>>(
+        future: _partifuture,
+        builder: (context, snapshot) {
+          if (snapshot.data.toString() == "[]") {
+            return Text(
+              'คุณยังไม่ได้เข้าร่วมห้อง',
+              style: TextStyle(color: Color.fromRGBO(176, 162, 148, 1.0)),
+            );
+          } else if (snapshot.hasData) {
+            value = snapshot.data;
+            return ListView.builder(
+                itemCount: value!.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                      splashColor: Colors.blue.withAlpha(30),
+                      onTap: () {
+                        RoomModel roomModel = new RoomModel(
+                            id: value![index].roomParticipate!.id,
+                            name: value![index].roomParticipate!.name,
+                            code: value![index].roomParticipate!.code,
+                            userId: value![index].roomParticipate!.userId,
+                            createdAt: value![index].roomParticipate!.createdAt,
+                            updatedAt: value![index].roomParticipate!.updatedAt,
+                            ownerModel:
+                                value![index].roomParticipate!.ownerModel);
+                        Navigator.of(context)
+                            .push(new MaterialPageRoute(
+                                builder: (context) => new RoomPage(
+                                      userModel: widget.info,
+                                      roomModel: roomModel,
+                                      ownerModel: roomModel.ownerModel,
+                                    )))
+                            .then(onGoBack);
+                      },
+                      onHover: (hovering) {
+                        setState(() {
+                          isHovering = hovering;
+                          print("hovering now");
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        curve: Curves.ease,
+                        margin: EdgeInsets.only(left: 0, top: 4.0),
+                        padding: EdgeInsets.all(isHovering ? 50 : 30),
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                          image: AssetImage('assets/images/card.png'),
+                          fit: BoxFit.fill,
+                          alignment: Alignment.topCenter,
+                        )),
+                        child: Text(
+                          (value?[index].roomParticipate?.name).toString(),
+                          style: TextStyle(
+                              color: Color.fromRGBO(107, 103, 98, 1.0),
+                              fontSize: 24),
+                          textAlign: TextAlign.center,
+                        ),
+                      ));
+                });
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+  }
+
+  getAllRoom(BuildContext context) {
+    return FutureBuilder<List<RoomModel>>(
+        future: _roomfuture,
+        builder: (context, snapshot) {
+          if (snapshot.data.toString() == "[]") {
+            return Text(
+              'คุณยังไม่ได้เข้าร่วมห้อง',
+              style: TextStyle(color: Color.fromRGBO(176, 162, 148, 1.0)),
+            );
+          } else if (snapshot.hasData) {
+            value2 = snapshot.data;
+            return ListView.builder(
+                itemCount: value2!.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                      splashColor: Colors.blue.withAlpha(30),
+                      onTap: () {
+                        RoomModel roomModel = new RoomModel(
+                            id: value2![index].id,
+                            name: value2![index].name,
+                            code: value2![index].code,
+                            userId: value2![index].userId,
+                            createdAt: value2![index].createdAt,
+                            updatedAt: value2![index].updatedAt,
+                            ownerModel: value2![index].ownerModel);
+                        Navigator.of(context)
+                            .push(new MaterialPageRoute(
+                                builder: (context) => new RoomPage(
+                                      userModel: widget.info,
+                                      roomModel: roomModel,
+                                      ownerModel: roomModel.ownerModel,
+                                    )))
+                            .then(onGoBack);
+                      },
+                      onHover: (hovering) {
+                        setState(() {
+                          isHovering = hovering;
+                          print("hovering now");
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        curve: Curves.ease,
+                        margin: EdgeInsets.only(left: 0, top: 4.0),
+                        padding: EdgeInsets.all(isHovering ? 50 : 30),
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                          image: AssetImage('assets/images/card.png'),
+                          fit: BoxFit.fill,
+                          alignment: Alignment.topCenter,
+                        )),
+                        child: Text(
+                          (value2?[index].name).toString(),
+                          style: TextStyle(
+                              color: Color.fromRGBO(107, 103, 98, 1.0),
+                              fontSize: 24),
+                          textAlign: TextAlign.center,
+                        ),
+                      ));
+                });
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+  }
   // ignore: non_constant_identifier_name
 }

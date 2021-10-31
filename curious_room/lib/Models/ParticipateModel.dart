@@ -89,6 +89,22 @@ Future<List<ParticipateModel>> getRoomParticipate(int userid) async {
   }
 }
 
+Future<dynamic> deleteParti(int roomid, int userid) async {
+  final String apiUrl = "http://147.182.209.40/participate/$roomid";
+  final body = jsonEncode({
+    'userid': userid,
+  });
+  final response = await http.put(Uri.parse(apiUrl),
+      body: body,
+      headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
+  if (response.statusCode == 200) {
+    print(response.body);
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to update room.');
+  }
+}
+
 Future<dynamic> createParticipate(int userId, int roomId) async {
   final String apiUrl = "http://192.168.1.48:8000/participate";
   final body = jsonEncode({"userId": userId, "roomId": roomId});
