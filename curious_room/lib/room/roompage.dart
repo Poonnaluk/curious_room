@@ -1,9 +1,11 @@
+import 'package:curious_room/Models/PostModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/Post/createPost.dart';
 import 'package:curious_room/room/aboutRoomPage.dart';
 import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class RoomPage extends StatefulWidget {
@@ -23,9 +25,9 @@ class RoomPage extends StatefulWidget {
 
 class _RoomPageState extends State<RoomPage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-
+  late Future<List<PostModel>> future;
+  late List<PostModel> value;
   late RoomModel room;
-
   // resposive
   late double screenw;
   late double screenh;
@@ -36,6 +38,7 @@ class _RoomPageState extends State<RoomPage> {
   @override
   void initState() {
     super.initState();
+    future = getPost(widget.roomModel.id);
     room = widget.roomModel;
   }
 
@@ -43,6 +46,7 @@ class _RoomPageState extends State<RoomPage> {
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
+
     {
       return Scaffold(
         key: _key,
@@ -122,12 +126,216 @@ class _RoomPageState extends State<RoomPage> {
                   ),
                   _buttonHots('ยอดนิยม', chooseHots),
                 ],
-              )
+              ),
+              SizedBox(
+                height: 1.h,
+              ),
+              chooseNew == true
+                  ? Expanded(
+                      child: FutureBuilder<List<PostModel>>(
+                          future: future,
+                          builder: (context, snapshot) {
+                            if (snapshot.data.toString() == "[]") {
+                              return Center(
+                                child: Text(
+                                  'ยังไม่มีโพสต์',
+                                  style: TextStyle(
+                                      color:
+                                          Color.fromRGBO(176, 162, 148, 1.0)),
+                                ),
+                              );
+                            } else if (snapshot.hasData) {
+                              value = snapshot.data!;
+                              print(value);
+                              return ListView.builder(
+                                  itemCount: value.length,
+                                  itemBuilder: (context, index) {
+                                    // String time = DateFormat('kk:mm:a')
+                                    //     .format(value[index].createdAt);
+                                    // convertLocalToDetroit(
+                                    //     value[index].createdAt);
+                                    String time = DateFormat('Hm').format(
+                                        value[index].createdAt.toLocal());
+                                    String date =
+                                        '${DateFormat.yMMMd().format(value[index].createdAt.toLocal())}';
+
+                                    // String date = DateFormat.yMEd()
+                                    //     .add_jms()
+                                    //     .format(value[index].createdAt);
+                                    String subname = value[index]
+                                        .userPost
+                                        .name
+                                        .substring(0, 17);
+                                    return ListTile(
+                                      visualDensity: VisualDensity(
+                                          horizontal: -4, vertical: -4),
+                                      title: Transform.scale(
+                                        scale: 1,
+                                        child: Container(
+                                          padding: EdgeInsets.only(top: 10),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20)),
+                                              border: Border.all(
+                                                color: Color.fromRGBO(
+                                                    176, 162, 148, 1),
+                                              )),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 20.w,
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          CircleAvatar(
+                                                            backgroundColor:
+                                                                Color.fromRGBO(
+                                                                    255,
+                                                                    255,
+                                                                    255,
+                                                                    0),
+                                                            radius: 20.5,
+                                                            backgroundImage: Image.network((value[
+                                                                            index]
+                                                                        .userPost
+                                                                        .display)
+                                                                    .toString())
+                                                                .image,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 4.w,
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                (subname +
+                                                                    '...'),
+                                                                style:
+                                                                    text(16.8),
+                                                              ),
+                                                              Text(
+                                                                date,
+                                                                style:
+                                                                    text(14.8),
+                                                              ),
+                                                              Text(
+                                                                time,
+                                                                style:
+                                                                    text(14.8),
+                                                              )
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 2.h,
+                                                      ),
+                                                      Text(
+                                                        value[index]
+                                                            .postHistory
+                                                            .first
+                                                            .content,
+                                                        overflow:
+                                                            TextOverflow.clip,
+                                                        maxLines: 5,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              value[index]
+                                                          .postHistory
+                                                          .first
+                                                          .image ==
+                                                      null
+                                                  ? Container()
+                                                  : GestureDetector(
+                                                      child: Hero(
+                                                        tag: 'imageHero',
+                                                        child: Container(
+                                                            width: 80.w,
+                                                            height: 30.h,
+                                                            child: Image(
+                                                              image: NetworkImage(
+                                                                  value[index]
+                                                                      .postHistory
+                                                                      .first
+                                                                      .image
+                                                                      .toString()),
+                                                            )),
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.push(context,
+                                                            MaterialPageRoute(
+                                                                builder: (_) {
+                                                          return ImageScreen(
+                                                            uri: value[index]
+                                                                .postHistory
+                                                                .first
+                                                                .image
+                                                                .toString(),
+                                                          );
+                                                        }));
+                                                      }),
+                                              Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 10),
+                                                height: 1,
+                                                color: Color.fromRGBO(
+                                                    176, 162, 148, 1),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {},
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      'เพิ่มคำตอบของคุณ...',
+                                                      style: TextStyle(
+                                                          color: Color.fromRGBO(
+                                                              176,
+                                                              162,
+                                                              148,
+                                                              1)),
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            }
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }))
+                  : Center(
+                      child: Text("หน้าแสดง ยอดนิยม"),
+                    ),
             ],
           )),
         )),
       );
     }
+  }
+
+  TextStyle text(double s) {
+    return TextStyle(
+        color: Color.fromRGBO(107, 103, 98, 1),
+        fontSize: s.sp,
+        fontFamily: 'Prompt');
   }
 
   Widget _buildButtonCreate() {
@@ -177,6 +385,15 @@ class _RoomPageState extends State<RoomPage> {
           );
         });
   }
+
+  // void convertLocalToDetroit(DateTime time) async {
+  //   tz.initializeTimeZones();
+  //   DateTime indiaTime = time; //Emulator time is India time
+  //   final detroitTime =
+  //       new TZDateTime.from(indiaTime, getLocation('Thailand/Detroit'));
+  //   print('Local India Time: ' + indiaTime.toString());
+  //   print('Detroit Time: ' + detroitTime.toString());
+  // }
 
   Widget _buttonNew(String textbutton, bool button) {
     return Container(
@@ -235,6 +452,29 @@ class _RoomPageState extends State<RoomPage> {
             chooseHots = true;
             chooseNew = false;
           });
+        },
+      ),
+    );
+  }
+}
+
+class ImageScreen extends StatelessWidget {
+  ImageScreen({Key? key, required this.uri}) : super(key: key);
+  String uri;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+            tag: 'imageHero',
+            child: Image.network(
+              uri,
+            ),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
         },
       ),
     );
