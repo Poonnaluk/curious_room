@@ -123,7 +123,7 @@ Future<List<RoomModel>> getAllRooms() async {
 }
 
 Future<dynamic> getRoomByCode(String code) async {
-  final String apiUrl = "http://192.168.1.48:8000/room/$code";
+  final String apiUrl = "http://147.182.209.40/room/$code";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     Iterable l = json.decode(response.body);

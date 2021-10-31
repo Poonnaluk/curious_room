@@ -66,7 +66,7 @@ class PostModel {
 }
 
 Future<List<PostModel>> getPost(int roomId) async {
-  final String url = "http://192.168.1.48:8000/post/$roomId";
+  final String url = "http://147.182.209.40/post/$roomId";
   // final String url = "http://147.182.209.40/post/$roomId";
   print(url);
   final res = await http.get(Uri.parse(url));

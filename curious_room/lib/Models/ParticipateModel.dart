@@ -106,7 +106,7 @@ Future<dynamic> deleteParti(int roomid, int userid) async {
 }
 
 Future<dynamic> createParticipate(int userId, int roomId) async {
-  final String apiUrl = "http://192.168.1.48:8000/participate";
+  final String apiUrl = "http://147.182.209.40/participate";
   final body = jsonEncode({"userId": userId, "roomId": roomId});
   final response = await http.post(Uri.parse(apiUrl),
       body: body,
