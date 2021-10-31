@@ -35,7 +35,6 @@ import 'controllers/loginController.dart';
 
 // ignore: must_be_immutable
 class FirstPage extends StatefulWidget {
-
   const FirstPage({Key? key, required this.info}) : super(key: key);
   final UserModel info;
 
@@ -64,7 +63,6 @@ class _FirstPageState extends State<FirstPage> {
   late List<ParticipateModel>? value = [];
   late List<RoomModel>? value2 = [];
   bool isHovering = false;
-
 
   @override
   void initState() {
@@ -139,13 +137,6 @@ class _FirstPageState extends State<FirstPage> {
                               )));
                 },
               ),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            CreatRoomPage(userModel: widget.info)));
-              },
             ),
           ),
           SizedBox(

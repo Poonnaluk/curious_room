@@ -119,6 +119,8 @@ Future<List<RoomModel>> getAllRooms() async {
     return roomModels;
   } else {
     throw Exception('Failed to load room participates');
+  }
+}
 
 Future<dynamic> getRoomByCode(String code) async {
   final String apiUrl = "http://192.168.1.48:8000/room/$code";
@@ -132,6 +134,5 @@ Future<dynamic> getRoomByCode(String code) async {
     return null;
   } else {
     throw Exception('Failed to load participates');
-
   }
 }
