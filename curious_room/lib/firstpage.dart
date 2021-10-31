@@ -1,8 +1,11 @@
+import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
+// import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/room/createroom.dart';
 import 'package:curious_room/room/roompage.dart';
 import 'package:curious_room/utility/utility.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -32,8 +35,10 @@ import 'controllers/loginController.dart';
 
 // ignore: must_be_immutable
 class FirstPage extends StatefulWidget {
+
   const FirstPage({Key? key, required this.info}) : super(key: key);
   final UserModel info;
+
   @override
   _FirstPageState createState() => _FirstPageState();
 }
@@ -43,10 +48,10 @@ class _FirstPageState extends State<FirstPage> {
   late double screenh;
   String ip = 'http://192.168.1.48:8000/';
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-  final textCodeController = TextEditingController();
   bool isTextFiledFocus = false;
   final _formKey = new GlobalKey<FormState>();
   final controller = Get.put(LoginController());
+
   late String code;
   dynamic room;
 
@@ -59,6 +64,7 @@ class _FirstPageState extends State<FirstPage> {
   late List<ParticipateModel>? value = [];
   late List<RoomModel>? value2 = [];
   bool isHovering = false;
+
 
   @override
   void initState() {
@@ -98,10 +104,10 @@ class _FirstPageState extends State<FirstPage> {
         title: Text(
           'Curius Room',
           style: TextStyle(
-              fontSize: 22.sp, color: Color.fromRGBO(176, 162, 148, 1)),
+              fontSize: 21.5.sp, color: Color.fromRGBO(176, 162, 148, 1)),
         ),
-        leading: AspectRatio(
-          aspectRatio: 1,
+        leading: Transform.scale(
+          scale: 0.7,
           child: IconButton(
             onPressed: () {
               print(widget.info.display);
@@ -115,12 +121,23 @@ class _FirstPageState extends State<FirstPage> {
           ),
         ),
         actions: [
-          AspectRatio(
-            aspectRatio: 0.8,
-            child: IconButton(
-              icon: Image.asset(
-                'assets/images/createRoom.png',
-                fit: BoxFit.fill,
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: AspectRatio(
+              aspectRatio: 0.85,
+              child: IconButton(
+                icon: Image.asset(
+                  'assets/images/createRoom.png',
+                  fit: BoxFit.fill,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CreatRoomPage(
+                                userModel: widget.info,
+                              )));
+                },
               ),
               onPressed: () {
                 Navigator.push(
@@ -132,7 +149,7 @@ class _FirstPageState extends State<FirstPage> {
             ),
           ),
           SizedBox(
-            width: screenw * 0.02,
+            width: screenw * 0.05,
           )
         ],
         shape: RoundedRectangleBorder(
@@ -142,7 +159,7 @@ class _FirstPageState extends State<FirstPage> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: Column(
               children: [
                 Container(
@@ -162,7 +179,9 @@ class _FirstPageState extends State<FirstPage> {
           scale: 1.2,
           child: FloatingActionButton(
             onPressed: () {
-              joinRoom(context);
+              joinRoom(
+                context,
+              );
             },
             child: Image.asset(
               'assets/icons/join.png',
@@ -186,6 +205,12 @@ class _FirstPageState extends State<FirstPage> {
                 height: screenh * 0.2,
               ),
               StatefulBuilder(builder: (context, setState) {
+                List<RoomModel> roomWithOwnerUser;
+                dynamic futureRoom;
+                dynamic futrueParti;
+                dynamic code;
+                final textCodeController = TextEditingController();
+
                 return AlertDialog(
                   contentPadding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                   shape: RoundedRectangleBorder(
@@ -207,7 +232,9 @@ class _FirstPageState extends State<FirstPage> {
                             });
                           },
                           child: TextFormField(
-                            onChanged: (value) => code = value.trim(),
+                            onChanged: (value) async {
+                              code = value.trim();
+                            },
                             controller: textCodeController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -219,7 +246,45 @@ class _FirstPageState extends State<FirstPage> {
                         ),
                       )),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            print(textCodeController);
+                            if (_formKey.currentState!.validate()) {
+                              futureRoom =
+                                  await (getRoomByCode(code.toString()));
+                              if (futureRoom == null) {
+                                final snackBar = SnackBar(
+                                  content: const Text('รหัสไม่ถูกต้อง'),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } else {
+                                roomWithOwnerUser = futureRoom;
+                                print(widget.info.id.toString() +
+                                    roomWithOwnerUser[0].id.toString());
+                                futrueParti = await createParticipate(
+                                    widget.info.id, roomWithOwnerUser[0].id);
+                                if (futrueParti == null) {
+                                  Navigator.of(context).pushReplacement(
+                                      new MaterialPageRoute(
+                                          settings: const RouteSettings(
+                                              name: '/roompage'),
+                                          builder: (context) => new RoomPage(
+                                                userModel: widget.info,
+                                                roomModel: roomWithOwnerUser[0],
+                                                ownerModel: roomWithOwnerUser[0]
+                                                    .ownerModel,
+                                              )));
+                                } else {
+                                  final snackBar = SnackBar(
+                                    content:
+                                        const Text('คุณได้เข้าร่วมห้องนี้แล้ว'),
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                }
+                              }
+                            }
+                          },
                           icon: !isTextFiledFocus
                               ? Image.asset('assets/icons/Join_button_gray.png')
                               : Image.asset(

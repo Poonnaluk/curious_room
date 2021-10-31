@@ -17,7 +17,7 @@ String participateModelToJson(List<ParticipateModel> data) =>
 class ParticipateModel {
   ParticipateModel({
     required this.id,
-    required this.joinStatus,
+    this.joinStatus,
     required this.userId,
     required this.roomId,
     required this.createdAt,
@@ -27,7 +27,7 @@ class ParticipateModel {
   });
 
   int id;
-  bool joinStatus;
+  bool? joinStatus;
   int userId;
   int roomId;
   DateTime createdAt;
@@ -89,6 +89,7 @@ Future<List<ParticipateModel>> getRoomParticipate(int userid) async {
   }
 }
 
+
 Future<dynamic> deleteParti(int roomid, int userid) async {
   final String apiUrl = "http://147.182.209.40/participate/$roomid";
   final body = jsonEncode({
@@ -102,5 +103,18 @@ Future<dynamic> deleteParti(int roomid, int userid) async {
     return jsonDecode(response.body);
   } else {
     throw Exception('Failed to update room.');
+
+Future<dynamic> createParticipate(int userId, int roomId) async {
+  final String apiUrl = "http://192.168.1.48:8000/participate";
+  final body = jsonEncode({"userId": userId, "roomId": roomId});
+  final response = await http.post(Uri.parse(apiUrl),
+      body: body,
+      headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
+  if (response.statusCode == 200) {
+    return ParticipateModel.fromJson(jsonDecode(response.body));
+  } else if (response.statusCode == 201) {
+    return null;
+  } else {
+    throw Exception('Failed to create participate.');
   }
 }
