@@ -24,12 +24,20 @@ class RoomPage extends StatefulWidget {
 class _RoomPageState extends State<RoomPage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
+  late RoomModel room;
+
   // resposive
   late double screenw;
   late double screenh;
 
   bool chooseNew = true;
   bool chooseHots = false;
+
+  @override
+  void initState() {
+    super.initState();
+    room = widget.roomModel;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +48,11 @@ class _RoomPageState extends State<RoomPage> {
         key: _key,
         backgroundColor: Colors.white,
         appBar: AppBar(
-          elevation: 1,
+          elevation: 0,
           backgroundColor: Colors.white,
           toolbarHeight: screenh * 0.08,
           title: new Text(
-            widget.roomModel.name,
+            room.name,
           ),
           titleTextStyle: TextStyle(
               color: Color.fromRGBO(176, 162, 148, 1),
@@ -72,31 +80,31 @@ class _RoomPageState extends State<RoomPage> {
                 ),
               ),
             ),
-            Transform.scale(
-              scale: 0.9,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AboutRoomPage(
-                                roomid: widget.roomModel.id,
-                                roomName: widget.roomModel.name,
-                                code: widget.roomModel.code,
-                                ownerid: widget.roomModel.userId,
-                                ownerName: widget.ownerModel.name,
-                                ownerDisplay: widget.ownerModel.display,
-                              )));
-                },
-                icon: Image.asset('assets/icons/about_icon.png'),
-              ),
+            IconButton(
+              onPressed: () async {
+                print(
+                    "owner display >> " + widget.ownerModel.display.toString());
+                final roomname = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AboutRoomPage(
+                            roomModel: room,
+                            ownerModel: widget.ownerModel,
+                            userModel: widget.userModel)));
+                setState(() {
+                  room.name = roomname.toString();
+                });
+              },
+              icon: Image.asset('assets/icons/about_icon.png'),
             ),
             SizedBox(
               width: screenw * 0.02,
             )
           ],
         ),
-        drawer: MyMenu(),
+        drawer: MyMenu(
+          userModel: widget.userModel,
+        ),
         body: SafeArea(
             child: Center(
           child: Container(

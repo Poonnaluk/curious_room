@@ -1,10 +1,12 @@
 // ignore: duplicate_ignore
 // ignore: unused_import
 // ignore_for_file: unused_import, unused_local_variable
+import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/loginController.dart';
 
 import 'package:curious_room/main.dart';
+import 'package:curious_room/room/roompage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,8 +16,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 //เมนูบาร์
 // ignore: non_constant_identifier_names, must_be_immutable
 class MyMenu extends StatelessWidget {
-  MyMenu({Key? key, this.url}) : super(key: key);
-  String? url;
+  MyMenu({Key? key, required this.userModel}) : super(key: key);
+  UserModel userModel;
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +26,9 @@ class MyMenu extends StatelessWidget {
     late double screenh;
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
-    // String ipTest = 'http://192.168.1.48:8000/null';
-    String ipTest = 'http://192.168.43.94:8000/null';
-    String image;
-    if (controller.googleAccount.value!.photoUrl.toString() != "null") {
-      image = controller.googleAccount.value!.photoUrl.toString();
-    } else if (url != ipTest) {
-      image = url.toString();
-    } else {
-      image = 'null';
-    }
+    String image = userModel.display.toString();
+    late List<RoomModel>? value;
+    final Future<List<RoomModel>> future = getMyRoom(userModel.id);
 
     return SafeArea(
       child: Drawer(
@@ -60,7 +55,7 @@ class MyMenu extends StatelessWidget {
                       radius: 25,
                       backgroundImage: image == "null"
                           ? Image.asset('assets/images/logoIcon.png').image
-                          : Image.network('$image').image,
+                          : Image.network(image).image,
                       onBackgroundImageError: (exception, context) {
                         print('$image Cannot be loaded');
                       },
@@ -82,6 +77,7 @@ class MyMenu extends StatelessWidget {
                   // ...
                   // Then close the drawer
                   Navigator.pop(context);
+                  print("image >> " + image);
                 },
               ),
             ),
@@ -95,6 +91,58 @@ class MyMenu extends StatelessWidget {
                 style: textStyle(),
               ),
             ),
+            Transform.scale(
+                scale: 1,
+                child: FutureBuilder<List<RoomModel>>(
+                  future: future,
+                  builder: (context, snapshot) {
+                    if (snapshot.data.toString() == "[]") {
+                      return Container(
+                          padding: EdgeInsets.only(left: 15.0, bottom: 10.0),
+                          child: Text(
+                            'ยังไม่ได้สร้างห้อง',
+                            style: TextStyle(
+                                color: Color.fromRGBO(176, 162, 148, 1.0)),
+                          ));
+                    } else if (snapshot.hasData) {
+                      value = snapshot.data;
+                      return new ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: value!.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              visualDensity: VisualDensity(
+                                horizontal: -4,
+                              ),
+                              title: Text(
+                                (value?[index].name).toString(),
+                                style: textStyle(),
+                              ),
+                              onTap: () {
+                                RoomModel roomModel = new RoomModel(
+                                    id: value![index].id,
+                                    name: value![index].name,
+                                    code: value![index].code,
+                                    userId: value![index].userId,
+                                    createdAt: value![index].createdAt,
+                                    updatedAt: value![index].updatedAt,
+                                    ownerModel: value![index].ownerModel);
+                                Navigator.of(context)
+                                    .push(new MaterialPageRoute(
+                                        builder: (context) => new RoomPage(
+                                              userModel: userModel,
+                                              roomModel: roomModel,
+                                              ownerModel: userModel,
+                                            )));
+                              },
+                            );
+                          });
+                    }
+                    return Center(
+                      child: LinearProgressIndicator(),
+                    );
+                  },
+                )),
             Divider(
               height: 1,
               thickness: 2,
