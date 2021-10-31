@@ -183,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
           await controller.login();
           bool substring =
               controller.googleAccount.value!.email.contains("@dpu.ac.th");
-          if (substring == false) {
+          if (substring == true) {
             await check(controller.googleAccount.value!.email);
             if (user == null) {
               print('${controller.googleAccount.value?.photoUrl}');
