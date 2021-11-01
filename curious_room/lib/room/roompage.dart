@@ -150,18 +150,10 @@ class _RoomPageState extends State<RoomPage> {
                               return ListView.builder(
                                   itemCount: value.length,
                                   itemBuilder: (context, index) {
-                                    // String time = DateFormat('kk:mm:a')
-                                    //     .format(value[index].createdAt);
-                                    // convertLocalToDetroit(
-                                    //     value[index].createdAt);
                                     String time = DateFormat('Hm').format(
                                         value[index].createdAt.toLocal());
                                     String date =
                                         '${DateFormat.yMMMd().format(value[index].createdAt.toLocal())}';
-
-                                    // String date = DateFormat.yMEd()
-                                    //     .add_jms()
-                                    //     .format(value[index].createdAt);
                                     String subname = value[index]
                                         .userPost
                                         .name
@@ -183,73 +175,90 @@ class _RoomPageState extends State<RoomPage> {
                                           child: Column(
                                             children: [
                                               Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  SizedBox(
-                                                    width: 20.w,
-                                                  ),
                                                   Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          CircleAvatar(
-                                                            backgroundColor:
-                                                                Color.fromRGBO(
-                                                                    255,
-                                                                    255,
-                                                                    255,
-                                                                    0),
-                                                            radius: 20.5,
-                                                            backgroundImage: Image.network((value[
-                                                                            index]
-                                                                        .userPost
-                                                                        .display)
-                                                                    .toString())
-                                                                .image,
-                                                          ),
-                                                          SizedBox(
-                                                            width: 4.w,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                (subname +
-                                                                    '...'),
-                                                                style:
-                                                                    text(16.8),
-                                                              ),
-                                                              Text(
-                                                                date,
-                                                                style:
-                                                                    text(14.8),
-                                                              ),
-                                                              Text(
-                                                                time,
-                                                                style:
-                                                                    text(14.8),
-                                                              )
-                                                            ],
-                                                          )
-                                                        ],
+                                                      IconButton(
+                                                        icon: Image.asset(
+                                                            'assets/icons/upvote_gray.png'),
+                                                        iconSize: 30,
+                                                        onPressed: () {},
                                                       ),
-                                                      SizedBox(
-                                                        height: 2.h,
-                                                      ),
-                                                      Text(
-                                                        value[index]
-                                                            .postHistory
-                                                            .first
-                                                            .content,
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 5,
+                                                      Text('0'),
+                                                      IconButton(
+                                                        icon: Image.asset(
+                                                            'assets/icons/downvote_gray.png'),
+                                                        iconSize: 30,
+                                                        onPressed: () {},
                                                       ),
                                                     ],
+                                                  ),
+                                                  Flexible(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            CircleAvatar(
+                                                              backgroundColor:
+                                                                  Color
+                                                                      .fromRGBO(
+                                                                          255,
+                                                                          255,
+                                                                          255,
+                                                                          0),
+                                                              radius: 20.5,
+                                                              backgroundImage: Image.network((value[
+                                                                              index]
+                                                                          .userPost
+                                                                          .display)
+                                                                      .toString())
+                                                                  .image,
+                                                            ),
+                                                            SizedBox(
+                                                              width: 4.w,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  (subname +
+                                                                      '...'),
+                                                                  style: text(
+                                                                      16.8),
+                                                                ),
+                                                                Text(
+                                                                  date,
+                                                                  style: text(
+                                                                      14.8),
+                                                                ),
+                                                                Text(
+                                                                  time,
+                                                                  style: text(
+                                                                      14.8),
+                                                                )
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 2.h,
+                                                        ),
+                                                        Text(
+                                                          value[index]
+                                                              .postHistory
+                                                              .first
+                                                              .content,
+                                                          maxLines: 5,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -385,15 +394,6 @@ class _RoomPageState extends State<RoomPage> {
           );
         });
   }
-
-  // void convertLocalToDetroit(DateTime time) async {
-  //   tz.initializeTimeZones();
-  //   DateTime indiaTime = time; //Emulator time is India time
-  //   final detroitTime =
-  //       new TZDateTime.from(indiaTime, getLocation('Thailand/Detroit'));
-  //   print('Local India Time: ' + indiaTime.toString());
-  //   print('Detroit Time: ' + detroitTime.toString());
-  // }
 
   Widget _buttonNew(String textbutton, bool button) {
     return Container(
