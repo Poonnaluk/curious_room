@@ -96,123 +96,121 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
             )
           ],
         ),
-        body: SingleChildScrollView(
-          child: SafeArea(
-              child: Center(
-            child: Padding(
-                padding: EdgeInsets.fromLTRB(30, 0, 50, 0),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: screenh * 0.03,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          roomName,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: Color.fromRGBO(69, 171, 157, 1.0),
-                              fontSize: 22),
-                        ),
-                        Text(
-                          widget.roomModel.code,
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                              color: Color.fromRGBO(176, 162, 148, 1.0),
-                              fontSize: 16),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: screenh * 0.015,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "สมาชิก",
-                          style: TextStyle(
-                              color: Color.fromRGBO(225, 141, 63, 1.0),
-                              fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "เจ้าของ",
-                          style: TextStyle(
-                              color: Color.fromRGBO(69, 171, 157, 1.0),
-                              fontSize: 18),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: screenh * 0.008,
-                    ),
-                    Container(
-                      height: 1.5,
-                      color: Color.fromRGBO(69, 171, 157, 1.0),
-                    ),
-                    SizedBox(
-                      height: screenh * 0.015,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: screenw * 0.04,
-                        ),
-                        CircleAvatar(
-                          backgroundColor: Color.fromRGBO(255, 255, 255, 0),
-                          radius: 15,
-                          backgroundImage: image == "null"
-                              ? Image.asset('assets/images/logoIcon.png').image
-                              : Image.network(image).image,
-                          onBackgroundImageError: (exception, context) {
-                            print('$image Cannot be loaded');
-                          },
-                        ),
-                        SizedBox(
-                          width: screenw * 0.045,
-                        ),
-                        Text(
-                          widget.ownerModel.name,
-                          style: textStyle(),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: screenh * 0.03,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "เพื่อนร่วมห้อง",
-                          style: TextStyle(
-                              color: Color.fromRGBO(69, 171, 157, 1.0),
-                              fontSize: 18),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: screenh * 0.008,
-                    ),
-                    Container(
-                      height: 1.5,
-                      color: Color.fromRGBO(69, 171, 157, 1.0),
-                    ),
-                    SizedBox(
-                      height: screenh * 0.008,
-                    ),
-                    Transform.scale(
-                      scale: 1,
-                      child: getParticipates(context),
-                    )
-                  ],
-                )),
-          )),
-        ),
+        body: SafeArea(
+            child: SingleChildScrollView(
+          child: Padding(
+              padding: EdgeInsets.fromLTRB(30, 0, 50, 0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: screenh * 0.03,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        roomName,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Color.fromRGBO(69, 171, 157, 1.0),
+                            fontSize: 22),
+                      ),
+                      Text(
+                        widget.roomModel.code,
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                            color: Color.fromRGBO(176, 162, 148, 1.0),
+                            fontSize: 16),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenh * 0.015,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "สมาชิก",
+                        style: TextStyle(
+                            color: Color.fromRGBO(225, 141, 63, 1.0),
+                            fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "เจ้าของ",
+                        style: TextStyle(
+                            color: Color.fromRGBO(69, 171, 157, 1.0),
+                            fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenh * 0.008,
+                  ),
+                  Container(
+                    height: 1.5,
+                    color: Color.fromRGBO(69, 171, 157, 1.0),
+                  ),
+                  SizedBox(
+                    height: screenh * 0.015,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: screenw * 0.04,
+                      ),
+                      CircleAvatar(
+                        backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+                        radius: 15,
+                        backgroundImage: image == "null"
+                            ? Image.asset('assets/images/logoIcon.png').image
+                            : Image.network(image).image,
+                        onBackgroundImageError: (exception, context) {
+                          print('$image Cannot be loaded');
+                        },
+                      ),
+                      SizedBox(
+                        width: screenw * 0.045,
+                      ),
+                      Text(
+                        widget.ownerModel.name,
+                        style: textStyle(),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenh * 0.03,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "เพื่อนร่วมห้อง",
+                        style: TextStyle(
+                            color: Color.fromRGBO(69, 171, 157, 1.0),
+                            fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenh * 0.008,
+                  ),
+                  Container(
+                    height: 1.5,
+                    color: Color.fromRGBO(69, 171, 157, 1.0),
+                  ),
+                  SizedBox(
+                    height: screenh * 0.008,
+                  ),
+                  Transform.scale(
+                    scale: 1,
+                    child: getParticipates(context),
+                  )
+                ],
+              )),
+        )),
       );
     }
   }
