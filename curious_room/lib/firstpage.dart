@@ -1,8 +1,8 @@
 import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:curious_room/room/createRoom.dart';
 // import 'package:curious_room/controllers/roomController.dart';
-import 'package:curious_room/room/createroom.dart';
 import 'package:curious_room/room/roompage.dart';
 import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/foundation.dart';
@@ -119,23 +119,42 @@ class _FirstPageState extends State<FirstPage> {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: AspectRatio(
-              aspectRatio: 0.85,
-              child: IconButton(
-                icon: Image.asset(
-                  'assets/images/createRoom.png',
-                  fit: BoxFit.fill,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CreatRoomPage(
-                                userModel: widget.info,
-                              )));
-                },
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CreatRoomPage(
+                            userModel: widget.info,
+                          )));
+            },
+            child: Container(
+              padding: EdgeInsets.fromLTRB(0, 8, 9, 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(176, 162, 148, 1),
+                    blurRadius: 2,
+                    offset: Offset(1, 3), // Shadow position
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 10, right: 10),
+                    child: Image.asset(
+                      'assets/images/createRoom.png',
+                      scale: 5,
+                    ),
+                  ),
+                  Text(
+                    'ห้อง',
+                    style: TextStyle(color: Color.fromRGBO(107, 103, 98, 1)),
+                  ),
+                ],
               ),
             ),
           ),
@@ -168,15 +187,20 @@ class _FirstPageState extends State<FirstPage> {
         padding: const EdgeInsets.all(10.0),
         child: Transform.scale(
           scale: 1.2,
-          child: FloatingActionButton(
+          child: FloatingActionButton.extended(
             onPressed: () {
               joinRoom(
                 context,
               );
             },
-            child: Image.asset(
+            label: Text(
+              'เข้าร่วม',
+              style: TextStyle(color: Color.fromRGBO(107, 103, 98, 1)),
+            ),
+            icon: Image.asset(
               'assets/icons/join.png',
-              fit: BoxFit.contain,
+              fit: BoxFit.fill,
+              scale: 15,
             ),
             backgroundColor: Colors.white,
           ),
@@ -309,52 +333,66 @@ class _FirstPageState extends State<FirstPage> {
             return ListView.builder(
                 itemCount: value!.length,
                 itemBuilder: (context, index) {
-                  return InkWell(
-                      splashColor: Colors.blue.withAlpha(30),
-                      onTap: () {
-                        RoomModel roomModel = new RoomModel(
-                            id: value![index].roomParticipate!.id,
-                            name: value![index].roomParticipate!.name,
-                            code: value![index].roomParticipate!.code,
-                            userId: value![index].roomParticipate!.userId,
-                            createdAt: value![index].roomParticipate!.createdAt,
-                            updatedAt: value![index].roomParticipate!.updatedAt,
-                            ownerModel:
-                                value![index].roomParticipate!.ownerModel);
-                        Navigator.of(context)
-                            .push(new MaterialPageRoute(
-                                builder: (context) => new RoomPage(
-                                      userModel: widget.info,
-                                      roomModel: roomModel,
-                                      ownerModel: roomModel.ownerModel,
-                                    )))
-                            .then(onGoBack);
-                      },
-                      onHover: (hovering) {
-                        setState(() {
-                          isHovering = hovering;
-                          print("hovering now");
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        curve: Curves.ease,
-                        margin: EdgeInsets.only(left: 0, top: 4.0),
-                        padding: EdgeInsets.all(isHovering ? 50 : 30),
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                          image: AssetImage('assets/images/card.png'),
-                          fit: BoxFit.fill,
-                          alignment: Alignment.topCenter,
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: InkWell(
+                        splashColor: Colors.blue.withAlpha(30),
+                        onTap: () {
+                          RoomModel roomModel = new RoomModel(
+                              id: value![index].roomParticipate!.id,
+                              name: value![index].roomParticipate!.name,
+                              code: value![index].roomParticipate!.code,
+                              userId: value![index].roomParticipate!.userId,
+                              createdAt:
+                                  value![index].roomParticipate!.createdAt,
+                              updatedAt:
+                                  value![index].roomParticipate!.updatedAt,
+                              ownerModel:
+                                  value![index].roomParticipate!.ownerModel);
+                          Navigator.of(context)
+                              .push(new MaterialPageRoute(
+                                  builder: (context) => new RoomPage(
+                                        userModel: widget.info,
+                                        roomModel: roomModel,
+                                        ownerModel: roomModel.ownerModel,
+                                      )))
+                              .then(onGoBack);
+                        },
+                        onHover: (hovering) {
+                          setState(() {
+                            isHovering = hovering;
+                            print("hovering now");
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.ease,
+                          margin: EdgeInsets.only(left: 0, top: 4.0),
+                          padding: EdgeInsets.all(isHovering ? 50 : 30),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color.fromRGBO(176, 162, 148, 90),
+                                  blurRadius: 2,
+                                  offset: Offset(1, 3), // Shadow position
+                                ),
+                              ],
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/card.png'),
+                                fit: BoxFit.fill,
+                                alignment: Alignment.topCenter,
+                              )),
+                          child: Text(
+                            (value?[index].roomParticipate?.name).toString(),
+                            style: TextStyle(
+                                color: Color.fromRGBO(107, 103, 98, 1.0),
+                                fontSize: 24),
+                            textAlign: TextAlign.start,
+                          ),
                         )),
-                        child: Text(
-                          (value?[index].roomParticipate?.name).toString(),
-                          style: TextStyle(
-                              color: Color.fromRGBO(107, 103, 98, 1.0),
-                              fontSize: 24),
-                          textAlign: TextAlign.center,
-                        ),
-                      ));
+                  );
                 });
           }
           return Center(

@@ -88,7 +88,10 @@ class MyMenu extends StatelessWidget {
             ListTile(
               title: Text(
                 'ห้องของฉัน',
-                style: textStyle(),
+                style: TextStyle(
+                    fontSize: 16.5.sp,
+                    color: Color.fromRGBO(176, 162, 148, 1),
+                    fontWeight: FontWeight.w600),
               ),
             ),
             Transform.scale(
@@ -114,9 +117,16 @@ class MyMenu extends StatelessWidget {
                               visualDensity: VisualDensity(
                                 horizontal: -4,
                               ),
-                              title: Text(
-                                (value?[index].name).toString(),
-                                style: textStyle(),
+                              title: Row(
+                                children: [
+                                  Container(
+                                    width: 5.w,
+                                  ),
+                                  Text(
+                                    (value?[index].name).toString(),
+                                    style: textStyle(),
+                                  ),
+                                ],
                               ),
                               onTap: () {
                                 RoomModel roomModel = new RoomModel(
@@ -190,7 +200,7 @@ class MyMenu extends StatelessWidget {
 
   TextStyle textStyle() {
     return TextStyle(
-        fontSize: 18,
+        fontSize: 18.sp,
         color: Color.fromRGBO(176, 162, 148, 1),
         fontWeight: FontWeight.w600);
   }
