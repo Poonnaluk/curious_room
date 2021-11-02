@@ -2,6 +2,7 @@ import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/room/roompage.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CreatRoomPage extends StatefulWidget {
   final UserModel userModel;
@@ -32,7 +33,7 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
       decoration: InputDecoration(
           errorStyle: TextStyle(
             color: Colors.red[400],
-            fontSize: 18,
+            fontSize: 18.sp,
           ),
           contentPadding: EdgeInsets.all(16.0),
           filled: true,
@@ -115,11 +116,13 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
           toolbarHeight: screenh * 0.08,
           title: new Text('สร้างห้อง'),
           titleTextStyle: const TextStyle(
-              color: Colors.black, fontSize: 24, fontFamily: 'Prompt'),
+              color: Color.fromRGBO(124, 124, 124, 1),
+              fontSize: 24,
+              fontFamily: 'Prompt'),
           leading: IconButton(
             icon: Icon(Icons.chevron_left),
             onPressed: () => Navigator.pop(context),
-            color: Colors.black,
+            color: Color.fromRGBO(124, 124, 124, 1),
             iconSize: 50,
           ),
           actions: <Widget>[

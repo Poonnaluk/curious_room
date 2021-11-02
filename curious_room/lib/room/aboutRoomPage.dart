@@ -3,6 +3,7 @@ import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/roomController.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'deleteParticipate.dart';
 import 'dialogs/editRoom.dart';
@@ -71,13 +72,13 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
           toolbarHeight: screenh * 0.08,
           title: new Text('เกี่ยวกับ'),
           titleTextStyle: const TextStyle(
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: Color.fromRGBO(124, 124, 124, 1),
               fontSize: 24,
               fontFamily: 'Prompt'),
           leading: IconButton(
             icon: Icon(Icons.chevron_left),
             onPressed: () => Navigator.pop(context, roomName),
-            color: Color.fromRGBO(0, 0, 0, 25),
+            color: Color.fromRGBO(124, 124, 124, 1),
             iconSize: 50,
           ),
           actions: [
@@ -113,19 +114,33 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                         textAlign: TextAlign.left,
                         style: TextStyle(
                             color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 22),
+                            fontSize: 21.sp),
                       ),
-                      Text(
-                        widget.roomModel.code,
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                            color: Color.fromRGBO(176, 162, 148, 1.0),
-                            fontSize: 16),
+                      Row(
+                        children: [
+                          Text(
+                            'รหัสเข้าร่วม',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                                color: Color.fromRGBO(69, 171, 157, 1.0),
+                                fontSize: 16.sp),
+                          ),
+                          SizedBox(
+                            width: 1.w,
+                          ),
+                          Text(
+                            widget.roomModel.code,
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                                color: Color.fromRGBO(176, 162, 148, 1.0),
+                                fontSize: 16.sp),
+                          ),
+                        ],
                       )
                     ],
                   ),
                   SizedBox(
-                    height: screenh * 0.015,
+                    height: screenh * 0.010,
                   ),
                   Row(
                     children: [
@@ -133,9 +148,12 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                         "สมาชิก",
                         style: TextStyle(
                             color: Color.fromRGBO(225, 141, 63, 1.0),
-                            fontSize: 20),
+                            fontSize: 19.sp),
                       ),
                     ],
+                  ),
+                  SizedBox(
+                    height: screenh * 0.008,
                   ),
                   Row(
                     children: [
@@ -143,7 +161,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                         "เจ้าของ",
                         style: TextStyle(
                             color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 18),
+                            fontSize: 18.sp),
                       ),
                     ],
                   ),
@@ -190,7 +208,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                         "เพื่อนร่วมห้อง",
                         style: TextStyle(
                             color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 18),
+                            fontSize: 18.sp),
                       ),
                     ],
                   ),
@@ -306,7 +324,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
               SizedBox(width: 20),
               Text(name.toString(),
                   style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 20)),
+                      color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 20.sp)),
             ],
           ),
           SizedBox(height: 20),
@@ -315,7 +333,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
   }
 
   TextStyle textStyle() {
-    return TextStyle(color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 16);
+    return TextStyle(color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 17.sp);
   }
 
   getParticipates(BuildContext context) {

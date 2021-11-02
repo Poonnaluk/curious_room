@@ -458,6 +458,7 @@ class _RoomPageState extends State<RoomPage> {
   }
 }
 
+// ignore: must_be_immutable
 class ImageScreen extends StatelessWidget {
   ImageScreen({Key? key, required this.uri}) : super(key: key);
   String uri;
