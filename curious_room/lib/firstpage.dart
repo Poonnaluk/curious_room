@@ -165,7 +165,7 @@ class _FirstPageState extends State<FirstPage> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(bottomRight: Radius.circular(50))),
       ),
-      drawer: MyMenu(userModel: widget.info),
+      drawer: MyMenu(userModel: widget.info, page: '/firstpage'),
       body: SafeArea(
         child: Center(
           child: Padding(

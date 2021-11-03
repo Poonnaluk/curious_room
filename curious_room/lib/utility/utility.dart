@@ -13,11 +13,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../firstpage.dart';
+
 //เมนูบาร์
 // ignore: non_constant_identifier_names, must_be_immutable
 class MyMenu extends StatelessWidget {
-  MyMenu({Key? key, required this.userModel}) : super(key: key);
+  MyMenu({Key? key, required this.userModel, required this.page})
+      : super(key: key);
   UserModel userModel;
+  String page;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +44,14 @@ class MyMenu extends StatelessWidget {
                 'Curious Room',
                 style: textStyle(),
               ),
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => FirstPage(
+                              info: userModel,
+                            )),
+                    (Route<dynamic> route) => false);
+              },
             ),
             Divider(
               height: 1,
@@ -137,13 +149,25 @@ class MyMenu extends StatelessWidget {
                                     createdAt: value![index].createdAt,
                                     updatedAt: value![index].updatedAt,
                                     ownerModel: value![index].ownerModel);
-                                Navigator.of(context)
-                                    .push(new MaterialPageRoute(
-                                        builder: (context) => new RoomPage(
-                                              userModel: userModel,
-                                              roomModel: roomModel,
-                                              ownerModel: userModel,
-                                            )));
+                                if (page == '/firstpage') {
+                                  Navigator.of(context)
+                                      .push(new MaterialPageRoute(
+                                          builder: (context) => new RoomPage(
+                                                userModel: userModel,
+                                                roomModel: roomModel,
+                                                ownerModel: userModel,
+                                              )));
+                                } else {
+                                  Navigator.of(context).pushReplacement(
+                                      new MaterialPageRoute(
+                                          settings: const RouteSettings(
+                                              name: '/roompage'),
+                                          builder: (context) => new RoomPage(
+                                                userModel: userModel,
+                                                roomModel: roomModel,
+                                                ownerModel: userModel,
+                                              )));
+                                }
                               },
                             );
                           });

@@ -4,7 +4,6 @@ class RoomController {
   late RoomModel roomModel;
   late RoomModel aboutroom;
 
-
   addRoom(String name, int userid) async {
     roomModel = await createRoom(name, userid);
   }
@@ -15,5 +14,9 @@ class RoomController {
 
   updateRoomName(String name, int id) async {
     roomModel = await updateRoom(name, id);
+  }
+
+  deleteRoom(int id) async {
+    await deleteMyRoom(id);
   }
 }
