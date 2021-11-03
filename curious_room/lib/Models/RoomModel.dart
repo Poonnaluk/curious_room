@@ -136,3 +136,15 @@ Future<dynamic> getRoomByCode(String code) async {
     throw Exception('Failed to load participates');
   }
 }
+
+Future<dynamic> deleteMyRoom(int id) async {
+  final String apiUrl = "http://147.182.209.40/room/delete/$id";
+  final response =
+      await http.put(Uri.parse(apiUrl));
+  if (response.statusCode == 200) {
+    print(response.body);
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to update room.');
+  }
+}

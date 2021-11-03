@@ -108,6 +108,7 @@ class _RoomPageState extends State<RoomPage> {
         ),
         drawer: MyMenu(
           userModel: widget.userModel,
+          page: '/roompage',
         ),
         body: SafeArea(
             child: Center(
@@ -116,12 +117,12 @@ class _RoomPageState extends State<RoomPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [_buildButtonCreate()]),
               Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.fromLTRB(31, 0, 10, 0),
+                    padding: EdgeInsets.fromLTRB(22, 0, 10, 0),
                     child: _buttonNew('ล่าสุด', chooseNew),
                   ),
                   _buttonHots('ยอดนิยม', chooseHots),
@@ -350,14 +351,14 @@ class _RoomPageState extends State<RoomPage> {
   Widget _buildButtonCreate() {
     return Container(
       margin: EdgeInsets.fromLTRB(
-          screenw * 0.005, screenh * 0.02, screenw * 0.005, screenh * 0.01),
+          screenw * 0.04, screenh * 0.0, screenw * 0, screenh * 0.01),
       alignment: Alignment.center,
       child: TextButton(
         style: TextButton.styleFrom(
             primary: Color.fromRGBO(107, 103, 98, 1),
             backgroundColor: Colors.white,
             padding: const EdgeInsets.only(
-                left: 31.0, top: 27.5, right: 160.5, bottom: 27.5),
+                left: 31.0, top: 27.5, right: 210, bottom: 27.5),
             shadowColor: Color.fromRGBO(176, 162, 148, 1),
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -366,7 +367,7 @@ class _RoomPageState extends State<RoomPage> {
                     color: Color.fromRGBO(176, 162, 148, 1), width: 1))),
         child: Text(
           'แชร์สิ่งที่กำลังสัยอยู่...',
-          style: TextStyle(fontSize: 17.sp),
+          style: TextStyle(fontSize: 15.5.sp),
         ),
         onPressed: () {
           Navigator.of(context).push(_createRoute());
@@ -414,7 +415,7 @@ class _RoomPageState extends State<RoomPage> {
                     width: 1.w))),
         child: Text(
           textbutton,
-          style: TextStyle(fontSize: 17.5.sp),
+          style: TextStyle(fontSize: 15.5.sp),
         ),
         onPressed: () {
           setState(() {
@@ -445,7 +446,7 @@ class _RoomPageState extends State<RoomPage> {
                     width: 3))),
         child: Text(
           textbutton,
-          style: TextStyle(fontSize: 17.5.sp),
+          style: TextStyle(fontSize: 15.5.sp),
         ),
         onPressed: () {
           setState(() {

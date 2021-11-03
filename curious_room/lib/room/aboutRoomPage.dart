@@ -2,9 +2,12 @@ import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/roomController.dart';
+import 'package:curious_room/utility/alertDialog.dart';
+import 'package:curious_room/utility/finishDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../firstpage.dart';
 import 'deleteParticipate.dart';
 import 'dialogs/editRoom.dart';
 
@@ -242,7 +245,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
       pageBuilder: (context, a1, a2) {
         return Dialog(
             insetPadding: owner
-                ? EdgeInsets.only(top: screenh * 0.762)
+                ? EdgeInsets.only(top: screenh * 0.745)
                 : EdgeInsets.only(top: screenh * 0.85),
             child: SingleChildScrollView(
               child: Column(
@@ -290,7 +293,23 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     child: _buildSelections(
                         iconAsset: 'assets/icons/delete_icon.png',
                         name: "ลบห้อง"),
-                    onTap: () {},
+                    onTap: () {
+                      confirmDialog(context,
+                              'หากคุณลบห้อง ข้อมูลโพสต์ คะแนนโหวต สมาชิกและสถิตของห้องนี้จะหายไป')
+                          .then((data) async {
+                        print('value >> $data');
+                        if (data == 'true') {
+                          await roomController.deleteRoom(widget.roomModel.id);
+                          await successDialog(context, 'ลบห้องสำเร็จ');
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => FirstPage(
+                                        info: widget.userModel,
+                                      )),
+                              (Route<dynamic> route) => false);
+                        }
+                      });
+                    },
                   )
                 ],
               ),
