@@ -6,7 +6,9 @@ import 'package:curious_room/room/aboutRoomPage.dart';
 import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+// import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class RoomPage extends StatefulWidget {
   final UserModel userModel;
@@ -117,7 +119,7 @@ class _RoomPageState extends State<RoomPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [_buildButtonCreate()]),
               Row(
                 children: [
@@ -351,14 +353,17 @@ class _RoomPageState extends State<RoomPage> {
   Widget _buildButtonCreate() {
     return Container(
       margin: EdgeInsets.fromLTRB(
-          screenw * 0.04, screenh * 0.0, screenw * 0, screenh * 0.01),
+          // screenw * 0.04, screenh * 0.0, screenw * 0, screenh * 0.01),
+          1.w,
+          1.h,
+          1.w,
+          1.h),
       alignment: Alignment.center,
       child: TextButton(
         style: TextButton.styleFrom(
             primary: Color.fromRGBO(107, 103, 98, 1),
             backgroundColor: Colors.white,
-            padding: const EdgeInsets.only(
-                left: 31.0, top: 27.5, right: 210, bottom: 27.5),
+            padding: EdgeInsets.fromLTRB(3.w, 4.h, 57.w, 4.h),
             shadowColor: Color.fromRGBO(176, 162, 148, 1),
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -401,7 +406,7 @@ class _RoomPageState extends State<RoomPage> {
       child: TextButton(
         style: TextButton.styleFrom(
             primary: Color.fromRGBO(107, 103, 98, 1),
-            backgroundColor: Colors.white,
+            backgroundColor: Color.fromRGBO(255, 255, 255, 1),
             padding: const EdgeInsets.only(
                 left: 20.5, top: 10, right: 20.5, bottom: 10),
             shadowColor: Color.fromRGBO(176, 162, 148, 1),
@@ -412,7 +417,7 @@ class _RoomPageState extends State<RoomPage> {
                     color: button
                         ? Color.fromRGBO(225, 141, 63, 1)
                         : Color.fromRGBO(176, 162, 148, 1),
-                    width: 1.w))),
+                    width: 3))),
         child: Text(
           textbutton,
           style: TextStyle(fontSize: 15.5.sp),
@@ -432,7 +437,7 @@ class _RoomPageState extends State<RoomPage> {
       child: TextButton(
         style: TextButton.styleFrom(
             primary: Color.fromRGBO(107, 103, 98, 1),
-            backgroundColor: Colors.white,
+            backgroundColor: Color.fromRGBO(255, 255, 255, 1),
             padding: const EdgeInsets.only(
                 left: 20.5, top: 10, right: 20.5, bottom: 10),
             shadowColor: Color.fromRGBO(176, 162, 148, 1),
@@ -460,24 +465,42 @@ class _RoomPageState extends State<RoomPage> {
 }
 
 // ignore: must_be_immutable
-class ImageScreen extends StatelessWidget {
+class ImageScreen extends StatefulWidget {
   ImageScreen({Key? key, required this.uri}) : super(key: key);
   String uri;
+
+  @override
+  State<ImageScreen> createState() => _ImageScreenState();
+}
+
+class _ImageScreenState extends State<ImageScreen> {
+  double _scale = 1.0;
+  double _previousScale = 1.0;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        child: Center(
-          child: Hero(
-            tag: 'imageHero',
-            child: Image.network(
-              uri,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: Scaffold(
+        body: GestureDetector(
+          child: Center(
+            child: Hero(
+              tag: 'imageHero',
+              child: PhotoView(
+                minScale: PhotoViewComputedScale.contained * 1,
+                maxScale: PhotoViewComputedScale.covered * 2,
+                imageProvider: NetworkImage(
+                  widget.uri,
+                ),
+              ),
             ),
           ),
+          onTap: () {
+            Navigator.pop(context);
+          },
         ),
-        onTap: () {
-          Navigator.pop(context);
-        },
       ),
     );
   }
