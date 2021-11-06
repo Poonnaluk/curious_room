@@ -1,9 +1,9 @@
 import 'package:curious_room/Models/PostModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
-import 'package:curious_room/Post/createPost.dart';
-import 'package:curious_room/room/aboutRoomPage.dart';
-import 'package:curious_room/utility/utility.dart';
+import 'package:curious_room/Views/Post/createPost.dart';
+import 'package:curious_room/Views/room/aboutRoomPage.dart';
+import 'package:curious_room/Views/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
@@ -474,9 +474,6 @@ class ImageScreen extends StatefulWidget {
 }
 
 class _ImageScreenState extends State<ImageScreen> {
-  double _scale = 1.0;
-  double _previousScale = 1.0;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

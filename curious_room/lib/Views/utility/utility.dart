@@ -6,7 +6,7 @@ import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/loginController.dart';
 
 import 'package:curious_room/main.dart';
-import 'package:curious_room/room/roompage.dart';
+import 'package:curious_room/Views/room/roompage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

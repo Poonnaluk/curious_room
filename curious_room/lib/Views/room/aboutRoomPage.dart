@@ -2,8 +2,8 @@ import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/roomController.dart';
-import 'package:curious_room/utility/alertDialog.dart';
-import 'package:curious_room/utility/finishDialog.dart';
+import 'package:curious_room/Views/utility/alertDialog.dart';
+import 'package:curious_room/Views/utility/finishDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -387,8 +387,17 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                 });
           }
           return Center(
-            child: CircularProgressIndicator(),
-          );
+              child: Column(children: <Widget>[
+            SizedBox(
+              child: CircularProgressIndicator(),
+              width: 30,
+              height: 30,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text('กำลังโหลดข้อมูล...'),
+            )
+          ]));
         });
   }
 }

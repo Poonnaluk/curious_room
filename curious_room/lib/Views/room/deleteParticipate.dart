@@ -1,7 +1,7 @@
 import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/controllers/participateController.dart';
-import 'package:curious_room/utility/alertDialog.dart';
-import 'package:curious_room/utility/finishDialog.dart';
+import 'package:curious_room/Views/utility/alertDialog.dart';
+import 'package:curious_room/Views/utility/finishDialog.dart';
 import 'package:flutter/material.dart';
 
 class DeleteParticipate extends StatefulWidget {

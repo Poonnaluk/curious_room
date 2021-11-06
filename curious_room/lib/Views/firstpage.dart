@@ -1,17 +1,17 @@
 import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
-import 'package:curious_room/room/createRoom.dart';
+import 'package:curious_room/Views/room/roompage.dart';
+import 'package:curious_room/Views/utility/utility.dart';
+import 'room/createRoom.dart';
 // import 'package:curious_room/controllers/roomController.dart';
-import 'package:curious_room/room/roompage.dart';
-import 'package:curious_room/utility/utility.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-import 'Models/ParticipateModel.dart';
-import 'controllers/loginController.dart';
+import '../Models/ParticipateModel.dart';
+import '../controllers/loginController.dart';
 
 // void main(List<String> args) {
 //   runApp(First());
@@ -337,6 +337,12 @@ class _FirstPageState extends State<FirstPage> {
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                     child: InkWell(
                         splashColor: Colors.blue.withAlpha(30),
+                        onHover: (hovering) {
+                          setState(() {
+                            isHovering = hovering;
+                            print("hovering now");
+                          });
+                        },
                         onTap: () {
                           RoomModel roomModel = new RoomModel(
                               id: value![index].roomParticipate!.id,
@@ -357,12 +363,6 @@ class _FirstPageState extends State<FirstPage> {
                                         ownerModel: roomModel.ownerModel,
                                       )))
                               .then(onGoBack);
-                        },
-                        onHover: (hovering) {
-                          setState(() {
-                            isHovering = hovering;
-                            print("hovering now");
-                          });
                         },
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 200),
@@ -417,6 +417,12 @@ class _FirstPageState extends State<FirstPage> {
                 itemBuilder: (context, index) {
                   return InkWell(
                       splashColor: Colors.blue.withAlpha(30),
+                      onHover: (hovering) {
+                        setState(() {
+                          isHovering = hovering;
+                          print("hovering now");
+                        });
+                      },
                       onTap: () {
                         RoomModel roomModel = new RoomModel(
                             id: value2![index].id,
@@ -434,12 +440,6 @@ class _FirstPageState extends State<FirstPage> {
                                       ownerModel: roomModel.ownerModel,
                                     )))
                             .then(onGoBack);
-                      },
-                      onHover: (hovering) {
-                        setState(() {
-                          isHovering = hovering;
-                          print("hovering now");
-                        });
                       },
                       child: AnimatedContainer(
                         duration: Duration(milliseconds: 200),

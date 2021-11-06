@@ -1,8 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:ui';
-import 'package:curious_room/firstpage.dart';
-import 'package:curious_room/room/roompage.dart';
+import 'package:curious_room/Views/firstpage.dart';
+import 'package:curious_room/Views/room/roompage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:get/get.dart';
@@ -10,6 +10,7 @@ import 'package:curious_room/Models/UserModel.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'Views/room/roompage.dart';
 import 'controllers/loginController.dart';
 
 import 'Models/RoomModel.dart';

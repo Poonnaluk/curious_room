@@ -1,6 +1,6 @@
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/roomController.dart';
-import 'package:curious_room/room/roompage.dart';
+import 'package:curious_room/Views/room/roompage.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
