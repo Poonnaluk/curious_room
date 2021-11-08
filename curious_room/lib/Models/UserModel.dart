@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
+
+import 'package:mime/mime.dart';
 
 UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
 String userModelToJson(UserModel data) => json.encode(data.toJson());
@@ -80,4 +85,41 @@ Future<UserModel?> createUser(
   final String responseString = response.body;
   print(responseString);
   return userModelFromJson(responseString);
+}
+
+Future<dynamic> uodateUserName(int id, String name, dynamic img) async {
+  final String apiUrl = "http://147.182.209.40/user/$id";
+
+  // ignore: avoid_init_to_null
+  dynamic file = null;
+
+  final imageUpload = http.MultipartRequest('PUT', Uri.parse(apiUrl));
+  imageUpload.headers.addAll({
+    'Content-Type': 'multipart/form-data',
+    'Accept-Encoding-Type': 'gzip, deflate, br',
+    'Accept-': '/',
+  });
+     imageUpload.fields["name"] = name.toString();
+
+  if (img != null) {
+    File _image = img;
+    final mimeTypeData = lookupMimeType(
+      img.toString(),
+      headerBytes: [0xFF, 0xD8],
+    )!
+        .split('/');
+    file = await http.MultipartFile.fromPath("display", _image.path,
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+
+    imageUpload.files.add(file);
+  }
+
+  final streamedResponse = await imageUpload.send();
+  final response = await http.Response.fromStream(streamedResponse);
+  if (response.statusCode == 200) {
+    print(response.body);
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to update user.');
+  }
 }

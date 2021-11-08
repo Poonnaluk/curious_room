@@ -2,7 +2,6 @@ import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/Views/room/roompage.dart';
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CreatRoomPage extends StatefulWidget {
   final UserModel userModel;
@@ -26,14 +25,23 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
 
   Widget inputField(TextEditingController controller) {
     return TextFormField(
-      onChanged: (value) => name = value.trim(),
+      onChanged: (value) {
+        name = value.trim();
+        setState(() {
+          if (name.isNotEmpty) {
+            isTextFiledFocus = true;
+          } else {
+            isTextFiledFocus = false;
+          }
+        });
+      },
       controller: controller,
       keyboardType: TextInputType.text,
       style: TextStyle(fontSize: 20),
       decoration: InputDecoration(
           errorStyle: TextStyle(
             color: Colors.red[400],
-            fontSize: 18.sp,
+            fontSize: 16,
           ),
           contentPadding: EdgeInsets.all(16.0),
           filled: true,
@@ -136,16 +144,7 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             padding: const EdgeInsets.fromLTRB(40, 200, 40, 0),
             child: Form(
                 key: _formKey,
-                child: Column(children: <Widget>[
-                  Focus(
-                    child: inputField(nameController),
-                    onFocusChange: (hasvalue) {
-                      setState(() {
-                        isTextFiledFocus = hasvalue;
-                      });
-                    },
-                  )
-                ]))),
+                child: Column(children: <Widget>[inputField(nameController)]))),
       );
     }
   }
