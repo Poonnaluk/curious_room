@@ -81,16 +81,23 @@ Future<List<PostModel>> getPost(int roomId) async {
   }
 }
 
-Future<void> creatPost(int userId, int roomId, String content, File img) async {
+Future<void> creatPost(
+    int userId, int roomId, String content, dynamic img) async {
   final String url = "http://147.182.209.40/post";
-  final mimeTypeData = lookupMimeType(
-    img.toString(),
-    headerBytes: [0xFF, 0xD8],
-  )!
-      .split('/');
+  // ignore: avoid_init_to_null
+  dynamic file = null;
+  if (img != null) {
+    File _image = img;
+    final mimeTypeData = lookupMimeType(
+      img.toString(),
+      headerBytes: [0xFF, 0xD8],
+    )!
+        .split('/');
+    file = await http.MultipartFile.fromPath("image", _image.path,
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+  }
+
   final imageUpload = http.MultipartRequest('POST', Uri.parse(url));
-  final file = await http.MultipartFile.fromPath("image", img.toString(),
-      contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
   imageUpload.headers.addAll({
     'Content-Type': 'multipart/form-data',
     'Accept-Encoding-Type': 'gzip, deflate, br',
@@ -99,7 +106,9 @@ Future<void> creatPost(int userId, int roomId, String content, File img) async {
   imageUpload.fields["userId"] = userId.toString();
   imageUpload.fields["roomId"] = roomId.toString();
   imageUpload.fields["content"] = content.toString();
-  imageUpload.files.add(file);
+  if (img != null) {
+    imageUpload.files.add(file);
+  }
   final streamedResponse = await imageUpload.send();
   final res = await http.Response.fromStream(streamedResponse);
   if (res.statusCode == 200) {
@@ -110,3 +119,4 @@ Future<void> creatPost(int userId, int roomId, String content, File img) async {
     throw Exception('Failed to check');
   }
 }
+
