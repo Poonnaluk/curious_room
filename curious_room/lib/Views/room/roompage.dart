@@ -48,6 +48,8 @@ class _RoomPageState extends State<RoomPage> {
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
+    String subname;
+    int nameLenght;
 
     {
       return Scaffold(
@@ -157,10 +159,14 @@ class _RoomPageState extends State<RoomPage> {
                                         value[index].createdAt.toLocal());
                                     String date =
                                         '${DateFormat.yMMMd().format(value[index].createdAt.toLocal())}';
-                                    String subname = value[index]
-                                        .userPost
-                                        .name
-                                        .substring(0, 17);
+                                    nameLenght =
+                                        (value[index].userPost.name).length;
+                                    nameLenght < 17
+                                        ? subname = value[index].userPost.name
+                                        : subname = value[index]
+                                            .userPost
+                                            .name
+                                            .substring(0, 17);
                                     return ListTile(
                                       visualDensity: VisualDensity(
                                           horizontal: -4, vertical: -4),
@@ -230,12 +236,18 @@ class _RoomPageState extends State<RoomPage> {
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                Text(
-                                                                  (subname +
-                                                                      '...'),
-                                                                  style: text(
-                                                                      16.8),
-                                                                ),
+                                                                nameLenght < 17
+                                                                    ? Text(
+                                                                        (subname),
+                                                                        style: text(
+                                                                            16.8),
+                                                                      )
+                                                                    : Text(
+                                                                        (subname +
+                                                                            '...'),
+                                                                        style: text(
+                                                                            16.8),
+                                                                      ),
                                                                 Text(
                                                                   date,
                                                                   style: text(
