@@ -3,6 +3,7 @@
 // ignore_for_file: unused_import, unused_local_variable
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:curious_room/Views/profile/profile.dart';
 import 'package:curious_room/controllers/loginController.dart';
 
 import 'package:curious_room/main.dart';
@@ -15,13 +16,30 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../firstpage.dart';
 
-//เมนูบาร์
-// ignore: non_constant_identifier_names, must_be_immutable
-class MyMenu extends StatelessWidget {
+class MyMenu extends StatefulWidget {
+  final UserModel userModel;
+  final String page;
+
   MyMenu({Key? key, required this.userModel, required this.page})
       : super(key: key);
-  UserModel userModel;
-  String page;
+  @override
+  State<StatefulWidget> createState() => MyMenuState();
+}
+
+//เมนูบาร์
+class MyMenuState extends State<MyMenu> {
+  late String username = widget.userModel.name;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future onGoBack(dynamic value) async {
+    setState(() {
+      username = value.toString();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +48,9 @@ class MyMenu extends StatelessWidget {
     late double screenh;
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
-    String image = userModel.display.toString();
+    String image = widget.userModel.display.toString();
     late List<RoomModel>? value;
-    final Future<List<RoomModel>> future = getMyRoom(userModel.id);
+    final Future<List<RoomModel>> future = getMyRoom(widget.userModel.id);
 
     return SafeArea(
       child: Drawer(
@@ -48,7 +66,7 @@ class MyMenu extends StatelessWidget {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                         builder: (context) => FirstPage(
-                              info: userModel,
+                              info: widget.userModel,
                             )),
                     (Route<dynamic> route) => false);
               },
@@ -76,8 +94,7 @@ class MyMenu extends StatelessWidget {
                       width: screenw * 0.01,
                     ),
                     Text(
-                      controller.googleAccount.value!.displayName ??
-                          "User Name",
+                      username,
                       style: textStyle(),
                     )
                   ],
@@ -88,8 +105,15 @@ class MyMenu extends StatelessWidget {
                   // Update the state of the app
                   // ...
                   // Then close the drawer
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
                   print("image >> " + image);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfilePage(
+                              userModel: widget.userModel,
+                            )),
+                  ).then((onGoBack));
                 },
               ),
             ),
@@ -149,13 +173,13 @@ class MyMenu extends StatelessWidget {
                                     createdAt: value![index].createdAt,
                                     updatedAt: value![index].updatedAt,
                                     ownerModel: value![index].ownerModel);
-                                if (page == '/firstpage') {
+                                if (widget.page == '/firstpage') {
                                   Navigator.of(context)
                                       .push(new MaterialPageRoute(
                                           builder: (context) => new RoomPage(
-                                                userModel: userModel,
+                                                userModel: widget.userModel,
                                                 roomModel: roomModel,
-                                                ownerModel: userModel,
+                                                ownerModel: widget.userModel,
                                               )));
                                 } else {
                                   Navigator.of(context).pushReplacement(
@@ -163,9 +187,9 @@ class MyMenu extends StatelessWidget {
                                           settings: const RouteSettings(
                                               name: '/roompage'),
                                           builder: (context) => new RoomPage(
-                                                userModel: userModel,
+                                                userModel: widget.userModel,
                                                 roomModel: roomModel,
-                                                ownerModel: userModel,
+                                                ownerModel: widget.userModel,
                                               )));
                                 }
                               },
