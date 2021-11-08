@@ -387,8 +387,8 @@ class _FirstPageState extends State<FirstPage> {
                           child: Text(
                             (value?[index].roomParticipate?.name).toString(),
                             style: TextStyle(
-                                color: Color.fromRGBO(107, 103, 98, 1.0),
-                                fontSize: 24),
+                                color: Color.fromRGBO(124, 124, 124, 1),
+                                fontSize: 21.sp),
                             textAlign: TextAlign.start,
                           ),
                         )),
@@ -455,8 +455,8 @@ class _FirstPageState extends State<FirstPage> {
                         child: Text(
                           (value2?[index].name).toString(),
                           style: TextStyle(
-                              color: Color.fromRGBO(107, 103, 98, 1.0),
-                              fontSize: 24),
+                              color: Color.fromRGBO(124, 124, 124, 1),
+                              fontSize: 21.sp),
                           textAlign: TextAlign.center,
                         ),
                       ));

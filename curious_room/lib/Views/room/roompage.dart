@@ -253,12 +253,17 @@ class _RoomPageState extends State<RoomPage> {
                                                         SizedBox(
                                                           height: 2.h,
                                                         ),
-                                                        Text(
-                                                          value[index]
-                                                              .postHistory
-                                                              .first
-                                                              .content,
-                                                          maxLines: 5,
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 2.w),
+                                                          child: Text(
+                                                            value[index]
+                                                                .postHistory
+                                                                .first
+                                                                .content,
+                                                            maxLines: 5,
+                                                          ),
                                                         ),
                                                       ],
                                                     ),
@@ -272,20 +277,17 @@ class _RoomPageState extends State<RoomPage> {
                                                       null
                                                   ? Container()
                                                   : GestureDetector(
-                                                      child: Hero(
-                                                        tag: 'imageHero',
-                                                        child: Container(
-                                                            width: 80.w,
-                                                            height: 30.h,
-                                                            child: Image(
-                                                              image: NetworkImage(
-                                                                  value[index]
-                                                                      .postHistory
-                                                                      .first
-                                                                      .image
-                                                                      .toString()),
-                                                            )),
-                                                      ),
+                                                      child: Container(
+                                                          width: 80.w,
+                                                          height: 30.h,
+                                                          child: Image(
+                                                            image: NetworkImage(
+                                                                value[index]
+                                                                    .postHistory
+                                                                    .first
+                                                                    .image
+                                                                    .toString()),
+                                                          )),
                                                       onTap: () {
                                                         Navigator.push(context,
                                                             MaterialPageRoute(
@@ -384,6 +386,8 @@ class _RoomPageState extends State<RoomPage> {
   Route _createRoute() {
     return PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => CreatePost(
+              ownerModel: widget.ownerModel,
+              roomModel: room,
               userModel: widget.userModel,
             ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {

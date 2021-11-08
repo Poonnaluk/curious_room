@@ -1,25 +1,39 @@
 import 'dart:io';
+import 'package:curious_room/Models/PostModel.dart';
+import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:curious_room/Views/room/roompage.dart';
+import 'package:curious_room/Views/utility/alertDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CreatePost extends StatefulWidget {
   final UserModel userModel;
-  CreatePost({Key? key, required this.userModel}) : super(key: key);
+  final RoomModel roomModel;
+  final UserModel ownerModel;
+  CreatePost(
+      {Key? key,
+      required this.userModel,
+      required this.roomModel,
+      required this.ownerModel})
+      : super(key: key);
 
   @override
   _CreatePostState createState() => _CreatePostState();
 }
 
 class _CreatePostState extends State<CreatePost> {
-  final _formKey = new GlobalKey<FormState>();
-  late String name;
+  // ignore: unused_field
+  // final _formKey = new GlobalKey<FormState>();
+  String? content;
   TextEditingController contentController = TextEditingController();
   bool isTextFiledFocus = false;
   late double screenw;
   late double screenh;
   File? image;
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
@@ -36,7 +50,15 @@ class _CreatePostState extends State<CreatePost> {
             fontFamily: 'Prompt'),
         leading: IconButton(
           icon: Icon(Icons.chevron_left),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            print(contentController.value.text.isEmpty);
+            if (image == null && contentController.value.text.isEmpty) {
+              Navigator.pop(context);
+            } else {
+              confirmDialog(context, 'คุณต้องการละทิ้งการสร้างคำถามนี้').then(
+                  (value) => value == 'true' ? Navigator.pop(context) : null);
+            }
+          },
           color: Color.fromRGBO(107, 103, 98, 1),
           iconSize: 50,
         ),
@@ -48,94 +70,131 @@ class _CreatePostState extends State<CreatePost> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 2.h,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Row(
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Column(
                 children: [
-                  Transform.scale(
-                    scale: 1.4,
-                    child: CircleAvatar(
-                      backgroundColor: Color.fromRGBO(255, 255, 255, 0),
-                      backgroundImage:
-                          Image.network(widget.userModel.display).image,
-                      radius: 17,
-                    ),
-                  ),
                   SizedBox(
-                    width: 5.w,
+                    height: 2.h,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 18),
-                    child: Text(
-                      widget.userModel.name,
-                      style: TextStyle(
-                          color: Color.fromRGBO(107, 103, 98, 1),
-                          fontSize: 20.sp),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-                child: Focus(
-                    onFocusChange: (value) {
-                      setState(() {
-                        isTextFiledFocus = value;
-                      });
-                    },
-                    child: inputField(contentController))),
-            // ignore: unnecessary_null_comparison
-            if (image == null)
-              SizedBox()
-            else
-              Expanded(
-                child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Image.file(
-                      image!,
-                      width: 10.w,
-                      height: 10.h,
-                    )),
-              ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 1,
-                color: Color.fromRGBO(176, 162, 148, 1),
-              ),
-            ),
-            TextButton(
-              onPressed: () => chooseImage(ImageSource.gallery, image!),
-              child: Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: 10, right: 10),
-                    child: Image.asset(
-                      'assets/icons/image.png',
-                      scale: 11,
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Row(
+                      children: [
+                        Transform.scale(
+                          scale: 1.4,
+                          child: CircleAvatar(
+                            backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+                            backgroundImage:
+                                Image.network(widget.userModel.display).image,
+                            radius: 17,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 18),
+                          child: Text(
+                            widget.userModel.name,
+                            style: TextStyle(
+                                color: Color.fromRGBO(107, 103, 98, 1),
+                                fontSize: 20.sp),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  Text(
-                    'เพิ่มรูปภาพ',
-                    style: TextStyle(color: Color.fromRGBO(176, 162, 148, 1)),
-                  )
+                  Expanded(
+                      child: Focus(
+                          onFocusChange: (value) {
+                            setState(() {
+                              isTextFiledFocus = value;
+                            });
+                          },
+                          child: inputField(contentController))),
+                  // ignore: unnecessary_null_comparison
+                  image != null
+                      ? Stack(children: [
+                          Stack(alignment: Alignment.bottomRight, children: [
+                            Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Image.file(
+                                image!,
+                                width: 100.w,
+                                height: 25.h,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: TextButton.icon(
+                                icon: Image.asset(
+                                  'assets/icons/image.png',
+                                  scale: 16,
+                                ),
+                                label: Text(
+                                  'เปลี่ยนรูปภาพ',
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(176, 162, 148, 1)),
+                                ),
+                                onPressed: () => chooseImage(),
+                              ),
+                            ),
+                          ]),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                                onPressed: () => setState(() {
+                                      image = null;
+                                    }),
+                                icon: Icon(
+                                  Icons.clear,
+                                  color: Color.fromRGBO(124, 124, 124, 80),
+                                )),
+                          ),
+                        ])
+                      : Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                height: 1,
+                                color: Color.fromRGBO(176, 162, 148, 1),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => chooseImage(),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    child: Image.asset(
+                                      'assets/icons/image.png',
+                                      scale: 11,
+                                    ),
+                                  ),
+                                  Text(
+                                    'เพิ่มรูปภาพ',
+                                    style: TextStyle(
+                                        color:
+                                            Color.fromRGBO(176, 162, 148, 1)),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
 
   Widget inputField(TextEditingController controller) {
     return TextFormField(
-      onChanged: (value) => name = value.trim(),
+      onChanged: (value) => content = value.trim(),
       controller: controller,
       keyboardType: TextInputType.multiline,
       maxLines: 9,
@@ -150,12 +209,6 @@ class _CreatePostState extends State<CreatePost> {
         ),
         contentPadding: EdgeInsets.all(15.0),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'คุณยังไม่ได้กรอกชื่อห้อง';
-        }
-        return null;
-      },
     );
   }
 
@@ -174,21 +227,30 @@ class _CreatePostState extends State<CreatePost> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
             )),
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  backgroundColor: Color.fromRGBO(119, 192, 182, 1),
-                  content: Text(
-                    'สร้างคำถามสำเร็จ',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Prompt',
-                        fontSize: 26.sp),
-                    textAlign: TextAlign.center,
-                  )),
+        onPressed: () async {
+          print(image);
+          if (content == null && image == null) {
+            final snackBar = SnackBar(
+              content: const Text('กรุณาเพิ่มเนื้อหา'),
             );
-            print(name);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else {
+            setState(() {
+              isLoading = true;
+            });
+            await creatPost(widget.userModel.id, widget.roomModel.id,
+                content!.toString(), image);
+            setState(() {
+              isLoading = false;
+            });
+
+            Navigator.of(context).pushReplacement(new MaterialPageRoute(
+                settings: const RouteSettings(name: '/roompage'),
+                builder: (context) => new RoomPage(
+                      userModel: widget.userModel,
+                      roomModel: widget.roomModel,
+                      ownerModel: widget.ownerModel,
+                    )));
           }
         },
         child: Text(
@@ -203,24 +265,16 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 
-  Future<Null> chooseImage(ImageSource imageSource, File file) async {
+  Future chooseImage() async {
     try {
-      var object = await ImagePicker().pickImage(
-          source: imageSource, maxHeight: 480, maxWidth: 640, imageQuality: 50);
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemporary = File(image.path);
       setState(() {
-        file = object as File;
+        this.image = imageTemporary;
       });
-    } catch (e) {}
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
   }
-  // getUsers() async {
-  //   final response = await http.post(
-  //       Uri.parse('http://192.168.43.94:8000/user/610107030011@dpu.ac.th'));
-  //   print(response.body);
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getUsers();
-  // }
 }
