@@ -246,7 +246,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
         return Dialog(
             insetPadding: owner
                 ? EdgeInsets.only(top: screenh * 0.745)
-                : EdgeInsets.only(top: screenh * 0.85),
+                : EdgeInsets.only(top: screenh * 0.83),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

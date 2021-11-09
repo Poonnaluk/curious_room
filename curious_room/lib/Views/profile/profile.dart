@@ -27,6 +27,10 @@ class _ProfilePageState extends State<ProfilePage> {
     'score_icon.png'
   ];
   var listType = ['ถาม', 'ตอบ', 'คำตอบที่ดีที่สุด', 'คะแนนที่ได้รับ'];
+  // var listIcon_admin = [
+  //   'declare_Icon.png'
+  // ];
+  // var listType_admin = ['ประกาศ'];
   bool _clickChanged = false;
   bool isTextFiledFocus = false;
   bool _displayNameValid = true;

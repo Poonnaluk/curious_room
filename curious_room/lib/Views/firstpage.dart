@@ -183,29 +183,31 @@ class _FirstPageState extends State<FirstPage> {
           ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Transform.scale(
-          scale: 1.2,
-          child: FloatingActionButton.extended(
-            onPressed: () {
-              joinRoom(
-                context,
-              );
-            },
-            label: Text(
-              'เข้าร่วม',
-              style: TextStyle(color: Color.fromRGBO(107, 103, 98, 1)),
-            ),
-            icon: Image.asset(
-              'assets/icons/join.png',
-              fit: BoxFit.fill,
-              scale: 15,
-            ),
-            backgroundColor: Colors.white,
-          ),
-        ),
-      ),
+      floatingActionButton: widget.info.role == 'USER'
+          ? Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Transform.scale(
+                scale: 1.2,
+                child: FloatingActionButton.extended(
+                  onPressed: () {
+                    joinRoom(
+                      context,
+                    );
+                  },
+                  label: Text(
+                    'เข้าร่วม',
+                    style: TextStyle(color: Color.fromRGBO(107, 103, 98, 1)),
+                  ),
+                  icon: Image.asset(
+                    'assets/icons/join.png',
+                    fit: BoxFit.fill,
+                    scale: 15,
+                  ),
+                  backgroundColor: Colors.white,
+                ),
+              ),
+            )
+          : null,
     );
   }
 
@@ -415,51 +417,63 @@ class _FirstPageState extends State<FirstPage> {
             return ListView.builder(
                 itemCount: value2!.length,
                 itemBuilder: (context, index) {
-                  return InkWell(
-                      splashColor: Colors.blue.withAlpha(30),
-                      onHover: (hovering) {
-                        setState(() {
-                          isHovering = hovering;
-                          print("hovering now");
-                        });
-                      },
-                      onTap: () {
-                        RoomModel roomModel = new RoomModel(
-                            id: value2![index].id,
-                            name: value2![index].name,
-                            code: value2![index].code,
-                            userId: value2![index].userId,
-                            createdAt: value2![index].createdAt,
-                            updatedAt: value2![index].updatedAt,
-                            ownerModel: value2![index].ownerModel);
-                        Navigator.of(context)
-                            .push(new MaterialPageRoute(
-                                builder: (context) => new RoomPage(
-                                      userModel: widget.info,
-                                      roomModel: roomModel,
-                                      ownerModel: roomModel.ownerModel,
-                                    )))
-                            .then(onGoBack);
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        curve: Curves.ease,
-                        margin: EdgeInsets.only(left: 0, top: 4.0),
-                        padding: EdgeInsets.all(isHovering ? 50 : 30),
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                          image: AssetImage('assets/images/card.png'),
-                          fit: BoxFit.fill,
-                          alignment: Alignment.topCenter,
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: InkWell(
+                        splashColor: Colors.blue.withAlpha(30),
+                        onHover: (hovering) {
+                          setState(() {
+                            isHovering = hovering;
+                            print("hovering now");
+                          });
+                        },
+                        onTap: () {
+                          RoomModel roomModel = new RoomModel(
+                              id: value2![index].id,
+                              name: value2![index].name,
+                              code: value2![index].code,
+                              userId: value2![index].userId,
+                              createdAt: value2![index].createdAt,
+                              updatedAt: value2![index].updatedAt,
+                              ownerModel: value2![index].ownerModel);
+                          Navigator.of(context)
+                              .push(new MaterialPageRoute(
+                                  builder: (context) => new RoomPage(
+                                        userModel: widget.info,
+                                        roomModel: roomModel,
+                                        ownerModel: roomModel.ownerModel,
+                                      )))
+                              .then(onGoBack);
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.ease,
+                          margin: EdgeInsets.only(left: 0, top: 4.0),
+                          padding: EdgeInsets.all(isHovering ? 50 : 30),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color.fromRGBO(176, 162, 148, 90),
+                                  blurRadius: 2,
+                                  offset: Offset(1, 3), // Shadow position
+                                ),
+                              ],
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/card.png'),
+                                fit: BoxFit.fill,
+                                alignment: Alignment.topCenter,
+                              )),
+                          child: Text(
+                            (value2?[index].name).toString(),
+                            style: TextStyle(
+                                color: Color.fromRGBO(124, 124, 124, 1),
+                                fontSize: 21.sp),
+                            textAlign: TextAlign.start,
+                          ),
                         )),
-                        child: Text(
-                          (value2?[index].name).toString(),
-                          style: TextStyle(
-                              color: Color.fromRGBO(124, 124, 124, 1),
-                              fontSize: 21.sp),
-                          textAlign: TextAlign.center,
-                        ),
-                      ));
+                  );
                 });
           }
           return Center(
