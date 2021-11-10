@@ -17,7 +17,7 @@ class EditRoomState extends State<EditRoom> {
   bool isTextFiledFocus = false;
   late String roomName;
   RoomController roomController = RoomController();
-
+  bool isLoading = false;
   late double screenw;
   late double screenh;
 
@@ -32,60 +32,62 @@ class EditRoomState extends State<EditRoom> {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
     {
-      return Dialog(
-          insetPadding:
-              EdgeInsets.only(left: screenw * 0.02, right: screenw * 0.02),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20))),
-          child: Container(
-            padding: EdgeInsets.all(25.0),
-            height: 200.0,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: [
-                    Text(
-                      "เปลี่ยนชื่อห้อง",
-                      style: textStyle(),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: screenh * 0.02,
-                ),
-                Expanded(
-                  child: Form(
-                      key: _formKey,
-                      child: Focus(
-                        onFocusChange: (value) {
-                          setState(() {
-                            isTextFiledFocus = value;
-                          });
-                        },
-                        child: new TextFormField(
-                          controller: textController,
-                          onChanged: (value) => roomName = value.trim(),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0)),
-                            contentPadding: EdgeInsets.all(10),
-                          ),
+      return isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Dialog(
+              insetPadding:
+                  EdgeInsets.only(left: screenw * 0.02, right: screenw * 0.02),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Container(
+                padding: EdgeInsets.all(25.0),
+                height: 200.0,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Text(
+                          "เปลี่ยนชื่อห้อง",
+                          style: textStyle(),
                         ),
-                      )),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _buttonCancel(),
-                    SizedBox(
-                      width: screenw * 0.08,
+                      ],
                     ),
-                    _buttonConfirm()
+                    SizedBox(
+                      height: screenh * 0.02,
+                    ),
+                    Expanded(
+                      child: Form(
+                          key: _formKey,
+                          child: Focus(
+                            onFocusChange: (value) {
+                              setState(() {
+                                isTextFiledFocus = value;
+                              });
+                            },
+                            child: new TextFormField(
+                              controller: textController,
+                              onChanged: (value) => roomName = value.trim(),
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                contentPadding: EdgeInsets.all(10),
+                              ),
+                            ),
+                          )),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _buttonCancel(),
+                        SizedBox(
+                          width: screenw * 0.08,
+                        ),
+                        _buttonConfirm()
+                      ],
+                    )
                   ],
-                )
-              ],
-            ),
-          ));
+                ),
+              ));
     }
   }
 
@@ -101,7 +103,13 @@ class EditRoomState extends State<EditRoom> {
       ),
       onTap: () async {
         if (_formKey.currentState!.validate()) {
+          setState(() {
+            isLoading = true;
+          });
           await roomController.updateRoomName(roomName, widget.roomid);
+          setState(() {
+            isLoading = false;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 backgroundColor: Color.fromRGBO(119, 192, 182, 1),

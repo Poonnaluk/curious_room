@@ -53,6 +53,7 @@ class _FirstPageState extends State<FirstPage> {
 
   late String code;
   dynamic room;
+  bool isLoading = false;
 
   // late Future<List<ParticipateModel>>? _partifuture;
   // late Future<List<RoomModel>>? _roomfuture;
@@ -272,9 +273,15 @@ class _FirstPageState extends State<FirstPage> {
                           onPressed: () async {
                             print(textCodeController);
                             if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                isLoading = true;
+                              });
                               futureRoom =
                                   await (getRoomByCode(code.toString()));
                               if (futureRoom == null) {
+                                setState(() {
+                                  isLoading = false;
+                                });
                                 final snackBar = SnackBar(
                                   content: const Text('รหัสไม่ถูกต้อง'),
                                 );
@@ -286,6 +293,9 @@ class _FirstPageState extends State<FirstPage> {
                                     roomWithOwnerUser[0].id.toString());
                                 futrueParti = await createParticipate(
                                     widget.info.id, roomWithOwnerUser[0].id);
+                                setState(() {
+                                  isLoading = false;
+                                });
                                 if (futrueParti == null) {
                                   Navigator.of(context).pushReplacement(
                                       new MaterialPageRoute(
@@ -298,6 +308,9 @@ class _FirstPageState extends State<FirstPage> {
                                                     .ownerModel,
                                               )));
                                 } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                   final snackBar = SnackBar(
                                     content:
                                         const Text('คุณได้เข้าร่วมห้องนี้แล้ว'),
@@ -310,8 +323,10 @@ class _FirstPageState extends State<FirstPage> {
                           },
                           icon: !isTextFiledFocus
                               ? Image.asset('assets/icons/Join_button_gray.png')
-                              : Image.asset(
-                                  'assets/icons/Join_button_green.png'))
+                              : isLoading
+                                  ? Center(child: CircularProgressIndicator())
+                                  : Image.asset(
+                                      'assets/icons/Join_button_green.png'))
                     ],
                   ),
                 );
