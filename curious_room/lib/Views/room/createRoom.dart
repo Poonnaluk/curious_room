@@ -22,40 +22,43 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
 
   late double screenw;
   late double screenh;
+  bool isLoading = false;
 
   Widget inputField(TextEditingController controller) {
-    return TextFormField(
-      onChanged: (value) {
-        name = value.trim();
-        setState(() {
-          if (name.isNotEmpty) {
-            isTextFiledFocus = true;
-          } else {
-            isTextFiledFocus = false;
-          }
-        });
-      },
-      controller: controller,
-      keyboardType: TextInputType.text,
-      style: TextStyle(fontSize: 20),
-      decoration: InputDecoration(
-          errorStyle: TextStyle(
-            color: Colors.red[400],
-            fontSize: 16,
-          ),
-          contentPadding: EdgeInsets.all(16.0),
-          filled: true,
-          fillColor: Colors.white,
-          labelText: 'ชื่อห้องของคุณ...',
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(15.0))),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'กรุณากรอกชื่อห้อง';
-        }
-        return null;
-      },
-    );
+    return isLoading
+        ? Center(child: CircularProgressIndicator())
+        : TextFormField(
+            onChanged: (value) {
+              name = value.trim();
+              setState(() {
+                if (name.isNotEmpty) {
+                  isTextFiledFocus = true;
+                } else {
+                  isTextFiledFocus = false;
+                }
+              });
+            },
+            controller: controller,
+            keyboardType: TextInputType.text,
+            style: TextStyle(fontSize: 20),
+            decoration: InputDecoration(
+                errorStyle: TextStyle(
+                  color: Colors.red[400],
+                  fontSize: 16,
+                ),
+                contentPadding: EdgeInsets.all(16.0),
+                filled: true,
+                fillColor: Colors.white,
+                labelText: 'ชื่อห้องของคุณ...',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0))),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'กรุณากรอกชื่อห้อง';
+              }
+              return null;
+            },
+          );
   }
 
   Widget _buildButtonCreate() {
@@ -75,7 +78,13 @@ class _CreatRoomPageState extends State<CreatRoomPage> {
             )),
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
+            setState(() {
+              isLoading = true;
+            });
             await roomController.addRoom(name, widget.userModel.id);
+            setState(() {
+              isLoading = true;
+            });
             print(roomController.roomModel.ownerModel.name);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

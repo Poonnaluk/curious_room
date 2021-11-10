@@ -69,23 +69,7 @@ class _LoginPageState extends State<LoginPage> {
   // late UserModel _regisToGbase;
   final controller = Get.put(LoginController());
   late UserModel Info;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   print(controller.googleAccount.value);
-
-  //   if (controller.googleAccount.value != null) {
-  //     check(controller.googleAccount.value!.email);
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (BuildContext context) => FirstPage(
-  //           info: Info,
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +151,9 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: screenh * 0.25,
                   ),
-                  googleButton()
+                  isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : googleButton()
                 ],
               ),
             ],
@@ -184,6 +170,9 @@ class _LoginPageState extends State<LoginPage> {
       child: SignInButton(
         Buttons.Google,
         onPressed: () async {
+          setState(() {
+            isLoading = true;
+          });
           await controller.login();
           bool substring =
               controller.googleAccount.value!.email.contains("@dpu.ac.th");
@@ -196,6 +185,9 @@ class _LoginPageState extends State<LoginPage> {
                   controller.googleAccount.value!.email,
                   controller.googleAccount.value!.photoUrl.toString());
               await check(controller.googleAccount.value!.email);
+              setState(() {
+                isLoading = false;
+              });
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -205,6 +197,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               );
             } else {
+              setState(() {
+                isLoading = false;
+              });
               print(Info.display);
               Navigator.pushReplacement(
                 context,
@@ -218,6 +213,9 @@ class _LoginPageState extends State<LoginPage> {
             }
           } else {
             controller.signout();
+            setState(() {
+              isLoading = false;
+            });
             final snackBar = SnackBar(
               content: const Text('โปรดใช้อีเมลของ DPU '),
             );
