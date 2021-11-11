@@ -88,6 +88,8 @@ Future<List<RoomModel>> getMyRoom(int userid) async {
     Iterable l = json.decode(response.body);
     List<RoomModel> roomModels = l.map((g) => RoomModel.fromJson(g)).toList();
     return roomModels;
+  } else if (response.statusCode == 500) {
+    return [];
   } else {
     throw Exception('Failed to load your rooms');
   }
@@ -139,8 +141,7 @@ Future<dynamic> getRoomByCode(String code) async {
 
 Future<dynamic> deleteMyRoom(int id) async {
   final String apiUrl = "http://147.182.209.40/room/delete/$id";
-  final response =
-      await http.put(Uri.parse(apiUrl));
+  final response = await http.put(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     print(response.body);
     return jsonDecode(response.body);

@@ -71,6 +71,8 @@ Future<List<ParticipateModel>> getParticipate(int roomid) async {
     List<ParticipateModel> participateModels =
         l.map((g) => ParticipateModel.fromJson(g)).toList();
     return participateModels;
+  } else if (response.statusCode == 500) {
+    return [];
   } else {
     throw Exception('Failed to load participates');
   }
@@ -84,6 +86,8 @@ Future<List<ParticipateModel>> getRoomParticipate(int userid) async {
     List<ParticipateModel> garageModels =
         l.map((g) => ParticipateModel.fromJson(g)).toList();
     return garageModels;
+  } else if (response.statusCode == 500) {
+    return [];
   } else {
     throw Exception('Failed to load room participates');
   }

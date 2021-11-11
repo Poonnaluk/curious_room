@@ -140,7 +140,7 @@ class _RoomPageState extends State<RoomPage> {
                       child: FutureBuilder<List<PostModel>>(
                           future: future,
                           builder: (context, snapshot) {
-                            if (snapshot.data.toString() == "[]") {
+                            if (snapshot.data == []) {
                               return Center(
                                 child: Text(
                                   'ยังไม่มีโพสต์',
