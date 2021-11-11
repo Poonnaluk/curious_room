@@ -60,7 +60,7 @@ Future<dynamic> regischeck(String uEmail) async {
   final pramsUrl = Uri.parse('http://147.182.209.40/user/$uEmail');
 
   print(pramsUrl);
-  final res = await http.post(pramsUrl);
+  final res = await http.get(pramsUrl);
   if (res.statusCode == 200) {
     return UserModel.fromJson(jsonDecode(res.body));
   } else if (res.statusCode == 500) {

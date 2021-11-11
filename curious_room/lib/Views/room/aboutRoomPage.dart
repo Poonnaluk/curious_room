@@ -359,7 +359,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
     return FutureBuilder<List<ParticipateModel>>(
         future: future,
         builder: (context, snapshot) {
-          if (snapshot.data.toString() == "[]") {
+          if (snapshot.data == []) {
             return Text(
               'ยังไม่มีสมาชิก',
               style: TextStyle(color: Color.fromRGBO(176, 162, 148, 1.0)),

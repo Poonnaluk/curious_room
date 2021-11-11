@@ -76,6 +76,8 @@ Future<List<PostModel>> getPost(int roomId) async {
     return postModel;
     // Map<String, dynamic> map = json.decode(res.body);
     // List<dynamic> data = map["post_history"];
+  } else if (res.statusCode == 500) {
+    return [];
   } else {
     throw Exception('Failed to check');
   }
@@ -119,4 +121,3 @@ Future<void> creatPost(
     throw Exception('Failed to check');
   }
 }
-

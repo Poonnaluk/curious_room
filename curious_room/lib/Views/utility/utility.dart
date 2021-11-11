@@ -135,7 +135,7 @@ class MyMenuState extends State<MyMenu> {
                 child: FutureBuilder<List<RoomModel>>(
                   future: future,
                   builder: (context, snapshot) {
-                    if (snapshot.data.toString() == "[]") {
+                    if (snapshot.data == []) {
                       return Container(
                           padding: EdgeInsets.only(left: 15.0, bottom: 10.0),
                           child: Text(
