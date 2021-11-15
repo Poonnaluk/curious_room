@@ -1,12 +1,19 @@
+import 'dart:io';
+import 'dart:math';
+import 'package:curious_room/Views/utility/alertDialog.dart';
+import 'package:curious_room/Views/utility/showImage.dart';
+import 'package:http/http.dart' as http;
 import 'package:curious_room/Models/PostModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/Views/Post/createPost.dart';
+import 'package:curious_room/Views/Post/editPost.dart';
 import 'package:curious_room/Views/room/aboutRoomPage.dart';
+import 'package:curious_room/Views/utility/themeMoreButton.dart';
 import 'package:curious_room/Views/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:photo_view/photo_view.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 // import 'package:vector_math/vector_math_64.dart' show Vector3;
 
@@ -33,9 +40,14 @@ class _RoomPageState extends State<RoomPage> {
   // resposive
   late double screenw;
   late double screenh;
-
+  File? _image;
   bool chooseNew = true;
   bool chooseHots = false;
+//เช็ค role
+  bool isownerpost = false;
+  bool isownerroom = false;
+
+  get async => null;
 
   @override
   void initState() {
@@ -50,6 +62,7 @@ class _RoomPageState extends State<RoomPage> {
     screenh = MediaQuery.of(context).size.height;
     String subname;
     int nameLenght;
+    _image = null;
 
     {
       return Scaffold(
@@ -140,7 +153,7 @@ class _RoomPageState extends State<RoomPage> {
                       child: FutureBuilder<List<PostModel>>(
                           future: future,
                           builder: (context, snapshot) {
-                            if (snapshot.data == []) {
+                            if (snapshot.data.toString() == "[]") {
                               return Center(
                                 child: Text(
                                   'ยังไม่มีโพสต์',
@@ -155,18 +168,26 @@ class _RoomPageState extends State<RoomPage> {
                               return ListView.builder(
                                   itemCount: value.length,
                                   itemBuilder: (context, index) {
+                                    //เปลี่ยนไทม์โซน
                                     String time = DateFormat('Hm').format(
                                         value[index].createdAt.toLocal());
                                     String date =
                                         '${DateFormat.yMMMd().format(value[index].createdAt.toLocal())}';
+                                    //เช็คความยาวชื่อ
                                     nameLenght =
                                         (value[index].userPost.name).length;
                                     nameLenght < 17
                                         ? subname = value[index].userPost.name
-                                        : subname = value[index]
-                                            .userPost
-                                            .name
-                                            .substring(0, 17);
+                                        : subname =
+                                            '${value[index].userPost.name.substring(0, 17)}...';
+                                    widget.userModel.id == widget.ownerModel.id
+                                        ? isownerroom = true
+                                        : isownerroom = false;
+
+                                    widget.userModel.id ==
+                                            value[index].userPost.id
+                                        ? isownerpost = true
+                                        : isownerpost = false;
                                     return ListTile(
                                       visualDensity: VisualDensity(
                                           horizontal: -4, vertical: -4),
@@ -236,18 +257,11 @@ class _RoomPageState extends State<RoomPage> {
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                nameLenght < 17
-                                                                    ? Text(
-                                                                        (subname),
-                                                                        style: text(
-                                                                            16.8),
-                                                                      )
-                                                                    : Text(
-                                                                        (subname +
-                                                                            '...'),
-                                                                        style: text(
-                                                                            16.8),
-                                                                      ),
+                                                                Text(
+                                                                  (subname),
+                                                                  style: text(
+                                                                      16.8),
+                                                                ),
                                                                 Text(
                                                                   date,
                                                                   style: text(
@@ -280,6 +294,52 @@ class _RoomPageState extends State<RoomPage> {
                                                       ],
                                                     ),
                                                   ),
+                                                  isownerpost || isownerroom
+                                                      ? IconButton(
+                                                          onPressed: () {
+                                                            //เช็ค Role
+                                                            widget.userModel
+                                                                        .id ==
+                                                                    widget
+                                                                        .ownerModel
+                                                                        .id
+                                                                ? isownerroom =
+                                                                    true
+                                                                : isownerroom =
+                                                                    false;
+
+                                                            widget.userModel
+                                                                        .id ==
+                                                                    value[index]
+                                                                        .userPost
+                                                                        .id
+                                                                ? isownerpost =
+                                                                    true
+                                                                : isownerpost =
+                                                                    false;
+
+                                                            moreBotton(
+                                                                context,
+                                                                value[index]
+                                                                    .id!,
+                                                                value[index]
+                                                                    .userPost,
+                                                                value[index]
+                                                                    .postHistory
+                                                                    .first
+                                                                    .content,
+                                                                value[index]
+                                                                    .postHistory
+                                                                    .first
+                                                                    .image
+                                                                    .toString(),
+                                                                isownerroom,
+                                                                isownerpost);
+                                                          },
+                                                          icon: Image.asset(
+                                                            'assets/icons/more_icon.png',
+                                                          ))
+                                                      : SizedBox()
                                                 ],
                                               ),
                                               value[index]
@@ -321,7 +381,15 @@ class _RoomPageState extends State<RoomPage> {
                                                     176, 162, 148, 1),
                                               ),
                                               TextButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  print(isownerpost);
+                                                  print(
+                                                      "userPOst = ${value[index].userPost.id}");
+                                                  print(
+                                                      "ownerpost = ${value[index].userPost.id}");
+                                                  print(
+                                                      "images = ${value[index].postHistory.first.image.toString()}");
+                                                },
                                                 child: Row(
                                                   children: [
                                                     Text(
@@ -355,6 +423,153 @@ class _RoomPageState extends State<RoomPage> {
         )),
       );
     }
+  }
+
+  moreBotton(BuildContext context, int postid, UserModel userModel,
+      String content, String image, bool ownerroom, bool ownerpost) {
+    bool isLoading = false;
+    bool isSuccess;
+    double padding;
+    dynamic value;
+    if (ownerpost || ownerroom) {
+      if (ownerroom && !ownerpost) {
+        padding = screenh * 0.912;
+      } else {
+        padding = screenh * 0.8265;
+      }
+    } else {
+      padding = screenh * 0.912;
+    }
+    return showGeneralDialog(
+        barrierDismissible: true,
+        transitionDuration: Duration(milliseconds: 500),
+        barrierLabel: "",
+        context: context,
+        pageBuilder: (context, a1, a2) {
+          return StatefulBuilder(builder: (context, setState) {
+            return isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Dialog(
+                    insetPadding: EdgeInsets.only(top: padding),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // !ownerroom && !ownerpost
+                          //     ? TextButton(
+                          //         onPressed: () {
+                          //           print(ownerpost);
+                          //           print(ownerroom);
+                          //         },
+                          //         child: themeMoreButton(
+                          //             'assets/icons/historyPost.png',
+                          //             'ดูประวัติการแก้ไข'))
+                          //     : SizedBox(),
+                          Container(
+                              height: 1,
+                              color: Color.fromRGBO(107, 103, 98, 1.0)),
+                          ownerpost
+                              ? TextButton(
+                                  onPressed: () async {
+                                    if (image.toString() != "null") {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      await urlToFile(image);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    }
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (_) {
+                                      return EditPostPage(
+                                        content: content,
+                                        images: _image,
+                                        postId: postid,
+                                        userModel: userModel,
+                                        ownerModel: widget.ownerModel,
+                                        roomModel: widget.roomModel,
+                                      );
+                                    }));
+                                  },
+                                  child: themeMoreButton(
+                                      'assets/icons/edit_icon.png', 'แก้ไข'))
+                              : SizedBox(),
+                          Container(
+                              height: 1,
+                              color: Color.fromRGBO(107, 103, 98, 1.0)),
+                          ownerroom || ownerpost
+                              ? TextButton(
+                                  onPressed: () async {
+                                    value = await confirmDialog(context,
+                                        'หากคุณลบโพสต์ของคุณสถิตของโพสต์นี้ของคุณจะหายไป');
+                                    if (value == 'true') {
+                                      print(postid);
+                                      final snackBar = SnackBar(
+                                        content: const Text('ลบโพสต์ไม่สำเร็จ'),
+                                      );
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      isSuccess = await deletePost(postid);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      isSuccess
+                                          ? Navigator.of(context)
+                                              .pushReplacement(
+                                                  new MaterialPageRoute(
+                                                      settings:
+                                                          const RouteSettings(
+                                                              name:
+                                                                  '/roompage'),
+                                                      builder: (context) =>
+                                                          new RoomPage(
+                                                            userModel: widget
+                                                                .userModel,
+                                                            roomModel: widget
+                                                                .roomModel,
+                                                            ownerModel: widget
+                                                                .ownerModel,
+                                                          )))
+                                          : ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
+                                      print("Delete success");
+                                    } else {
+                                      Navigator.pop(context);
+                                      print("Cancel delete");
+                                    }
+                                  },
+                                  child: themeMoreButton(
+                                      'assets/icons/delete_icon.png', 'ลบ'))
+                              : SizedBox(),
+                          Container(
+                              height: 1,
+                              color: Color.fromRGBO(107, 103, 98, 1.0)),
+                        ],
+                      ),
+                    ),
+                  );
+          });
+        });
+  }
+
+  //เปลี่ยน type string to file
+  Future<File?> urlToFile(String imageUrl) async {
+    // generate random number.
+    var rng = new Random();
+    // get temporary directory of device.
+    Directory tempDir = await getTemporaryDirectory();
+    // get temporary path from temporary directory.
+    String tempPath = tempDir.path;
+    // create a new file in temporary path with random file name.
+    File file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
+    // call http.get method and pass imageUrl into it to get response.
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    await file.writeAsBytes(response.bodyBytes);
+    _image = file;
+    return _image;
   }
 
   TextStyle text(double s) {
@@ -481,40 +696,4 @@ class _RoomPageState extends State<RoomPage> {
 }
 
 // ignore: must_be_immutable
-class ImageScreen extends StatefulWidget {
-  ImageScreen({Key? key, required this.uri}) : super(key: key);
-  String uri;
 
-  @override
-  State<ImageScreen> createState() => _ImageScreenState();
-}
-
-class _ImageScreenState extends State<ImageScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Scaffold(
-        body: GestureDetector(
-          child: Center(
-            child: Hero(
-              tag: 'imageHero',
-              child: PhotoView(
-                minScale: PhotoViewComputedScale.contained * 1,
-                maxScale: PhotoViewComputedScale.covered * 2,
-                imageProvider: NetworkImage(
-                  widget.uri,
-                ),
-              ),
-            ),
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-}

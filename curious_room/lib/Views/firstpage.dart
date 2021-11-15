@@ -50,6 +50,7 @@ class _FirstPageState extends State<FirstPage> {
   bool isTextFiledFocus = false;
   final _formKey = new GlobalKey<FormState>();
   final controller = Get.put(LoginController());
+  bool isLoading = false;
 
   late String code;
   dynamic room;
@@ -268,50 +269,63 @@ class _FirstPageState extends State<FirstPage> {
                           ),
                         ),
                       )),
-                      IconButton(
-                          onPressed: () async {
-                            print(textCodeController);
-                            if (_formKey.currentState!.validate()) {
-                              futureRoom =
-                                  await (getRoomByCode(code.toString()));
-                              if (futureRoom == null) {
-                                final snackBar = SnackBar(
-                                  content: const Text('รหัสไม่ถูกต้อง'),
-                                );
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                              } else {
-                                roomWithOwnerUser = futureRoom;
-                                print(widget.info.id.toString() +
-                                    roomWithOwnerUser[0].id.toString());
-                                futrueParti = await createParticipate(
-                                    widget.info.id, roomWithOwnerUser[0].id);
-                                if (futrueParti == null) {
-                                  Navigator.of(context).pushReplacement(
-                                      new MaterialPageRoute(
-                                          settings: const RouteSettings(
-                                              name: '/roompage'),
-                                          builder: (context) => new RoomPage(
-                                                userModel: widget.info,
-                                                roomModel: roomWithOwnerUser[0],
-                                                ownerModel: roomWithOwnerUser[0]
-                                                    .ownerModel,
-                                              )));
-                                } else {
-                                  final snackBar = SnackBar(
-                                    content:
-                                        const Text('คุณได้เข้าร่วมห้องนี้แล้ว'),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
+                      isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : IconButton(
+                              onPressed: () async {
+                                print(textCodeController);
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  futureRoom =
+                                      await (getRoomByCode(code.toString()));
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (futureRoom == null) {
+                                    final snackBar = SnackBar(
+                                      content: const Text('รหัสไม่ถูกต้อง'),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  } else {
+                                    roomWithOwnerUser = futureRoom;
+                                    print(widget.info.id.toString() +
+                                        roomWithOwnerUser[0].id.toString());
+                                    futrueParti = await createParticipate(
+                                        widget.info.id,
+                                        roomWithOwnerUser[0].id);
+                                    if (futrueParti == null) {
+                                      Navigator.of(context).pushReplacement(
+                                          new MaterialPageRoute(
+                                              settings: const RouteSettings(
+                                                  name: '/roompage'),
+                                              builder: (context) =>
+                                                  new RoomPage(
+                                                    userModel: widget.info,
+                                                    roomModel:
+                                                        roomWithOwnerUser[0],
+                                                    ownerModel:
+                                                        roomWithOwnerUser[0]
+                                                            .ownerModel,
+                                                  )));
+                                    } else {
+                                      final snackBar = SnackBar(
+                                        content: const Text(
+                                            'คุณได้เข้าร่วมห้องนี้แล้ว'),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }
+                                  }
                                 }
-                              }
-                            }
-                          },
-                          icon: !isTextFiledFocus
-                              ? Image.asset('assets/icons/Join_button_gray.png')
-                              : Image.asset(
-                                  'assets/icons/Join_button_green.png'))
+                              },
+                              icon: !isTextFiledFocus
+                                  ? Image.asset(
+                                      'assets/icons/Join_button_gray.png')
+                                  : Image.asset(
+                                      'assets/icons/Join_button_green.png'))
                     ],
                   ),
                 );
