@@ -111,7 +111,6 @@ class _RoomPageState extends State<RoomPage> {
           ],
         ),
         drawer: MyMenu(
-          userModel: widget.userModel,
           page: '/roompage',
         ),
         body: SafeArea(

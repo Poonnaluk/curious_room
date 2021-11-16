@@ -303,9 +303,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                           await successDialog(context, 'ลบห้องสำเร็จ');
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (context) => FirstPage(
-                                        info: widget.userModel,
-                                      )),
+                                  builder: (context) => FirstPage()),
                               (Route<dynamic> route) => false);
                         }
                       });

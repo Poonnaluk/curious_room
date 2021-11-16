@@ -3,6 +3,8 @@ import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/Views/room/roompage.dart';
 import 'package:curious_room/Views/utility/utility.dart';
+import 'package:curious_room/providers/userProvider.dart';
+import 'package:provider/provider.dart';
 import 'room/createRoom.dart';
 // import 'package:curious_room/controllers/roomController.dart';
 import 'package:flutter/foundation.dart';
@@ -35,8 +37,7 @@ import '../controllers/loginController.dart';
 
 // ignore: must_be_immutable
 class FirstPage extends StatefulWidget {
-  const FirstPage({Key? key, required this.info}) : super(key: key);
-  final UserModel info;
+  const FirstPage({Key? key}) : super(key: key);
 
   @override
   _FirstPageState createState() => _FirstPageState();
@@ -50,7 +51,6 @@ class _FirstPageState extends State<FirstPage> {
   bool isTextFiledFocus = false;
   final _formKey = new GlobalKey<FormState>();
   final controller = Get.put(LoginController());
-
   late String code;
   dynamic room;
 
@@ -63,16 +63,11 @@ class _FirstPageState extends State<FirstPage> {
   late List<ParticipateModel>? value = [];
   late List<RoomModel>? value2 = [];
   bool isHovering = false;
-
-  @override
-  void initState() {
-    super.initState();
-    refreshData();
-  }
+  UserModel? userModel;
 
   void refreshData() {
-    if (widget.info.role == 'USER') {
-      _partifuture = getRoomParticipate(widget.info.id);
+    if (userModel!.role == 'USER') {
+      _partifuture = getRoomParticipate(userModel!.id);
       _roomfuture = null;
       value2 = null;
     } else {
@@ -82,15 +77,12 @@ class _FirstPageState extends State<FirstPage> {
     }
   }
 
-  Future onGoBack(dynamic value) async {
-    refreshData();
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
+    userModel = context.watch<UserProvider>().userModel;
+    refreshData();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -108,7 +100,6 @@ class _FirstPageState extends State<FirstPage> {
           scale: 0.7,
           child: IconButton(
             onPressed: () {
-              print(widget.info.display);
               _key.currentState!.openDrawer();
             }, //,
             icon: Image.asset(
@@ -125,7 +116,7 @@ class _FirstPageState extends State<FirstPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => CreatRoomPage(
-                            userModel: widget.info,
+                            userModel: userModel!,
                           )));
             },
             child: Container(
@@ -165,7 +156,7 @@ class _FirstPageState extends State<FirstPage> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(bottomRight: Radius.circular(50))),
       ),
-      drawer: MyMenu(userModel: widget.info, page: '/firstpage'),
+      drawer: MyMenu(page: '/firstpage'),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -174,7 +165,7 @@ class _FirstPageState extends State<FirstPage> {
               children: [
                 Container(
                     child: Expanded(
-                  child: widget.info.role == 'USER'
+                  child: userModel!.role == 'USER'
                       ? getMyRooms(context)
                       : getAllRoom(context),
                 ))
@@ -183,7 +174,7 @@ class _FirstPageState extends State<FirstPage> {
           ),
         ),
       ),
-      floatingActionButton: widget.info.role == 'USER'
+      floatingActionButton: userModel!.role == 'USER'
           ? Padding(
               padding: const EdgeInsets.all(10.0),
               child: Transform.scale(
@@ -282,17 +273,17 @@ class _FirstPageState extends State<FirstPage> {
                                     .showSnackBar(snackBar);
                               } else {
                                 roomWithOwnerUser = futureRoom;
-                                print(widget.info.id.toString() +
+                                print(userModel!.id.toString() +
                                     roomWithOwnerUser[0].id.toString());
                                 futrueParti = await createParticipate(
-                                    widget.info.id, roomWithOwnerUser[0].id);
+                                    userModel!.id, roomWithOwnerUser[0].id);
                                 if (futrueParti == null) {
                                   Navigator.of(context).pushReplacement(
                                       new MaterialPageRoute(
                                           settings: const RouteSettings(
                                               name: '/roompage'),
                                           builder: (context) => new RoomPage(
-                                                userModel: widget.info,
+                                                userModel: userModel!,
                                                 roomModel: roomWithOwnerUser[0],
                                                 ownerModel: roomWithOwnerUser[0]
                                                     .ownerModel,
@@ -357,14 +348,12 @@ class _FirstPageState extends State<FirstPage> {
                                   value![index].roomParticipate!.updatedAt,
                               ownerModel:
                                   value![index].roomParticipate!.ownerModel);
-                          Navigator.of(context)
-                              .push(new MaterialPageRoute(
-                                  builder: (context) => new RoomPage(
-                                        userModel: widget.info,
-                                        roomModel: roomModel,
-                                        ownerModel: roomModel.ownerModel,
-                                      )))
-                              .then(onGoBack);
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (context) => new RoomPage(
+                                    userModel: userModel!,
+                                    roomModel: roomModel,
+                                    ownerModel: roomModel.ownerModel,
+                                  )));
                         },
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 200),
@@ -436,14 +425,12 @@ class _FirstPageState extends State<FirstPage> {
                               createdAt: value2![index].createdAt,
                               updatedAt: value2![index].updatedAt,
                               ownerModel: value2![index].ownerModel);
-                          Navigator.of(context)
-                              .push(new MaterialPageRoute(
-                                  builder: (context) => new RoomPage(
-                                        userModel: widget.info,
-                                        roomModel: roomModel,
-                                        ownerModel: roomModel.ownerModel,
-                                      )))
-                              .then(onGoBack);
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (context) => new RoomPage(
+                                    userModel: userModel!,
+                                    roomModel: roomModel,
+                                    ownerModel: roomModel.ownerModel,
+                                  )));
                         },
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 200),
