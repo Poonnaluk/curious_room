@@ -79,7 +79,7 @@ Future<List<PostModel>> getPost(int roomId) async {
   } else if (res.statusCode == 500) {
     return [];
   } else {
-    throw Exception('Failed to check');
+    throw Exception('Failed to get post');
   }
 }
 
@@ -118,6 +118,55 @@ Future<void> creatPost(
   } else if (res.statusCode == 500) {
     return null;
   } else {
-    throw Exception('Failed to check');
+    throw Exception('Failed to create post');
+  }
+}
+
+Future<bool> editPost(int postId, String content, dynamic img) async {
+  final String url = "http://192.168.1.49:8000/post/edit";
+  // ignore: avoid_init_to_null
+  dynamic file = null;
+  if (img != null) {
+    File _image = img;
+    final mimeTypeData = lookupMimeType(
+      img.toString(),
+      headerBytes: [0xFF, 0xD8],
+    )!
+        .split('/');
+    file = await http.MultipartFile.fromPath("image", _image.path,
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+  }
+
+  final imageUpload = http.MultipartRequest('PUT', Uri.parse(url));
+  imageUpload.headers.addAll({
+    'Content-Type': 'multipart/form-data',
+    'Accept-Encoding-Type': 'gzip, deflate, br',
+    'Accept-': '*/*',
+  });
+  imageUpload.fields["postId"] = postId.toString();
+  imageUpload.fields["content"] = content.toString();
+  if (img != null) {
+    imageUpload.files.add(file);
+  }
+  final streamedResponse = await imageUpload.send();
+  final res = await http.Response.fromStream(streamedResponse);
+  if (res.statusCode == 200) {
+    return true;
+  } else if (res.statusCode == 500) {
+    return false;
+  } else {
+    throw Exception('Failed to edit post');
+  }
+}
+
+Future<bool> deletePost(int postid) async {
+  final String apiUrl = "http://192.168.1.49:8000/post/delete/$postid";
+  final res = await http.put(Uri.parse(apiUrl));
+  if (res.statusCode == 200) {
+    return true;
+  } else if (res.statusCode == 500) {
+    return false;
+  } else {
+    throw Exception('Failed to delete post');
   }
 }
