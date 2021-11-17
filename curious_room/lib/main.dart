@@ -3,12 +3,14 @@
 import 'dart:ui';
 import 'package:curious_room/Views/firstpage.dart';
 import 'package:curious_room/Views/room/roompage.dart';
+import 'package:curious_room/providers/userProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:get/get.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'Views/room/roompage.dart';
 import 'controllers/loginController.dart';
@@ -32,20 +34,21 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return ResponsiveSizer(
       builder: (BuildContext, Orientation, ScreenType) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: LoginPage(),
-          theme: ThemeData(fontFamily: 'Prompt'),
-          initialRoute: '/',
-          routes: {
-            '/firstpage': (context) => FirstPage(
-                  info: userModel,
-                ),
-            '/roompage': (context) => RoomPage(
-                userModel: userModel,
-                roomModel: roomModel,
-                ownerModel: ownerModel),
-          },
+        return MultiProvider(
+          providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: LoginPage(),
+            theme: ThemeData(fontFamily: 'Prompt'),
+            initialRoute: '/',
+            routes: {
+              '/firstpage': (context) => FirstPage(),
+              '/roompage': (context) => RoomPage(
+                  userModel: userModel,
+                  roomModel: roomModel,
+                  ownerModel: ownerModel)
+            },
+          ),
         );
       },
     );
@@ -68,7 +71,6 @@ class _LoginPageState extends State<LoginPage> {
   late dynamic user;
   // late UserModel _regisToGbase;
   final controller = Get.put(LoginController());
-  late UserModel Info;
   bool isLoading = false;
 
   @override
@@ -191,22 +193,17 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => FirstPage(
-                    info: Info,
-                  ),
+                  builder: (BuildContext context) => FirstPage(),
                 ),
               );
             } else {
               setState(() {
                 isLoading = false;
               });
-              print(Info.display);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => FirstPage(
-                    info: Info,
-                  ),
+                  builder: (BuildContext context) => FirstPage(),
                 ),
               );
               // }
@@ -244,7 +241,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> check(String email) async {
     user = (await regischeck(email));
     if (user != null) {
-      Info = user;
+      context.read<UserProvider>().setUser(user);
     }
   }
 }

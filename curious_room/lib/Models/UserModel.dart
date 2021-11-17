@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
@@ -55,20 +54,20 @@ class UserModel {
       };
 }
 
-Future<dynamic> regischeck(String uEmail) async {
-  //นำค่าเเป็น Params
-  final pramsUrl = Uri.parse('http://147.182.209.40/user/$uEmail');
 
-  print(pramsUrl);
-  final res = await http.get(pramsUrl);
-  if (res.statusCode == 200) {
-    return UserModel.fromJson(jsonDecode(res.body));
-  } else if (res.statusCode == 500) {
-    return null;
-  } else {
-    throw Exception('Failed to check');
+  Future<dynamic> regischeck(String uEmail) async {
+    //นำค่าเเป็น Params
+    final pramsUrl = Uri.parse('http://147.182.209.40/user/$uEmail');
+    print(pramsUrl);
+    final res = await http.get(pramsUrl);
+    if (res.statusCode == 200) {
+      return UserModel.fromJson(jsonDecode(res.body));
+    } else if (res.statusCode == 500) {
+      return null;
+    } else {
+      throw Exception('Failed to check');
+    }
   }
-}
 
 // ignore: non_constant_identifier_names
 Future<UserModel?> createUser(
@@ -87,7 +86,7 @@ Future<UserModel?> createUser(
   return userModelFromJson(responseString);
 }
 
-Future<dynamic> uodateUserName(int id, String name, dynamic img) async {
+Future<dynamic> updateUserName(int id, String name, dynamic img) async {
   final String apiUrl = "http://147.182.209.40/user/$id";
 
   // ignore: avoid_init_to_null
@@ -99,7 +98,7 @@ Future<dynamic> uodateUserName(int id, String name, dynamic img) async {
     'Accept-Encoding-Type': 'gzip, deflate, br',
     'Accept-': '/',
   });
-     imageUpload.fields["name"] = name.toString();
+  imageUpload.fields["name"] = name.toString();
 
   if (img != null) {
     File _image = img;

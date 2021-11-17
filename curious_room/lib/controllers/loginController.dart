@@ -16,6 +16,6 @@ class LoginController extends GetxController {
   }
 
   updateDisplayname(int id, String name, dynamic img) async {
-    await uodateUserName(id, name, img);
+    await updateUserName(id, name, img);
   }
 }

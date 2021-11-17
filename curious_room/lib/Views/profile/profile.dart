@@ -1,8 +1,10 @@
 import 'dart:io';
-
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:curious_room/Views/profile/editDisplay.dart';
 import 'package:curious_room/controllers/loginController.dart';
+import 'package:curious_room/providers/userProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   final UserModel userModel;
@@ -108,6 +110,8 @@ class _ProfilePageState extends State<ProfilePage> {
               widget.userModel.id, nameController.text, img);
           setState(() {
             username = nameController.text;
+            widget.userModel.name = username;
+            context.read<UserProvider>().setUser(widget.userModel);
             isTextFiledFocus = false;
           });
           ScaffoldMessenger.of(context).showSnackBar(
@@ -140,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
         leading: IconButton(
           alignment: Alignment.topLeft,
           icon: Icon(Icons.chevron_left),
-          onPressed: () => Navigator.pop(context, username),
+          onPressed: () => Navigator.pop(context),
           color: Color.fromRGBO(255, 255, 255, 0.8),
           iconSize: 50,
         ),
@@ -179,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     onBackgroundImageError: (exception, context) {
                       print('$image Cannot be loaded');
                     },
-                    child: _buildEditImage(),
+                    child: _buildEditImage(context),
                   ),
                   SizedBox(
                     height: screenh * 0.02,
@@ -279,21 +283,45 @@ TextStyle textStyle() {
   return TextStyle(color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 18);
 }
 
-Widget _buildEditImage() {
+Widget _buildEditImage(BuildContext context) {
   return Container(
-    height: 30,
-    width: 30,
-    margin: EdgeInsets.only(left: 80, top: 80),
-    alignment: Alignment.bottomRight,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      shape: BoxShape.circle,
-    ),
-    child: IconButton(
-      color: Colors.black,
-      iconSize: 15,
-      icon: Icon(Icons.photo_camera),
-      onPressed: () {},
-    ),
-  );
+      height: 30,
+      width: 30,
+      margin: EdgeInsets.only(left: 80, top: 80),
+      alignment: Alignment.bottomRight,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+          color: Colors.black,
+          iconSize: 15,
+          icon: Icon(Icons.photo_camera),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return EditDisplayPage();
+                },
+              ),
+            );
+          }));
 }
+
+  // //เปลี่ยน type string to file
+  // Future<File?> urlToFile(String imageUrl) async {
+  //   // generate random number.
+  //   var rng = new Random();
+  //   // get temporary directory of device.
+  //   Directory tempDir = await getTemporaryDirectory();
+  //   // get temporary path from temporary directory.
+  //   String tempPath = tempDir.path;
+  //   // create a new file in temporary path with random file name.
+  //   File file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
+  //   // call http.get method and pass imageUrl into it to get response.
+  //   http.Response response = await http.get(Uri.parse(imageUrl));
+  //   await file.writeAsBytes(response.bodyBytes);
+  //   _image = file;
+  //   return _image;
+  // }

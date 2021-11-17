@@ -8,38 +8,29 @@ import 'package:curious_room/controllers/loginController.dart';
 
 import 'package:curious_room/main.dart';
 import 'package:curious_room/Views/room/roompage.dart';
+import 'package:curious_room/providers/userProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../firstpage.dart';
 
 class MyMenu extends StatefulWidget {
-  final UserModel userModel;
   final String page;
 
-  MyMenu({Key? key, required this.userModel, required this.page})
-      : super(key: key);
+  MyMenu({Key? key, required this.page}) : super(key: key);
   @override
   State<StatefulWidget> createState() => MyMenuState();
 }
 
 //เมนูบาร์
 class MyMenuState extends State<MyMenu> {
-  late String username = widget.userModel.name;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future onGoBack(dynamic value) async {
-    setState(() {
-      username = value.toString();
-    });
-  }
+  UserModel? userModel;
+  Future<List<RoomModel>>? future = Future.value(<RoomModel>[]);
+  late List<RoomModel>? value;
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +39,8 @@ class MyMenuState extends State<MyMenu> {
     late double screenh;
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
-    String image = widget.userModel.display.toString();
-    late List<RoomModel>? value;
-    final Future<List<RoomModel>> future = getMyRoom(widget.userModel.id);
-
+    userModel = context.watch<UserProvider>().userModel;
+    future = getMyRoom(userModel!.id);
     return SafeArea(
       child: Drawer(
         child: ListView(
@@ -64,10 +53,7 @@ class MyMenuState extends State<MyMenu> {
               ),
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => FirstPage(
-                              info: widget.userModel,
-                            )),
+                    MaterialPageRoute(builder: (context) => FirstPage()),
                     (Route<dynamic> route) => false);
               },
             ),
@@ -83,18 +69,18 @@ class MyMenuState extends State<MyMenu> {
                     CircleAvatar(
                       backgroundColor: Color.fromRGBO(255, 255, 255, 0),
                       radius: 25,
-                      backgroundImage: image == "null"
+                      backgroundImage: userModel!.display == "null"
                           ? Image.asset('assets/images/logoIcon.png').image
-                          : Image.network(image).image,
+                          : Image.network(userModel!.display).image,
                       onBackgroundImageError: (exception, context) {
-                        print('$image Cannot be loaded');
+                        print('${userModel!.display} Cannot be loaded');
                       },
                     ),
                     SizedBox(
                       width: screenw * 0.01,
                     ),
                     Text(
-                      username,
+                      userModel!.name,
                       style: textStyle(),
                     )
                   ],
@@ -105,15 +91,14 @@ class MyMenuState extends State<MyMenu> {
                   // Update the state of the app
                   // ...
                   // Then close the drawer
-                  // Navigator.pop(context);
-                  print("image >> " + image);
+                  Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => ProfilePage(
-                              userModel: widget.userModel,
+                              userModel: userModel!,
                             )),
-                  ).then((onGoBack));
+                  );
                 },
               ),
             ),
@@ -177,9 +162,9 @@ class MyMenuState extends State<MyMenu> {
                                   Navigator.of(context)
                                       .push(new MaterialPageRoute(
                                           builder: (context) => new RoomPage(
-                                                userModel: widget.userModel,
+                                                userModel: userModel!,
                                                 roomModel: roomModel,
-                                                ownerModel: widget.userModel,
+                                                ownerModel: userModel!,
                                               )));
                                 } else {
                                   Navigator.of(context).pushReplacement(
@@ -187,9 +172,9 @@ class MyMenuState extends State<MyMenu> {
                                           settings: const RouteSettings(
                                               name: '/roompage'),
                                           builder: (context) => new RoomPage(
-                                                userModel: widget.userModel,
+                                                userModel: userModel!,
                                                 roomModel: roomModel,
-                                                ownerModel: widget.userModel,
+                                                ownerModel: userModel!,
                                               )));
                                 }
                               },
