@@ -1,6 +1,8 @@
 import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:curious_room/Views/Style/color.dart';
+import 'package:curious_room/Views/Style/textStyle.dart';
 import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/Views/utility/alertDialog.dart';
 import 'package:curious_room/Views/utility/finishDialog.dart';
@@ -81,7 +83,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
           leading: IconButton(
             icon: Icon(Icons.chevron_left),
             onPressed: () => Navigator.pop(context, roomName),
-            color: Color.fromRGBO(124, 124, 124, 1),
+            color: grayColor,
             iconSize: 50,
           ),
           actions: [
@@ -124,9 +126,8 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                           Text(
                             'รหัสเข้าร่วม',
                             textAlign: TextAlign.right,
-                            style: TextStyle(
-                                color: Color.fromRGBO(69, 171, 157, 1.0),
-                                fontSize: 16.sp),
+                            style:
+                                TextStyle(color: greenColor, fontSize: 16.sp),
                           ),
                           SizedBox(
                             width: 1.w,
@@ -162,9 +163,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     children: [
                       Text(
                         "เจ้าของ",
-                        style: TextStyle(
-                            color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 18.sp),
+                        style: greenTextStyle(18.sp),
                       ),
                     ],
                   ),
@@ -173,7 +172,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                   ),
                   Container(
                     height: 1.5,
-                    color: Color.fromRGBO(69, 171, 157, 1.0),
+                    color: greenColor,
                   ),
                   SizedBox(
                     height: screenh * 0.015,
@@ -198,7 +197,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                       ),
                       Text(
                         widget.ownerModel.name,
-                        style: textStyle(),
+                        style: normalTextStyle(17.sp),
                       ),
                     ],
                   ),
@@ -209,9 +208,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     children: [
                       Text(
                         "เพื่อนร่วมห้อง",
-                        style: TextStyle(
-                            color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 18.sp),
+                        style: greenTextStyle(18.sp),
                       ),
                     ],
                   ),
@@ -220,7 +217,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                   ),
                   Container(
                     height: 1.5,
-                    color: Color.fromRGBO(69, 171, 157, 1.0),
+                    color: greenColor,
                   ),
                   SizedBox(
                     height: screenh * 0.008,
@@ -349,10 +346,6 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
         ]);
   }
 
-  TextStyle textStyle() {
-    return TextStyle(color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 17.sp);
-  }
-
   getParticipates(BuildContext context) {
     return FutureBuilder<List<ParticipateModel>>(
         future: future,
@@ -380,7 +373,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     ),
                     title: Text(
                         (value?[index].userParticipate?.name).toString(),
-                        style: textStyle()),
+                        style: normalTextStyle(17.sp)),
                   );
                 });
           }

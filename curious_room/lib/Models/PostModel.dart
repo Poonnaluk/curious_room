@@ -123,7 +123,7 @@ Future<void> creatPost(
 }
 
 Future<bool> editPost(int postId, String content, dynamic img) async {
-  final String url = "http://192.168.1.49:8000/post/edit";
+  final String url = "http://147.182.209.40/post/edit";
   // ignore: avoid_init_to_null
   dynamic file = null;
   if (img != null) {
@@ -160,7 +160,7 @@ Future<bool> editPost(int postId, String content, dynamic img) async {
 }
 
 Future<bool> deletePost(int postid) async {
-  final String apiUrl = "http://192.168.1.49:8000/post/delete/$postid";
+  final String apiUrl = "http://147.182.209.40/post/delete/$postid";
   final res = await http.put(Uri.parse(apiUrl));
   if (res.statusCode == 200) {
     return true;
