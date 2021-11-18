@@ -3,7 +3,7 @@
 // ignore_for_file: unused_import, unused_local_variable
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
-import 'package:curious_room/Views/profile/profile.dart';
+import 'package:curious_room/Views/profile/screen/profile.dart';
 import 'package:curious_room/controllers/loginController.dart';
 
 import 'package:curious_room/main.dart';
