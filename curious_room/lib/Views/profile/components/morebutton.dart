@@ -1,12 +1,11 @@
-
 import 'package:curious_room/Views/Style/screenStyle.dart';
+import 'package:curious_room/Views/profile/screen/editDisplay.dart';
 
 import 'package:curious_room/Views/utility/openGallery.dart';
 import 'package:curious_room/Views/utility/themeMoreButton.dart';
 import 'package:flutter/material.dart';
 
 moreBotton(BuildContext context) {
-
   return showGeneralDialog(
       barrierDismissible: true,
       transitionDuration: Duration(milliseconds: 300),
@@ -29,7 +28,19 @@ moreBotton(BuildContext context) {
                         if (imageTemporary == null) {
                           Navigator.pop(context);
                         } else {
-                          cropImage(context, imageTemporary);
+                          dynamic img =
+                              await cropImage(context, imageTemporary);
+                          if (img == null) {
+                            Navigator.pop(context);
+                          } else {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    EditDisplayPage(cropped: img),
+                              ),
+                            );
+                          }
                         }
                       },
                       child: themeMoreButton(

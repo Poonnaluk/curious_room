@@ -3,6 +3,7 @@ import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/Views/Style/color.dart';
 import 'package:curious_room/Views/Style/textStyle.dart';
+import 'package:curious_room/Views/profile/screen/profile.dart';
 import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/Views/utility/alertDialog.dart';
 import 'package:curious_room/Views/utility/finishDialog.dart';
@@ -113,13 +114,16 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        roomName,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 21.sp),
+                      Flexible(
+                        child: Text(
+                          roomName,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              color: Color.fromRGBO(69, 171, 157, 1.0),
+                              fontSize: 21.sp),
+                        ),
                       ),
                       Row(
                         children: [
@@ -195,10 +199,21 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                       SizedBox(
                         width: screenw * 0.045,
                       ),
-                      Text(
-                        widget.ownerModel.name,
-                        style: normalTextStyle(17.sp),
-                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePage(
+                                        userModel: (widget.ownerModel),
+                                        page: 'about',
+                                      )));
+                        },
+                        child: Text(
+                          widget.ownerModel.name,
+                          style: normalTextStyle(17.sp),
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(
@@ -362,19 +377,31 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                 itemCount: value!.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-                    leading: CircleAvatar(
-                      backgroundColor: Color.fromRGBO(255, 255, 255, 0),
-                      backgroundImage: Image.network(
-                              (value?[index].userParticipate?.display)
-                                  .toString())
-                          .image,
-                      radius: 15,
-                    ),
-                    title: Text(
-                        (value?[index].userParticipate?.name).toString(),
-                        style: normalTextStyle(17.sp)),
-                  );
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      leading: CircleAvatar(
+                        backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+                        backgroundImage: Image.network(
+                                (value?[index].userParticipate?.display)
+                                    .toString())
+                            .image,
+                        radius: 15,
+                      ),
+                      title: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePage(
+                                        userModel:
+                                            (value?[index].userParticipate),
+                                        page: 'about',
+                                      )),
+                            );
+                          },
+                          child: Text(
+                              (value?[index].userParticipate?.name).toString(),
+                              style: normalTextStyle(17.sp))));
                 });
           }
           return Center(

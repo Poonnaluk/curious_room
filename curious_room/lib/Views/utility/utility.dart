@@ -1,6 +1,8 @@
 // ignore: duplicate_ignore
 // ignore: unused_import
 // ignore_for_file: unused_import, unused_local_variable
+import 'dart:io';
+
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:curious_room/Views/profile/screen/profile.dart';
@@ -40,6 +42,7 @@ class MyMenuState extends State<MyMenu> {
     screenw = MediaQuery.of(context).size.width;
     screenh = MediaQuery.of(context).size.height;
     userModel = context.watch<UserProvider>().userModel;
+    String imge = userModel!.display.toString();
     future = getMyRoom(userModel!.id);
     return SafeArea(
       child: Drawer(
@@ -69,9 +72,9 @@ class MyMenuState extends State<MyMenu> {
                     CircleAvatar(
                       backgroundColor: Color.fromRGBO(255, 255, 255, 0),
                       radius: 25,
-                      backgroundImage: userModel!.display == "null"
-                          ? Image.asset('assets/images/logoIcon.png').image
-                          : Image.network(userModel!.display).image,
+                      backgroundImage: userModel!.display.runtimeType.toString() == "_File"
+                          ? Image.file(userModel!.display).image
+                          : Image.network(imge).image,
                       onBackgroundImageError: (exception, context) {
                         print('${userModel!.display} Cannot be loaded');
                       },
@@ -97,6 +100,7 @@ class MyMenuState extends State<MyMenu> {
                     MaterialPageRoute(
                         builder: (context) => ProfilePage(
                               userModel: userModel!,
+                              page: 'menubar',
                             )),
                   );
                 },
