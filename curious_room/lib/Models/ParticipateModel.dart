@@ -119,6 +119,8 @@ Future<dynamic> createParticipate(int userId, int roomId) async {
     return ParticipateModel.fromJson(jsonDecode(response.body));
   } else if (response.statusCode == 201) {
     return null;
+  } else if (response.statusCode == 500) {
+    return null;
   } else {
     throw Exception('Failed to create participate.');
   }
