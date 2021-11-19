@@ -1,24 +1,22 @@
-import 'dart:io';
 import 'package:curious_room/Views/Style/screenStyle.dart';
 import 'package:curious_room/Views/Style/textStyle.dart';
-import 'package:curious_room/providers/userProvider.dart';
+import 'package:curious_room/Views/profile/components/createButton.dart';
+import 'package:curious_room/Views/utility/openGallery.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class EditDisplayPage extends StatefulWidget {
-  EditDisplayPage({Key? key}) : super(key: key);
+  EditDisplayPage({Key? key, this.cropped}) : super(key: key);
+  final cropped;
 
   @override
   _EditDisplayPageState createState() => _EditDisplayPageState();
 }
 
 class _EditDisplayPageState extends State<EditDisplayPage> {
-  File? _image;
 
   @override
   Widget build(BuildContext context) {
-    _image = context.watch<UserProvider>().file;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -35,7 +33,7 @@ class _EditDisplayPageState extends State<EditDisplayPage> {
           iconSize: 50,
         ),
         actions: <Widget>[
-          // buildEditPostButton(),
+          buildEditPostButton(context, widget.cropped),
           SizedBox(
             width: screenw(context, 0.015),
           )
@@ -43,16 +41,23 @@ class _EditDisplayPageState extends State<EditDisplayPage> {
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: ListView(
+        child: Stack(
+          alignment: Alignment.topRight,
           children: <Widget>[
-            if (_image != null) ...[
-              Image.file(_image!),
-              // Row(
-              //   children: <Widget>[
-              //     IconButton(onPressed: _cropImage, icon: Icon(Icons.crop)),
-              //     IconButton(onPressed: _clear, icon: Icon(Icons.refresh))
-              //   ],
-              // )
+            if (widget.cropped != null) ...[
+              Image.file(widget.cropped),
+              Transform.scale(
+                scale: 1,
+                child: Container(
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: IconButton(
+                      onPressed: () => cropImage(context, widget.cropped),
+                      icon: Icon(Icons.crop)),
+                ),
+              )
             ]
           ],
         ),

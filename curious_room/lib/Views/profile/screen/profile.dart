@@ -1,54 +1,48 @@
 import 'dart:io';
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:curious_room/Models/UserStatsModel.dart';
 import 'package:curious_room/Views/Style/color.dart';
+import 'package:curious_room/Views/Style/screenStyle.dart';
+import 'package:curious_room/Views/firstpage.dart';
 import 'package:curious_room/Views/profile/components/editDisplayButton.dart';
 import 'package:curious_room/Views/profile/components/editNameButton.dart';
+import 'package:curious_room/Views/profile/components/listScore.dart';
 import 'package:curious_room/Views/utility/showImage.dart';
 import 'package:curious_room/controllers/loginController.dart';
 import 'package:curious_room/providers/userProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../Style/textStyle.dart';
-
 class ProfilePage extends StatefulWidget {
-  final UserModel userModel;
-  ProfilePage({Key? key, required this.userModel}) : super(key: key);
+  final UserModel? userModel;
+  final page;
+  ProfilePage({Key? key, required this.userModel, this.page}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late double screenw;
-  late double screenh;
   UserModel? usermodel;
 
   final _formKey = new GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   LoginController userController = LoginController();
   late String username;
-  var listIcon = [
-    'Q_Icon.png',
-    'A_Icon.png',
-    'correct_icon.png',
-    'score_icon.png'
-  ];
-  var listType = ['ถาม', 'ตอบ', 'คำตอบที่ดีที่สุด', 'คะแนนที่ได้รับ'];
-  // var listIcon_admin = [
-  //   'declare_Icon.png'
-  // ];
-  // var listType_admin = ['ประกาศ'];
+
   bool _clickChanged = false;
   bool isTextFiledFocus = false;
   bool _displayNameValid = true;
   File? img;
 
+  late Future<UserStatsModel> future;
+
   @override
   void initState() {
     super.initState();
-    nameController.text = '${widget.userModel.name}';
-    username = '${widget.userModel.name}';
+    nameController.text = '${widget.userModel!.name}';
+    username = '${widget.userModel!.name}';
+    future = getStats(widget.userModel!.id, widget.userModel!.role);
   }
 
   Widget buildDisplayNameField() {
@@ -61,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   controller: nameController,
                   onChanged: (hasvalue) {
                     setState(() {
-                      if (hasvalue != widget.userModel.name) {
+                      if (hasvalue != widget.userModel!.name) {
                         isTextFiledFocus = true;
                       } else {
                         isTextFiledFocus = false;
@@ -91,13 +85,13 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_displayNameValid) {
       if (_formKey.currentState!.validate()) {
         _clickChanged = false;
-        if (nameController.text != widget.userModel.name) {
+        if (nameController.text != widget.userModel!.name) {
           await userController.updateDisplayname(
-              widget.userModel.id, nameController.text, img);
+              widget.userModel!.id, nameController.text, img);
           setState(() {
             username = nameController.text;
-            widget.userModel.name = username;
-            context.read<UserProvider>().setUser(widget.userModel);
+            widget.userModel!.name = username;
+            context.read<UserProvider>().setUser(widget.userModel!);
             isTextFiledFocus = false;
           });
           ScaffoldMessenger.of(context).showSnackBar(
@@ -117,20 +111,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    screenw = MediaQuery.of(context).size.width;
-    screenh = MediaQuery.of(context).size.height;
     usermodel = context.watch<UserProvider>().userModel;
-    File? imgFile = context.watch<UserProvider>().file;
     String subname = username.substring(0, 8);
+    checkRole(widget.userModel!);
+    bool owner = checkOwner(widget.userModel!, usermodel);
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Color.fromRGBO(246, 127, 123, 1),
-        toolbarHeight: screenh * 0.058,
+        toolbarHeight: screenh(context, 0.058),
         leading: IconButton(
           alignment: Alignment.topLeft,
           icon: Icon(Icons.chevron_left),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            widget.page == 'menubar'
+                ? Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => FirstPage(),
+                    ),
+                  )
+                : Navigator.pop(context);
+          },
           color: Color.fromRGBO(255, 255, 255, 0.8),
           iconSize: 50,
         ),
@@ -142,8 +144,8 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Container(
               padding: EdgeInsets.only(top: 50),
-              height: screenh * 0.38,
-              width: screenw * 1,
+              height: screenh(context, 0.35),
+              width: screenw(context, 1),
               decoration: BoxDecoration(
                 color: pinkColor,
                 borderRadius: BorderRadius.only(
@@ -165,23 +167,21 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.push(context, MaterialPageRoute(builder: (_) {
                         return ImageScreen(uri: usermodel!.display);
                       }));
-                      print("Image file >> $imgFile");
-                      print("Image url >> ${widget.userModel.display}");
                     },
                     child: CircleAvatar(
                       backgroundColor: Color.fromRGBO(255, 255, 255, 0),
                       radius: 60,
-                      backgroundImage: imgFile == null
-                          ? Image.network(widget.userModel.display).image
-                          : Image.file(imgFile).image,
-                      onBackgroundImageError: (exception, context) {
-                        print('$imgFile Cannot be loaded');
-                      },
-                      child: ButtonEditDisplay(),
+                      backgroundImage: widget.userModel!.display.runtimeType
+                                  .toString() ==
+                              "_File"
+                          ? Image.file(widget.userModel!.display).image
+                          : Image.network(widget.userModel!.display.toString())
+                              .image,
+                      child: owner ? ButtonEditDisplay() : SizedBox(),
                     ),
                   ),
                   SizedBox(
-                    height: screenh * 0.02,
+                    height: screenh(context, 0.02),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -189,90 +189,51 @@ class _ProfilePageState extends State<ProfilePage> {
                       _clickChanged
                           ? buildDisplayNameField()
                           : Text(
-                              '$subname...',
+                              owner ? '$subname...' : widget.userModel!.name,
                               style:
                                   TextStyle(fontSize: 20, color: Colors.white),
                             ),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _clickChanged
-                                ? ButtonEditName(
-                                    updateProfileData: updateProfileData,
-                                    isTextFiledFocus: isTextFiledFocus,
-                                  )
-                                : IconButton(
-                                    color: Colors.black,
-                                    icon: Image(
-                                        image: Image.asset(
-                                                'assets/icons/edit 1.png')
-                                            .image),
-                                    onPressed: () {
-                                      setState(() {
-                                        _clickChanged = true;
-                                      });
-                                    },
-                                  )
-                          ])
+                      owner
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                  _clickChanged
+                                      ? ButtonEditName(
+                                          updateProfileData: updateProfileData,
+                                          isTextFiledFocus: isTextFiledFocus,
+                                        )
+                                      : IconButton(
+                                          color: Colors.black,
+                                          icon: Image(
+                                              image: Image.asset(
+                                                      'assets/icons/edit 1.png')
+                                                  .image),
+                                          onPressed: () {
+                                            setState(() {
+                                              _clickChanged = true;
+                                            });
+                                          },
+                                        )
+                                ])
+                          : SizedBox()
                     ],
                   ),
                   SizedBox(
-                    height: screenh * 0.01,
+                    height: screenh(context, 0.01),
                   ),
-                  Text(
-                    widget.userModel.email,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  )
+                  owner
+                      ? Text(
+                          widget.userModel!.email,
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        )
+                      : SizedBox()
                 ],
               ),
             ),
             SizedBox(
-              height: screenh * 0.02,
+              height: screenh(context, 0.02),
             ),
-            ListView.builder(
-                padding: EdgeInsets.only(left: 20, top: 20, right: 30),
-                shrinkWrap: true,
-                itemCount: listType.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Image(
-                                    image: Image.asset(
-                                            'assets/icons/${listIcon[index]}')
-                                        .image),
-                                SizedBox(
-                                  width: screenw * 0.04,
-                                ),
-                                Text('${listType[index]}',
-                                    style: normalTextStyle(18)),
-                              ],
-                            ),
-                            Row(children: [
-                              Text('0', style: normalTextStyle(18))
-                            ])
-                          ],
-                        ),
-                        SizedBox(
-                          height: screenh * 0.01,
-                        ),
-                        Container(
-                          height: 1.5,
-                          width: screenw * 0.80,
-                          color: Color.fromRGBO(0, 0, 0, 0.1),
-                        ),
-                        SizedBox(
-                          height: screenh * 0.02,
-                        ),
-                      ],
-                    ),
-                  );
-                }),
+             listScore(future),
           ],
         )),
       )),
