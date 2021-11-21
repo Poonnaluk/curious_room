@@ -30,6 +30,7 @@ buildEditPostButton(BuildContext context, File cropped) {
         user!.display = cropped;
         context.read<UserProvider>().setUser(user);
         await userController.updateDisplay(user.id, "", cropped);
+        Navigator.pop(context);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

@@ -165,7 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   GestureDetector(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) {
-                        return ImageScreen(uri: usermodel!.display);
+                        return ImageScreen(uri: widget.userModel!.display);
                       }));
                     },
                     child: CircleAvatar(
@@ -233,7 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: screenh(context, 0.02),
             ),
-             listScore(future),
+            listScore(future),
           ],
         )),
       )),

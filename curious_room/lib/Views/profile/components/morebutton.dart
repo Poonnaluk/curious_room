@@ -1,9 +1,10 @@
 import 'package:curious_room/Views/Style/screenStyle.dart';
 import 'package:curious_room/Views/profile/screen/editDisplay.dart';
-
 import 'package:curious_room/Views/utility/openGallery.dart';
 import 'package:curious_room/Views/utility/themeMoreButton.dart';
+import 'package:curious_room/providers/userProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 moreBotton(BuildContext context) {
   return showGeneralDialog(
@@ -25,6 +26,7 @@ moreBotton(BuildContext context) {
                   TextButton(
                       onPressed: () async {
                         final imageTemporary = await chooseImage();
+                        context.read<UserProvider>().setImgFile(imageTemporary);
                         if (imageTemporary == null) {
                           Navigator.pop(context);
                         } else {

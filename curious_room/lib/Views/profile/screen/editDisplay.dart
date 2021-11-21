@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:curious_room/Views/Style/screenStyle.dart';
 import 'package:curious_room/Views/Style/textStyle.dart';
 import 'package:curious_room/Views/profile/components/createButton.dart';
 import 'package:curious_room/Views/utility/openGallery.dart';
+import 'package:curious_room/providers/userProvider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EditDisplayPage extends StatefulWidget {
   EditDisplayPage({Key? key, this.cropped}) : super(key: key);
@@ -14,9 +18,9 @@ class EditDisplayPage extends StatefulWidget {
 }
 
 class _EditDisplayPageState extends State<EditDisplayPage> {
-
   @override
   Widget build(BuildContext context) {
+    File? img = context.watch<UserProvider>().file;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -54,7 +58,7 @@ class _EditDisplayPageState extends State<EditDisplayPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: IconButton(
-                      onPressed: () => cropImage(context, widget.cropped),
+                      onPressed: () => cropImage(context, img!),
                       icon: Icon(Icons.crop)),
                 ),
               )
