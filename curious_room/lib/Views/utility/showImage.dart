@@ -4,7 +4,7 @@ import 'package:photo_view/photo_view.dart';
 // ignore: must_be_immutable
 class ImageScreen extends StatefulWidget {
   ImageScreen({Key? key, required this.uri}) : super(key: key);
-  String uri;
+  dynamic uri;
 
   @override
   State<ImageScreen> createState() => _ImageScreenState();
@@ -25,9 +25,7 @@ class _ImageScreenState extends State<ImageScreen> {
               child: PhotoView(
                 minScale: PhotoViewComputedScale.contained * 1,
                 maxScale: PhotoViewComputedScale.covered * 2,
-                imageProvider: NetworkImage(
-                  widget.uri,
-                ),
+                imageProvider: checkType(widget.uri),
               ),
             ),
           ),
@@ -37,5 +35,15 @@ class _ImageScreenState extends State<ImageScreen> {
         ),
       ),
     );
+  }
+
+  checkType(dynamic image) {
+    if (widget.uri.runtimeType.toString() == "_File") {
+      return FileImage(widget.uri);
+    } else {
+      return NetworkImage(
+        widget.uri.toString(),
+      );
+    }
   }
 }
