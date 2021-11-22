@@ -108,6 +108,7 @@ Future<void> creatPost(
   imageUpload.fields["userId"] = userId.toString();
   imageUpload.fields["roomId"] = roomId.toString();
   imageUpload.fields["content"] = content.toString();
+
   if (img != null) {
     imageUpload.files.add(file);
   }

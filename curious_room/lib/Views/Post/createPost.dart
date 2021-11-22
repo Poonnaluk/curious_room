@@ -27,7 +27,7 @@ class CreatePost extends StatefulWidget {
 class _CreatePostState extends State<CreatePost> {
   // ignore: unused_field
   // final _formKey = new GlobalKey<FormState>();
-  String? content;
+  String content = "";
   TextEditingController contentController = TextEditingController();
   bool isTextFiledFocus = false;
   late double screenw;
@@ -218,9 +218,9 @@ class _CreatePostState extends State<CreatePost> {
       alignment: Alignment.centerRight,
       child: TextButton(
         style: TextButton.styleFrom(
-            backgroundColor: !isTextFiledFocus
-                ? Color.fromRGBO(237, 237, 237, 1)
-                : Color.fromRGBO(69, 171, 157, 1),
+            backgroundColor: isTextFiledFocus || image != null
+                ? Color.fromRGBO(69, 171, 157, 1)
+                : Color.fromRGBO(237, 237, 237, 1),
             padding: const EdgeInsets.all(10.0),
             primary: Colors.white,
             textStyle: TextStyle(fontSize: 17.sp, fontFamily: 'Prompt'),
@@ -229,7 +229,7 @@ class _CreatePostState extends State<CreatePost> {
             )),
         onPressed: () async {
           print(image);
-          if (content == null && image == null) {
+          if (content == "" && image == null) {
             final snackBar = SnackBar(
               content: const Text('กรุณาเพิ่มเนื้อหา'),
             );
@@ -238,8 +238,10 @@ class _CreatePostState extends State<CreatePost> {
             setState(() {
               isLoading = true;
             });
-            await creatPost(widget.userModel.id, widget.roomModel.id,
-                content!.toString(), image);
+
+            await creatPost(
+                widget.userModel.id, widget.roomModel.id, content, image);
+
             setState(() {
               isLoading = false;
             });
@@ -256,9 +258,9 @@ class _CreatePostState extends State<CreatePost> {
         child: Text(
           'โพสต์',
           style: TextStyle(
-            color: !isTextFiledFocus
-                ? Color.fromRGBO(107, 103, 98, 1)
-                : Colors.white,
+            color: isTextFiledFocus || image != null
+                ? Colors.white
+                : Color.fromRGBO(107, 103, 98, 1),
           ),
         ),
       ),
