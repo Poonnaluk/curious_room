@@ -274,6 +274,11 @@ class _EditPostPageState extends State<EditPostPage> {
               content: const Text('ยังไม่มีการแก้ไขคำถาม'),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else if (content!.isEmpty && image == null) {
+            final snackBar = SnackBar(
+              content: const Text('กรุณาเพิ่มเนื้อหา'),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           } else {
             print(content);
             print("before content $beforeContent");

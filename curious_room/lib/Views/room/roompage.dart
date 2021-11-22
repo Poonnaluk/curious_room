@@ -59,9 +59,11 @@ class _RoomPageState extends State<RoomPage> {
   }
 
   Future<dynamic> refreshData() async {
-    future = await Future.value(getPost(widget.roomModel.id));
-    await Future.delayed(Duration(milliseconds: 700));
-    setState(() {});
+    try {
+      future = await Future.value(getPost(widget.roomModel.id));
+    } finally {
+      setState(() {});
+    }
   }
 
   void isloadingNow(bool loadNow) {
@@ -174,6 +176,8 @@ class _RoomPageState extends State<RoomPage> {
                             child: RefreshIndicator(
                             onRefresh: () async {
                               await refreshData();
+                              await Future.delayed(
+                                  Duration(milliseconds: 1000));
                             },
                             child: FutureBuilder<List<PostModel>>(
                                 future: future,
@@ -505,10 +509,13 @@ class _RoomPageState extends State<RoomPage> {
                                       setState(() {
                                         loading = true;
                                       });
-                                      await urlToFile(image);
-                                      setState(() {
-                                        loading = false;
-                                      });
+                                      try {
+                                        await urlToFile(image);
+                                      } finally {
+                                        setState(() {
+                                          loading = false;
+                                        });
+                                      }
                                     }
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (_) {
@@ -547,7 +554,6 @@ class _RoomPageState extends State<RoomPage> {
 
                                       if (isSuccess) {
                                         Navigator.pop(context);
-
                                         await refreshData();
                                       } else {
                                         ScaffoldMessenger.of(context)
@@ -582,11 +588,12 @@ class _RoomPageState extends State<RoomPage> {
     // get temporary path from temporary directory.
     String tempPath = tempDir.path;
     // create a new file in temporary path with random file name.
-    File file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
+    File? file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
     // call http.get method and pass imageUrl into it to get response.
     http.Response response = await http.get(Uri.parse(imageUrl));
     await file.writeAsBytes(response.bodyBytes);
     _image = file;
+    file = null;
     return _image;
   }
 
