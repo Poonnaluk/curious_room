@@ -46,7 +46,7 @@ moreBotton(BuildContext context) {
                         }
                       },
                       child: themeMoreButton(
-                          'assets/icons/image.png', 'เลือกรูปโปรไฟล์'))
+                          'assets/icons/image.png', 'เลือกรูปโปรไฟล์', 16))
                 ],
               ),
             ),
