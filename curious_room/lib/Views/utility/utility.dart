@@ -45,7 +45,7 @@ class MyMenuState extends State<MyMenu> {
     String imge = userModel!.display.toString();
     future = getMyRoom(userModel!.id);
     return SafeArea(
-      child: Drawer(
+      child: Drawer(   
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -72,9 +72,10 @@ class MyMenuState extends State<MyMenu> {
                     CircleAvatar(
                       backgroundColor: Color.fromRGBO(255, 255, 255, 0),
                       radius: 25,
-                      backgroundImage: userModel!.display.runtimeType.toString() == "_File"
-                          ? Image.file(userModel!.display).image
-                          : Image.network(imge).image,
+                      backgroundImage:
+                          userModel!.display.runtimeType.toString() == "_File"
+                              ? Image.file(userModel!.display).image
+                              : Image.network(imge).image,
                       onBackgroundImageError: (exception, context) {
                         print('${userModel!.display} Cannot be loaded');
                       },
