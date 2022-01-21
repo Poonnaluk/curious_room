@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:curious_room/Models/PostHistory.dart';
+import 'package:curious_room/Views/comment/commentPage.dart';
 import 'package:curious_room/Views/room/postHistory.dart';
 import 'package:curious_room/Views/utility/alertDialog.dart';
 import 'package:curious_room/Views/utility/finishDialog.dart';
@@ -442,16 +443,28 @@ class _RoomPageState extends State<RoomPage> {
                                                       },
                                                       child: Row(
                                                         children: [
-                                                          Text(
-                                                            'เพิ่มคำตอบของคุณ...',
-                                                            style: TextStyle(
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        176,
-                                                                        162,
-                                                                        148,
-                                                                        1)),
-                                                          )
+                                                          GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                  builder: (_) {
+                                                                    return CommentPage(
+                                                                        postId:
+                                                                            value[index].id);
+                                                                  },
+                                                                ));
+                                                              },
+                                                              child: Text(
+                                                                'เพิ่มคำตอบของคุณ...',
+                                                                style: TextStyle(
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                            176,
+                                                                            162,
+                                                                            148,
+                                                                            1)),
+                                                              ))
                                                         ],
                                                       ),
                                                     )

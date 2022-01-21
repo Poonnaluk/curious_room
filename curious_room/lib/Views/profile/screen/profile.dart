@@ -144,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Container(
               padding: EdgeInsets.only(top: 50),
-              height: screenh(context, 0.35),
+              height: screenh(context, 0.40),
               width: screenw(context, 1),
               decoration: BoxDecoration(
                 color: pinkColor,
@@ -177,7 +177,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           ? Image.file(widget.userModel!.display).image
                           : Image.network(widget.userModel!.display.toString())
                               .image,
-                      child: owner ? ButtonEditDisplay() : SizedBox(),
+                      child: owner && widget.userModel!.role != 'ADMIN'
+                          ? ButtonEditDisplay()
+                          : SizedBox(),
                     ),
                   ),
                   SizedBox(
@@ -189,11 +191,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       _clickChanged
                           ? buildDisplayNameField()
                           : Text(
-                              owner ? '$subname...' : widget.userModel!.name,
+                              owner && widget.userModel!.role != 'ADMIN'
+                                  ? '$subname...'
+                                  : widget.userModel!.name,
                               style:
                                   TextStyle(fontSize: 20, color: Colors.white),
                             ),
-                      owner
+                      owner && widget.userModel!.role != 'ADMIN'
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

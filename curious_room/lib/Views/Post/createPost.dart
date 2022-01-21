@@ -85,8 +85,14 @@ class _CreatePostState extends State<CreatePost> {
                           scale: 1.4,
                           child: CircleAvatar(
                             backgroundColor: Color.fromRGBO(255, 255, 255, 0),
-                            backgroundImage:
-                                Image.network(widget.userModel.display).image,
+                            backgroundImage: widget
+                                        .userModel.display.runtimeType
+                                        .toString() ==
+                                    "_File"
+                                ? Image.file(widget.userModel.display).image
+                                : Image.network(
+                                        widget.userModel.display.toString())
+                                    .image,
                             radius: 17,
                           ),
                         ),
@@ -212,6 +218,21 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 
+
+
+  Future chooseImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemporary = File(image.path);
+      setState(() {
+        this.image = imageTemporary;
+      });
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   Widget _buildButtonCreate() {
     return Container(
       padding: EdgeInsets.all(8),
@@ -265,18 +286,5 @@ class _CreatePostState extends State<CreatePost> {
         ),
       ),
     );
-  }
-
-  Future chooseImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      final imageTemporary = File(image.path);
-      setState(() {
-        this.image = imageTemporary;
-      });
-    } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
-    }
   }
 }
