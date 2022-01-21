@@ -22,46 +22,67 @@ class PostModel {
       required this.userId,
       required this.roomId,
       this.statusPost,
-      required this.createdAt,
+      this.createdAt,
       this.updatedAt,
       this.commentId,
       required this.userPost,
-      required this.postHistory});
+      this.postHistory,
+      this.statist});
 
   int? id;
-  int userId;
+  dynamic userId;
   int roomId;
   String? statusPost;
-  DateTime createdAt;
+  dynamic createdAt;
   DateTime? updatedAt;
   int? commentId;
   late UserModel userPost;
-  late List<PostHistoryModel> postHistory;
+  List<PostHistoryModel>? postHistory;
+  int? statist;
+  // Map<String, int>? countPost;
 
   factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
         id: json["id"],
+        commentId: json["commentId"],
         userId: json["userId"],
         roomId: json["roomId"],
         statusPost: json["statusPost"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
-        commentId: json["commentId"],
+        createdAt: json["createdAt"] == null
+            ? null
+            : DateTime.parse(json["createdAt"]),
+        updatedAt: json["updatedAt"] == null
+            ? null
+            : DateTime.parse(json["updatedAt"]),
         userPost: UserModel.fromJson(
             json["user_post"] == null ? {} : json["user_post"]),
-        postHistory: List<PostHistoryModel>.from(
-            json["post_history"].map((x) => PostHistoryModel.fromJson(x))),
+        postHistory: json["post_history"] == null
+            ? null
+            : List<PostHistoryModel>.from(
+                json["post_history"].map((x) => PostHistoryModel.fromJson(x))),
+        statist: json["statist"],
+        // countPost: json["count_post"] == null
+        //     ? null
+        //     : Map.from(json["count_post"])
+        //         .map((k, v) => MapEntry<String, int>(k, v)),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "commentId": commentId,
         "userId": userId,
         "roomId": roomId,
         "statusPost": statusPost,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt!.toIso8601String(),
-        "commentId": commentId,
+        "createdAt": createdAt == null ? null : createdAt!.toIso8601String(),
+        "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
         "user_post": userPost.toJson(),
-        "post_history": List<dynamic>.from(postHistory.map((x) => x.toJson())),
+        "post_history": postHistory == null
+            ? null
+            : List<dynamic>.from(postHistory!.map((x) => x.toJson())),
+        "statist": statist,
+        // "count_post": countPost == null
+        //     ? null
+        //     : Map.from(countPost!)
+        //         .map((k, v) => MapEntry<String, dynamic>(k, v)),
       };
 }
 
@@ -167,6 +188,21 @@ Future<bool> deletePost(int postid) async {
     return true;
   } else if (res.statusCode == 500) {
     return false;
+  } else {
+    throw Exception('Failed to delete post');
+  }
+}
+
+Future<List<PostModel>> getStatistPost(int roomid) async {
+  String apiUrl = "http://192.168.1.42:8000/room/stat/$roomid";
+
+  var res = await http.get(Uri.parse(apiUrl));
+  if (res.statusCode == 200) {
+    Iterable l = json.decode(res.body);
+    List<PostModel> postModel = l.map((g) => PostModel.fromJson(g)).toList();
+    return postModel;
+  } else if (res.statusCode == 500) {
+    return [];
   } else {
     throw Exception('Failed to delete post');
   }

@@ -161,6 +161,7 @@ class _CreatePostState extends State<CreatePost> {
                           ),
                         ])
                       : Column(
+                
                           children: [
                             Align(
                               alignment: Alignment.bottomCenter,
