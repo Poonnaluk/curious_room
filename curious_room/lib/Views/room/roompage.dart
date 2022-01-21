@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:curious_room/Models/PostHistory.dart';
+import 'package:curious_room/Views/room/statisticRoom.dart';
 import 'package:curious_room/Views/room/postHistory.dart';
 import 'package:curious_room/Views/utility/alertDialog.dart';
 import 'package:curious_room/Views/utility/finishDialog.dart';
@@ -123,7 +124,11 @@ class _RoomPageState extends State<RoomPage> {
               scale: 0.8,
               child: IconButton(
                 onPressed: () {
-                  // Navigator.of(context).push();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              StatisticPage(roomid: room.id)));
                 },
                 icon: Image.asset(
                   'assets/icons/stat_icon.png',
@@ -206,9 +211,11 @@ class _RoomPageState extends State<RoomPage> {
                                         itemBuilder: (context, index) {
                                           //เปลี่ยนไทม์โซน
                                           String time = DateFormat('Hm').format(
-                                              value[index].createdAt.toLocal());
+                                              value[index]
+                                                  .createdAt!
+                                                  .toLocal());
                                           String date =
-                                              '${DateFormat.yMMMd().format(value[index].createdAt.toLocal())}';
+                                              '${DateFormat.yMMMd().format(value[index].createdAt!.toLocal())}';
                                           //เช็คความยาวชื่อ
                                           nameLenght =
                                               (value[index].userPost.name)
@@ -352,8 +359,8 @@ class _RoomPageState extends State<RoomPage> {
                                                                             context,
                                                                             value[index].id!,
                                                                             value[index].userPost,
-                                                                            value[index].postHistory.first.content,
-                                                                            value[index].postHistory.first.image.toString(),
+                                                                            value[index].postHistory!.first.content,
+                                                                            value[index].postHistory!.first.image.toString(),
                                                                             isownerroom,
                                                                             isownerpost,
                                                                             isAdmin);
@@ -375,7 +382,7 @@ class _RoomPageState extends State<RoomPage> {
                                                                             .w),
                                                                 child: Text(
                                                                   value[index]
-                                                                      .postHistory
+                                                                      .postHistory!
                                                                       .first
                                                                       .content,
                                                                   maxLines: 5,
@@ -387,7 +394,7 @@ class _RoomPageState extends State<RoomPage> {
                                                       ],
                                                     ),
                                                     value[index]
-                                                                .postHistory
+                                                                .postHistory!
                                                                 .first
                                                                 .image ==
                                                             null
@@ -399,7 +406,7 @@ class _RoomPageState extends State<RoomPage> {
                                                                 child: Image(
                                                                   image: NetworkImage(value[
                                                                           index]
-                                                                      .postHistory
+                                                                      .postHistory!
                                                                       .first
                                                                       .image
                                                                       .toString()),
@@ -413,7 +420,7 @@ class _RoomPageState extends State<RoomPage> {
                                                                 return ImageScreen(
                                                                   uri: value[
                                                                           index]
-                                                                      .postHistory
+                                                                      .postHistory!
                                                                       .first
                                                                       .image
                                                                       .toString(),
