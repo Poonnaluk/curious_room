@@ -194,7 +194,7 @@ Future<bool> deletePost(int postid) async {
 }
 
 Future<List<PostModel>> getStatistPost(int roomid) async {
-  String apiUrl = "http://192.168.1.42:8000/room/stat/$roomid";
+  String apiUrl = "http://147.182.209.40/room/stat/$roomid";
 
   var res = await http.get(Uri.parse(apiUrl));
   if (res.statusCode == 200) {

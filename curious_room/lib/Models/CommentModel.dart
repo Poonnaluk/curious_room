@@ -105,3 +105,45 @@ Future<List<CommentModel>> getComment(int postId) async {
     throw Exception('Failed to get post');
   }
 }
+
+Future<dynamic> createComment(int? postid, int userid, String content) async {
+  final url = "http://147.182.209.40/comment";
+  print(url);
+  final body =
+      jsonEncode({"postId": postid, "userId": userid, "content": content});
+  final response = await http.post(Uri.parse(url),
+      body: body,
+      headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to create comment.');
+  }
+}
+
+Future<bool> delComment(int commentid) async {
+  final url = "http://147.182.209.40/comment/delete/$commentid";
+  final res = await http.put(Uri.parse(url));
+  if (res.statusCode == 200) {
+    return true;
+  } else if (res.statusCode == 500) {
+    return false;
+  } else {
+    throw Exception('Failed to delete comment.');
+  }
+}
+
+Future<bool> editComment(int commentid, String content) async {
+  final url = "http://147.182.209.40/comment/edit";
+  final body = jsonEncode({"commentId": commentid, "content": content});
+  final res = await http.put(Uri.parse(url),
+      body: body,
+      headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
+  if (res.statusCode == 200) {
+    return true;
+  } else if (res.statusCode == 500) {
+    return false;
+  } else {
+    throw Exception('Failed to edit comment.');
+  }
+}
