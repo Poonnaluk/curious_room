@@ -90,7 +90,7 @@ class _CommentPageState extends State<CommentPage> {
                 child: Container(
                     height: isTextFiledFocus ? 45.h : 75.h,
                     child: getAllComment(context))),
-            usermodel!.role == 'USER'
+            usermodel!.role == 'USER' && _clickChanged == false
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -170,7 +170,6 @@ class _CommentPageState extends State<CommentPage> {
   Widget buildDisplayNameField(int commentid, String content) {
     // final value = commentlist!.indexWhere(
     //     (element) => element.commentHistory.first.content == content);
-    editController.text = content;
     return Row(
       children: [
         Container(
@@ -180,7 +179,6 @@ class _CommentPageState extends State<CommentPage> {
             maxLines: 3,
             controller: editController,
             onChanged: (hasvalue) {
-              print(hasvalue);
               setState(() {
                 if (hasvalue != content && hasvalue != "") {
                   isTextFiledFocus = true;
@@ -202,11 +200,11 @@ class _CommentPageState extends State<CommentPage> {
             size: 5.w,
           ),
           onPressed: () async {
-            if (isTextFiledFocus) {
-              bool success = await editComment(commentid, content);
+            if (isTextFiledFocus && editController.text != content) {
+              bool success = await editComment(commentid, editController.text);
               if (success) {
-                refreashData();
                 setState(() {
+                  refreashData();
                   isTextFiledFocus = false;
                   _clickChanged = false;
                 });
@@ -364,6 +362,7 @@ class _CommentPageState extends State<CommentPage> {
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16.sp),
+                                              maxLines: 5,
                                             ),
                                             commentlist![index]
                                                         .userComment
@@ -381,7 +380,11 @@ class _CommentPageState extends State<CommentPage> {
                                                           context,
                                                           index,
                                                           commentlist![index]
-                                                              .id);
+                                                              .id,
+                                                          commentlist![index]
+                                                              .commentHistory
+                                                              .first
+                                                              .content);
                                                     },
                                                   )
                                                 : SizedBox()
@@ -429,7 +432,7 @@ class _CommentPageState extends State<CommentPage> {
     }
   }
 
-  moreButton(BuildContext context, int index, int commentid) {
+  moreButton(BuildContext context, int index, int commentid, String content) {
     bool isSuccess;
     return showModalBottomSheet(
       context: context,
@@ -443,6 +446,7 @@ class _CommentPageState extends State<CommentPage> {
                       Navigator.pop(context);
                       idxEdit = index;
                       _clickChanged = true;
+                      editController.text = content;
                     },
                     child: themeMoreButton(
                         'assets/icons/edit_icon.png', 'แก้ไข', 16)),
