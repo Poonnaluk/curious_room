@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:curious_room/Models/PostHistory.dart';
+import 'package:curious_room/Models/VoteModel.dart';
 import 'package:curious_room/Views/room/statisticRoom.dart';
 import 'package:curious_room/Views/comment/commentPage.dart';
 import 'package:curious_room/Views/room/postHistory.dart';
@@ -39,10 +40,8 @@ class RoomPage extends StatefulWidget {
 
 class _RoomPageState extends State<RoomPage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-
   late Future<List<PostModel>> future;
   late List<PostModel> value;
-
   late RoomModel room;
   // resposive
   late double screenw;
@@ -58,20 +57,31 @@ class _RoomPageState extends State<RoomPage> {
   get async => null;
   bool isLoading = false;
   Future<List<PostHistoryModel>> history = Future.value([]);
-  // late List<PostHistoryModel> history;
+  //เก็บสถานะการโหวต
+  List<dynamic> myListVote = [];
 
   @override
   void initState() {
     super.initState();
     future = getPost(widget.roomModel.id);
     room = widget.roomModel;
+    //เรียกสถานะการโหวตแต่ละโพสต์ของผู้ใช้
+    listStatus(widget.roomModel.id, widget.userModel.id).then((value) => {
+          if (value.listVoteStatus!.isNotEmpty)
+            {myListVote = value.listVoteStatus!}
+        });
   }
 
   Future<dynamic> refreshData() async {
+    myListVote.clear();
     try {
       future = await Future.value(getPost(widget.roomModel.id));
+      await listStatus(widget.roomModel.id, widget.userModel.id)
+          .then((value) => {myListVote = value.listVoteStatus!});
     } finally {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -206,9 +216,8 @@ class _RoomPageState extends State<RoomPage> {
                                     );
                                   } else if (snapshot.hasData) {
                                     value = snapshot.data!;
-                                    print(value);
                                     return ListView.builder(
-                                        itemCount: value.length,
+                                        itemCount: value.length - 1,
                                         itemBuilder: (context, index) {
                                           //เปลี่ยนไทม์โซน
                                           String time = DateFormat('Hm').format(
@@ -238,7 +247,6 @@ class _RoomPageState extends State<RoomPage> {
                                           widget.userModel.role == "USER"
                                               ? isAdmin = false
                                               : isAdmin = true;
-
                                           return ListTile(
                                             visualDensity: VisualDensity(
                                                 horizontal: -4, vertical: -4),
@@ -259,25 +267,81 @@ class _RoomPageState extends State<RoomPage> {
                                                 child: Column(
                                                   children: [
                                                     Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                      crossAxisAlignment: widget
+                                                                  .userModel
+                                                                  .role ==
+                                                              "USER"
+                                                          ? CrossAxisAlignment
+                                                              .start
+                                                          : CrossAxisAlignment
+                                                              .center,
                                                       children: [
                                                         Column(
                                                           children: [
-                                                            IconButton(
-                                                              icon: Image.asset(
-                                                                  'assets/icons/upvote_gray.png'),
-                                                              iconSize: 30,
-                                                              onPressed: () {},
+                                                            widget.userModel
+                                                                        .role ==
+                                                                    "USER"
+                                                                ? IconButton(
+                                                                    icon: myListVote[index] ==
+                                                                            1
+                                                                        ? Image.asset(
+                                                                            'assets/icons/upvote.png')
+                                                                        : Image.asset(
+                                                                            'assets/icons/upvote_gray.png'),
+                                                                    iconSize:
+                                                                        30,
+                                                                    onPressed:
+                                                                        () async {
+                                                                      //ส่งค่าการโหวตแล้วรีเฟรข
+                                                                      await voteScore(
+                                                                              1,
+                                                                              widget.userModel.id,
+                                                                              value[index].id)
+                                                                          .then((value) => refreshData());
+                                                                    },
+                                                                  )
+                                                                : SizedBox(),
+                                                            Container(
+                                                              margin: widget
+                                                                          .userModel
+                                                                          .role ==
+                                                                      "USER"
+                                                                  ? EdgeInsets
+                                                                      .all(0)
+                                                                  : EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              20,
+                                                                          right:
+                                                                              20),
+                                                              child: Text(value
+                                                                  .last
+                                                                  .score![index]
+                                                                  .toString()),
                                                             ),
-                                                            Text('0'),
-                                                            IconButton(
-                                                              icon: Image.asset(
-                                                                  'assets/icons/downvote_gray.png'),
-                                                              iconSize: 30,
-                                                              onPressed: () {},
-                                                            ),
+                                                            widget.userModel
+                                                                        .role ==
+                                                                    "USER"
+                                                                ? IconButton(
+                                                                    icon: myListVote[index] ==
+                                                                            0
+                                                                        ? Image.asset(
+                                                                            'assets/icons/downvote.png')
+                                                                        : Image.asset(
+                                                                            'assets/icons/downvote_gray.png'),
+                                                                    iconSize:
+                                                                        30,
+                                                                    onPressed:
+                                                                        () async {
+                                                                      //ส่งค่าการโหวตแล้วรีเฟรข
+                                                                      await voteScore(
+                                                                              0,
+                                                                              widget.userModel.id,
+                                                                              value[index].id)
+                                                                          .then((value) => refreshData());
+                                                                    },
+                                                                  )
+                                                                : SizedBox(),
                                                           ],
                                                         ),
                                                         Flexible(
@@ -360,8 +424,8 @@ class _RoomPageState extends State<RoomPage> {
                                                                             context,
                                                                             value[index].id!,
                                                                             value[index].userPost,
-                                                                            value[index].postHistory!.first.content,
-                                                                            value[index].postHistory!.first.image.toString(),
+                                                                            value[index].postHistory!.content,
+                                                                            value[index].postHistory!.image.toString(),
                                                                             isownerroom,
                                                                             isownerpost,
                                                                             isAdmin);
@@ -384,7 +448,6 @@ class _RoomPageState extends State<RoomPage> {
                                                                 child: Text(
                                                                   value[index]
                                                                       .postHistory!
-                                                                      .first
                                                                       .content,
                                                                   maxLines: 5,
                                                                 ),
@@ -396,7 +459,6 @@ class _RoomPageState extends State<RoomPage> {
                                                     ),
                                                     value[index]
                                                                 .postHistory!
-                                                                .first
                                                                 .image ==
                                                             null
                                                         ? Container()
@@ -408,7 +470,6 @@ class _RoomPageState extends State<RoomPage> {
                                                                   image: NetworkImage(value[
                                                                           index]
                                                                       .postHistory!
-                                                                      .first
                                                                       .image
                                                                       .toString()),
                                                                 )),
@@ -422,7 +483,6 @@ class _RoomPageState extends State<RoomPage> {
                                                                   uri: value[
                                                                           index]
                                                                       .postHistory!
-                                                                      .first
                                                                       .image
                                                                       .toString(),
                                                                 );
@@ -436,18 +496,7 @@ class _RoomPageState extends State<RoomPage> {
                                                           176, 162, 148, 1),
                                                     ),
                                                     TextButton(
-                                                      onPressed: () {
-                                                        // print(isownerpost ||
-                                                        //     isownerroom ||
-                                                        //     isAdmin);
-                                                        // print(isownerpost);
-                                                        // print(
-                                                        //     "userPOst = ${value[index].userPost.id}");
-                                                        // print(
-                                                        //     "ownerpost = ${value[index].userPost.id}");
-                                                        // print(
-                                                        //     "images = ${value[index].postHistory.first.image.toString()}");
-                                                      },
+                                                      onPressed: () {},
                                                       child: Row(
                                                         children: [
                                                           GestureDetector(
