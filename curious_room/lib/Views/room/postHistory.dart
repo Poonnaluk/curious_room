@@ -22,7 +22,6 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -70,9 +69,9 @@ class _HistoryPageState extends State<HistoryPage> {
                       itemCount: value.length,
                       itemBuilder: (context, index) {
                         String time = DateFormat('Hm')
-                            .format(value[index].createdAt.toLocal());
+                            .format(value[index].createdAt!.toLocal());
                         String date =
-                            '${DateFormat.yMMMd().format(value[index].createdAt.toLocal())}';
+                            '${DateFormat.yMMMd().format(value[index].createdAt!.toLocal())}';
                         return ListTile(
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
