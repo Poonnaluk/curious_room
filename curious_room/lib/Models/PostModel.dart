@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final postModel = postModelFromJson(jsonString);
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:curious_room/Models/PostHistory.dart';
@@ -20,24 +16,25 @@ class PostModel {
   PostModel(
       {this.id,
       required this.userId,
-      required this.roomId,
+      this.roomId,
       this.statusPost,
       this.createdAt,
       this.updatedAt,
       required this.userPost,
       this.postHistory,
-      this.statist});
+      this.statist,
+      this.score});
 
   int? id;
   dynamic userId;
-  int roomId;
+  int? roomId;
   String? statusPost;
   dynamic createdAt;
   DateTime? updatedAt;
   late UserModel userPost;
-  List<PostHistoryModel>? postHistory;
+  PostHistoryModel? postHistory;
   int? statist;
-  // Map<String, int>? countPost;
+  List<int>? score;
 
   factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
         id: json["id"],
@@ -52,15 +49,12 @@ class PostModel {
             : DateTime.parse(json["updatedAt"]),
         userPost: UserModel.fromJson(
             json["user_post"] == null ? {} : json["user_post"]),
-        postHistory: json["post_history"] == null
-            ? null
-            : List<PostHistoryModel>.from(
-                json["post_history"].map((x) => PostHistoryModel.fromJson(x))),
+        postHistory: PostHistoryModel.fromJson(
+            json["post_history"] == null ? {} : json["post_history"]),
         statist: json["statist"],
-        // countPost: json["count_post"] == null
-        //     ? null
-        //     : Map.from(json["count_post"])
-        //         .map((k, v) => MapEntry<String, int>(k, v)),
+        score: json["score"] == null
+            ? null
+            : List<int>.from(json["score"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -71,28 +65,22 @@ class PostModel {
         "createdAt": createdAt == null ? null : createdAt!.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
         "user_post": userPost.toJson(),
-        "post_history": postHistory == null
-            ? null
-            : List<dynamic>.from(postHistory!.map((x) => x.toJson())),
+        "post_history": postHistory == null ? null : postHistory!.toJson(),
         "statist": statist,
-        // "count_post": countPost == null
-        //     ? null
-        //     : Map.from(countPost!)
-        //         .map((k, v) => MapEntry<String, dynamic>(k, v)),
+        "score":
+            score == null ? null : List<dynamic>.from(score!.map((x) => x)),
       };
 }
 
 Future<List<PostModel>> getPost(int roomId) async {
-  final String url = "http://147.182.209.40/post/$roomId";
-  // final String url = "http://147.182.209.40/post/$roomId";
+  final String url = "http://192.168.1.36:8000/post/$roomId";
   print(url);
+  // final String url = "http://147.182.209.40/post/$roomId";
   final res = await http.get(Uri.parse(url));
   if (res.statusCode == 200) {
     Iterable l = json.decode(res.body);
     List<PostModel> postModel = l.map((g) => PostModel.fromJson(g)).toList();
     return postModel;
-    // Map<String, dynamic> map = json.decode(res.body);
-    // List<dynamic> data = map["post_history"];
   } else if (res.statusCode == 500) {
     return [];
   } else {
