@@ -68,7 +68,8 @@ Future<String> voteScore(int status, int userId, postId) async {
 }
 
 Future<VoteModel> listStatus(int roomId, int userId) async {
-  final apiUrl = 'http://147.182.209.40/vote/room/post';
+  final apiUrl = 'http://192.168.1.36:8000/vote/room/post';
+  // final apiUrl = 'http://147.182.209.40/vote/room/post';
   String body = jsonEncode(<String, int>{"roomId": roomId, "userId": userId});
   final res = await http.post(Uri.parse(apiUrl),
       body: body,
