@@ -1,6 +1,9 @@
 import 'package:curious_room/Models/ParticipateModel.dart';
 import 'package:curious_room/Models/RoomModel.dart';
 import 'package:curious_room/Models/UserModel.dart';
+import 'package:curious_room/Views/Style/color.dart';
+import 'package:curious_room/Views/Style/textStyle.dart';
+import 'package:curious_room/Views/profile/screen/profile.dart';
 import 'package:curious_room/controllers/roomController.dart';
 import 'package:curious_room/Views/utility/alertDialog.dart';
 import 'package:curious_room/Views/utility/finishDialog.dart';
@@ -81,7 +84,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
           leading: IconButton(
             icon: Icon(Icons.chevron_left),
             onPressed: () => Navigator.pop(context, roomName),
-            color: Color.fromRGBO(124, 124, 124, 1),
+            color: grayColor,
             iconSize: 50,
           ),
           actions: [
@@ -111,22 +114,24 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        roomName,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 21.sp),
+                      Flexible(
+                        child: Text(
+                          roomName,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              color: Color.fromRGBO(69, 171, 157, 1.0),
+                              fontSize: 21.sp),
+                        ),
                       ),
                       Row(
                         children: [
                           Text(
                             'รหัสเข้าร่วม',
                             textAlign: TextAlign.right,
-                            style: TextStyle(
-                                color: Color.fromRGBO(69, 171, 157, 1.0),
-                                fontSize: 16.sp),
+                            style:
+                                TextStyle(color: greenColor, fontSize: 16.sp),
                           ),
                           SizedBox(
                             width: 1.w,
@@ -162,9 +167,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     children: [
                       Text(
                         "เจ้าของ",
-                        style: TextStyle(
-                            color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 18.sp),
+                        style: greenTextStyle(18.sp),
                       ),
                     ],
                   ),
@@ -173,7 +176,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                   ),
                   Container(
                     height: 1.5,
-                    color: Color.fromRGBO(69, 171, 157, 1.0),
+                    color: greenColor,
                   ),
                   SizedBox(
                     height: screenh * 0.015,
@@ -196,10 +199,21 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                       SizedBox(
                         width: screenw * 0.045,
                       ),
-                      Text(
-                        widget.ownerModel.name,
-                        style: textStyle(),
-                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePage(
+                                        userModel: (widget.ownerModel),
+                                        page: 'about',
+                                      )));
+                        },
+                        child: Text(
+                          widget.ownerModel.name,
+                          style: normalTextStyle(17.sp),
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(
@@ -209,9 +223,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                     children: [
                       Text(
                         "เพื่อนร่วมห้อง",
-                        style: TextStyle(
-                            color: Color.fromRGBO(69, 171, 157, 1.0),
-                            fontSize: 18.sp),
+                        style: greenTextStyle(18.sp),
                       ),
                     ],
                   ),
@@ -220,7 +232,7 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                   ),
                   Container(
                     height: 1.5,
-                    color: Color.fromRGBO(69, 171, 157, 1.0),
+                    color: greenColor,
                   ),
                   SizedBox(
                     height: screenh * 0.008,
@@ -237,90 +249,69 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
   }
 
   _buildDialog(BuildContext context) {
-    return showGeneralDialog(
-      barrierDismissible: true,
-      transitionDuration: Duration(milliseconds: 500),
-      barrierLabel: "",
-      context: context,
-      pageBuilder: (context, a1, a2) {
-        return Dialog(
-            insetPadding: owner
-                ? EdgeInsets.only(top: screenh * 0.745)
-                : EdgeInsets.only(top: screenh * 0.83),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  owner
-                      ? InkWell(
-                          child: _buildSelections(
-                              iconAsset: 'assets/icons/edit_icon.png',
-                              name: "แก้ไขชื่อห้อง"),
-                          onTap: () async {
-                            showDialog(
-                                context: context,
-                                builder: (_) => EditRoom(
-                                      roomname: widget.roomModel.name,
-                                      roomid: widget.roomModel.id,
-                                    )).then((value) {
-                              if (value != null) {
-                                print('room name >> $value');
-                                setState(() {
-                                  roomName = value.toString();
-                                });
-                                Navigator.pop(context);
-                              }
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Wrap(
+            children: [
+              owner
+                  ? InkWell(
+                      child: _buildSelections(
+                          iconAsset: 'assets/icons/edit_icon.png',
+                          name: "แก้ไขชื่อห้อง"),
+                      onTap: () async {
+                        showDialog(
+                            context: context,
+                            builder: (_) => EditRoom(
+                                  roomname: widget.roomModel.name,
+                                  roomid: widget.roomModel.id,
+                                )).then((value) {
+                          if (value != null) {
+                            print('room name >> $value');
+                            setState(() {
+                              roomName = value.toString();
                             });
-                          },
-                        )
-                      : SizedBox(
-                          height: 0.0,
-                        ),
-                  InkWell(
-                    child: _buildSelections(
-                        iconAsset: 'assets/icons/delete_user_icon.png',
-                        name: "ลบสมาชิก"),
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(new MaterialPageRoute(
-                              builder: (context) => new DeleteParticipate(
-                                  roomid: widget.roomModel.id)))
-                          .then((onGoBack));
-                    },
-                  ),
-                  InkWell(
-                    child: _buildSelections(
-                        iconAsset: 'assets/icons/delete_icon.png',
-                        name: "ลบห้อง"),
-                    onTap: () {
-                      confirmDialog(context,
-                              'หากคุณลบห้อง ข้อมูลโพสต์ คะแนนโหวต สมาชิกและสถิตของห้องนี้จะหายไป')
-                          .then((data) async {
-                        print('value >> $data');
-                        if (data == 'true') {
-                          await roomController.deleteRoom(widget.roomModel.id);
-                          await successDialog(context, 'ลบห้องสำเร็จ');
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => FirstPage()),
-                              (Route<dynamic> route) => false);
-                        }
-                      });
-                    },
-                  )
-                ],
+                            Navigator.pop(context);
+                          }
+                        });
+                      },
+                    )
+                  : SizedBox(
+                      height: 0.0,
+                    ),
+              InkWell(
+                child: _buildSelections(
+                    iconAsset: 'assets/icons/delete_user_icon.png',
+                    name: "ลบสมาชิก"),
+                onTap: () {
+                  Navigator.of(context)
+                      .push(new MaterialPageRoute(
+                          builder: (context) => new DeleteParticipate(
+                              roomid: widget.roomModel.id)))
+                      .then((onGoBack));
+                },
               ),
-            ));
-      },
-      transitionBuilder: (context, anim1, anim2, child) {
-        return SlideTransition(
-          position:
-              Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
-          child: child,
-        );
-      },
-    );
+              InkWell(
+                child: _buildSelections(
+                    iconAsset: 'assets/icons/delete_icon.png', name: "ลบห้อง"),
+                onTap: () {
+                  confirmDialog(context,
+                          'หากคุณลบห้อง ข้อมูลโพสต์ คะแนนโหวต สมาชิกและสถิตของห้องนี้จะหายไป')
+                      .then((data) async {
+                    print('value >> $data');
+                    if (data == 'true') {
+                      await roomController.deleteRoom(widget.roomModel.id);
+                      await successDialog(context, 'ลบห้องสำเร็จ');
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => FirstPage()),
+                          (Route<dynamic> route) => false);
+                    }
+                  });
+                },
+              )
+            ],
+          );
+        });
   }
 
   Widget _buildSelections({String? iconAsset, String? name}) {
@@ -349,10 +340,6 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
         ]);
   }
 
-  TextStyle textStyle() {
-    return TextStyle(color: Color.fromRGBO(0, 0, 0, 0.6), fontSize: 17.sp);
-  }
-
   getParticipates(BuildContext context) {
     return FutureBuilder<List<ParticipateModel>>(
         future: future,
@@ -369,19 +356,31 @@ class _AboutRoomPageState extends State<AboutRoomPage> {
                 itemCount: value!.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-                    leading: CircleAvatar(
-                      backgroundColor: Color.fromRGBO(255, 255, 255, 0),
-                      backgroundImage: Image.network(
-                              (value?[index].userParticipate?.display)
-                                  .toString())
-                          .image,
-                      radius: 15,
-                    ),
-                    title: Text(
-                        (value?[index].userParticipate?.name).toString(),
-                        style: textStyle()),
-                  );
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      leading: CircleAvatar(
+                        backgroundColor: Color.fromRGBO(255, 255, 255, 0),
+                        backgroundImage: Image.network(
+                                (value?[index].userParticipate?.display)
+                                    .toString())
+                            .image,
+                        radius: 15,
+                      ),
+                      title: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePage(
+                                        userModel:
+                                            (value?[index].userParticipate),
+                                        page: 'about',
+                                      )),
+                            );
+                          },
+                          child: Text(
+                              (value?[index].userParticipate?.name).toString(),
+                              style: normalTextStyle(17.sp))));
                 });
           }
           return Center(

@@ -260,7 +260,6 @@ class _FirstPageState extends State<FirstPage> {
                           ),
                         ),
                       )),
-                      
                       isLoading
                           ? Center(child: CircularProgressIndicator())
                           : IconButton(
@@ -283,11 +282,8 @@ class _FirstPageState extends State<FirstPage> {
                                         .showSnackBar(snackBar);
                                   } else {
                                     roomWithOwnerUser = futureRoom;
-                                    print(widget.info.id.toString() +
-                                        roomWithOwnerUser[0].id.toString());
                                     futrueParti = await createParticipate(
-                                        widget.info.id,
-                                        roomWithOwnerUser[0].id);
+                                        userModel!.id, roomWithOwnerUser[0].id);
                                     if (futrueParti == null) {
                                       Navigator.of(context).pushReplacement(
                                           new MaterialPageRoute(
@@ -295,7 +291,7 @@ class _FirstPageState extends State<FirstPage> {
                                                   name: '/roompage'),
                                               builder: (context) =>
                                                   new RoomPage(
-                                                    userModel: userModel,
+                                                    userModel: userModel!,
                                                     roomModel:
                                                         roomWithOwnerUser[0],
                                                     ownerModel:

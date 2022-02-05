@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:curious_room/Models/UserModel.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -17,5 +18,9 @@ class LoginController extends GetxController {
 
   updateDisplayname(int id, String name, dynamic img) async {
     await updateUserName(id, name, img);
+  }
+
+  updateDisplay(int id, String name, File? imgFile) async {
+    await updateUserName(id, "", imgFile);
   }
 }

@@ -1,5 +1,9 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:curious_room/Models/PostHistory.dart';
+import 'package:curious_room/Views/room/statisticRoom.dart';
+import 'package:curious_room/Views/comment/commentPage.dart';
+import 'package:curious_room/Views/room/postHistory.dart';
 import 'package:curious_room/Views/utility/alertDialog.dart';
 import 'package:curious_room/Views/utility/finishDialog.dart';
 import 'package:curious_room/Views/utility/showImage.dart';
@@ -35,8 +39,10 @@ class RoomPage extends StatefulWidget {
 
 class _RoomPageState extends State<RoomPage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   late Future<List<PostModel>> future;
   late List<PostModel> value;
+
   late RoomModel room;
   // resposive
   late double screenw;
@@ -47,8 +53,12 @@ class _RoomPageState extends State<RoomPage> {
 //เช็ค role
   bool isownerpost = false;
   bool isownerroom = false;
+  bool isAdmin = false;
+  //เช็คเคยแก้ไขหรือไม่
   get async => null;
   bool isLoading = false;
+  Future<List<PostHistoryModel>> history = Future.value([]);
+  // late List<PostHistoryModel> history;
 
   @override
   void initState() {
@@ -57,9 +67,12 @@ class _RoomPageState extends State<RoomPage> {
     room = widget.roomModel;
   }
 
-  Future<void> refreshData() async {
-    future = getPost(widget.roomModel.id);
-    setState(() {});
+  Future<dynamic> refreshData() async {
+    try {
+      future = await Future.value(getPost(widget.roomModel.id));
+    } finally {
+      setState(() {});
+    }
   }
 
   void isloadingNow(bool loadNow) {
@@ -112,7 +125,11 @@ class _RoomPageState extends State<RoomPage> {
               scale: 0.8,
               child: IconButton(
                 onPressed: () {
-                  // Navigator.of(context).push();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              StatisticPage(roomid: room.id)));
                 },
                 icon: Image.asset(
                   'assets/icons/stat_icon.png',
@@ -169,6 +186,12 @@ class _RoomPageState extends State<RoomPage> {
                     ),
                     chooseNew == true
                         ? Expanded(
+                            child: RefreshIndicator(
+                            onRefresh: () async {
+                              await refreshData();
+                              await Future.delayed(
+                                  Duration(milliseconds: 1000));
+                            },
                             child: FutureBuilder<List<PostModel>>(
                                 future: future,
                                 builder: (context, snapshot) {
@@ -189,9 +212,11 @@ class _RoomPageState extends State<RoomPage> {
                                         itemBuilder: (context, index) {
                                           //เปลี่ยนไทม์โซน
                                           String time = DateFormat('Hm').format(
-                                              value[index].createdAt.toLocal());
+                                              value[index]
+                                                  .createdAt!
+                                                  .toLocal());
                                           String date =
-                                              '${DateFormat.yMMMd().format(value[index].createdAt.toLocal())}';
+                                              '${DateFormat.yMMMd().format(value[index].createdAt!.toLocal())}';
                                           //เช็คความยาวชื่อ
                                           nameLenght =
                                               (value[index].userPost.name)
@@ -210,6 +235,10 @@ class _RoomPageState extends State<RoomPage> {
                                                   value[index].userPost.id
                                               ? isownerpost = true
                                               : isownerpost = false;
+                                          widget.userModel.role == "USER"
+                                              ? isAdmin = false
+                                              : isAdmin = true;
+
                                           return ListTile(
                                             visualDensity: VisualDensity(
                                                 horizontal: -4, vertical: -4),
@@ -258,45 +287,90 @@ class _RoomPageState extends State<RoomPage> {
                                                                     .start,
                                                             children: [
                                                               Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
                                                                 children: [
-                                                                  CircleAvatar(
-                                                                    backgroundColor:
-                                                                        Color.fromRGBO(
-                                                                            255,
-                                                                            255,
-                                                                            255,
-                                                                            0),
-                                                                    radius:
-                                                                        20.5,
-                                                                    backgroundImage:
-                                                                        Image.network((value[index].userPost.display).toString())
-                                                                            .image,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 4.w,
-                                                                  ),
                                                                   Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceAround,
                                                                     children: [
-                                                                      Text(
-                                                                        (subname),
-                                                                        style: text(
-                                                                            16.8),
+                                                                      Row(
+                                                                        // crossAxisAlignment:
+                                                                        //     CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          CircleAvatar(
+                                                                            backgroundColor: Color.fromRGBO(
+                                                                                255,
+                                                                                255,
+                                                                                255,
+                                                                                0),
+                                                                            radius:
+                                                                                20.5,
+                                                                            backgroundImage:
+                                                                                Image.network((value[index].userPost.display).toString()).image,
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                4.w,
+                                                                          ),
+                                                                          Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Text(
+                                                                                (subname),
+                                                                                style: text(16.8),
+                                                                              ),
+                                                                              Text(
+                                                                                date,
+                                                                                style: text(14.8),
+                                                                              ),
+                                                                              Text(
+                                                                                time,
+                                                                                style: text(14.8),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        ],
                                                                       ),
-                                                                      Text(
-                                                                        date,
-                                                                        style: text(
-                                                                            14.8),
-                                                                      ),
-                                                                      Text(
-                                                                        time,
-                                                                        style: text(
-                                                                            14.8),
-                                                                      )
                                                                     ],
-                                                                  )
+                                                                  ),
+                                                                  // isownerpost ||
+                                                                  //         isownerroom ||
+                                                                  //         isAdmin ?
+                                                                  IconButton(
+                                                                      onPressed:
+                                                                          () async {
+                                                                        //เช็ค Role
+                                                                        widget.userModel.id == widget.ownerModel.id
+                                                                            ? isownerroom =
+                                                                                true
+                                                                            : isownerroom =
+                                                                                false;
+
+                                                                        widget.userModel.id == value[index].userPost.id
+                                                                            ? isownerpost =
+                                                                                true
+                                                                            : isownerpost =
+                                                                                false;
+
+                                                                        moreBotton(
+                                                                            context,
+                                                                            value[index].id!,
+                                                                            value[index].userPost,
+                                                                            value[index].postHistory!.first.content,
+                                                                            value[index].postHistory!.first.image.toString(),
+                                                                            isownerroom,
+                                                                            isownerpost,
+                                                                            isAdmin);
+                                                                      },
+                                                                      icon: Image
+                                                                          .asset(
+                                                                        'assets/icons/more_icon.png',
+                                                                      ))
+                                                                  // : SizedBox(),
                                                                 ],
                                                               ),
                                                               SizedBox(
@@ -309,7 +383,7 @@ class _RoomPageState extends State<RoomPage> {
                                                                             .w),
                                                                 child: Text(
                                                                   value[index]
-                                                                      .postHistory
+                                                                      .postHistory!
                                                                       .first
                                                                       .content,
                                                                   maxLines: 5,
@@ -318,58 +392,10 @@ class _RoomPageState extends State<RoomPage> {
                                                             ],
                                                           ),
                                                         ),
-                                                        isownerpost ||
-                                                                isownerroom
-                                                            ? IconButton(
-                                                                onPressed: () {
-                                                                  //เช็ค Role
-                                                                  widget.userModel
-                                                                              .id ==
-                                                                          widget
-                                                                              .ownerModel
-                                                                              .id
-                                                                      ? isownerroom =
-                                                                          true
-                                                                      : isownerroom =
-                                                                          false;
-
-                                                                  widget.userModel
-                                                                              .id ==
-                                                                          value[index]
-                                                                              .userPost
-                                                                              .id
-                                                                      ? isownerpost =
-                                                                          true
-                                                                      : isownerpost =
-                                                                          false;
-
-                                                                  moreBotton(
-                                                                      context,
-                                                                      value[index]
-                                                                          .id!,
-                                                                      value[index]
-                                                                          .userPost,
-                                                                      value[index]
-                                                                          .postHistory
-                                                                          .first
-                                                                          .content,
-                                                                      value[index]
-                                                                          .postHistory
-                                                                          .first
-                                                                          .image
-                                                                          .toString(),
-                                                                      isownerroom,
-                                                                      isownerpost);
-                                                                },
-                                                                icon:
-                                                                    Image.asset(
-                                                                  'assets/icons/more_icon.png',
-                                                                ))
-                                                            : SizedBox()
                                                       ],
                                                     ),
                                                     value[index]
-                                                                .postHistory
+                                                                .postHistory!
                                                                 .first
                                                                 .image ==
                                                             null
@@ -381,7 +407,7 @@ class _RoomPageState extends State<RoomPage> {
                                                                 child: Image(
                                                                   image: NetworkImage(value[
                                                                           index]
-                                                                      .postHistory
+                                                                      .postHistory!
                                                                       .first
                                                                       .image
                                                                       .toString()),
@@ -395,7 +421,7 @@ class _RoomPageState extends State<RoomPage> {
                                                                 return ImageScreen(
                                                                   uri: value[
                                                                           index]
-                                                                      .postHistory
+                                                                      .postHistory!
                                                                       .first
                                                                       .image
                                                                       .toString(),
@@ -411,26 +437,41 @@ class _RoomPageState extends State<RoomPage> {
                                                     ),
                                                     TextButton(
                                                       onPressed: () {
-                                                        print(isownerpost);
-                                                        print(
-                                                            "userPOst = ${value[index].userPost.id}");
-                                                        print(
-                                                            "ownerpost = ${value[index].userPost.id}");
-                                                        print(
-                                                            "images = ${value[index].postHistory.first.image.toString()}");
+                                                        // print(isownerpost ||
+                                                        //     isownerroom ||
+                                                        //     isAdmin);
+                                                        // print(isownerpost);
+                                                        // print(
+                                                        //     "userPOst = ${value[index].userPost.id}");
+                                                        // print(
+                                                        //     "ownerpost = ${value[index].userPost.id}");
+                                                        // print(
+                                                        //     "images = ${value[index].postHistory.first.image.toString()}");
                                                       },
                                                       child: Row(
                                                         children: [
-                                                          Text(
-                                                            'เพิ่มคำตอบของคุณ...',
-                                                            style: TextStyle(
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        176,
-                                                                        162,
-                                                                        148,
-                                                                        1)),
-                                                          )
+                                                          GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                  builder: (_) {
+                                                                    return CommentPage(
+                                                                        postId:
+                                                                            value[index].id);
+                                                                  },
+                                                                ));
+                                                              },
+                                                              child: Text(
+                                                                'เพิ่มคำตอบของคุณ...',
+                                                                style: TextStyle(
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                            176,
+                                                                            162,
+                                                                            148,
+                                                                            1)),
+                                                              ))
                                                         ],
                                                       ),
                                                     )
@@ -444,7 +485,8 @@ class _RoomPageState extends State<RoomPage> {
                                   return Center(
                                     child: CircularProgressIndicator(),
                                   );
-                                }))
+                                }),
+                          ))
                         : Center(
                             child: Text("หน้าแสดง ยอดนิยม"),
                           ),
@@ -455,128 +497,125 @@ class _RoomPageState extends State<RoomPage> {
     }
   }
 
-  moreBotton(BuildContext context, int postid, UserModel userModel,
-      String content, String image, bool ownerroom, bool ownerpost) {
-    bool loading = false;
+  moreBotton(
+      BuildContext context,
+      int postid,
+      UserModel userModel,
+      String content,
+      String image,
+      bool ownerroom,
+      bool ownerpost,
+      bool isadmin) async {
     bool isSuccess;
-    double padding;
     dynamic value;
-    if (ownerpost || ownerroom) {
-      if (ownerroom && !ownerpost) {
-        padding = screenh * 0.912;
-      } else {
-        padding = screenh * 0.8265;
-      }
-    } else {
-      padding = screenh * 0.912;
-    }
-
-    return showGeneralDialog(
-        barrierDismissible: true,
-        transitionDuration: Duration(milliseconds: 500),
-        barrierLabel: "",
+    return showModalBottomSheet(
         context: context,
-        pageBuilder: (context, a1, a2) {
-          return StatefulBuilder(builder: (context, setState) {
-            return loading
-                ? Center()
-                : Dialog(
-                    insetPadding: EdgeInsets.only(top: padding),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // !ownerroom && !ownerpost
-                          //     ? TextButton(
-                          //         onPressed: () {
-                          //           print(ownerpost);
-                          //           print(ownerroom);
-                          //         },
-                          //         child: themeMoreButton(
-                          //             'assets/icons/historyPost.png',
-                          //             'ดูประวัติการแก้ไข'))
-                          //     : SizedBox(),
-                          Container(
-                              height: 1,
-                              color: Color.fromRGBO(107, 103, 98, 1.0)),
-                          ownerpost
-                              ? TextButton(
-                                  onPressed: () async {
-                                    if (image.toString() != "null") {
-                                      setState(() {
-                                        loading = true;
-                                      });
-                                      await urlToFile(image);
-                                      setState(() {
-                                        loading = false;
-                                      });
-                                    }
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (_) {
-                                      return EditPostPage(
-                                        content: content,
-                                        images: _image,
-                                        postId: postid,
-                                        userModel: userModel,
-                                        ownerModel: widget.ownerModel,
-                                        roomModel: widget.roomModel,
-                                      );
-                                    }));
-                                  },
-                                  child: themeMoreButton(
-                                      'assets/icons/edit_icon.png', 'แก้ไข'))
-                              : SizedBox(),
-                          Container(
-                              height: 1,
-                              color: Color.fromRGBO(107, 103, 98, 1.0)),
-                          ownerroom || ownerpost
-                              ? TextButton(
-                                  onPressed: () async {
-                                    value = await confirmDialog(context,
-                                        'หากคุณลบโพสต์ของคุณสถิตของโพสต์นี้ของคุณจะหายไป');
-                                    if (value == 'true') {
-                                      print(postid);
-                                      final snackBar = SnackBar(
-                                        content: const Text('ลบโพสต์ไม่สำเร็จ'),
-                                      );
+        builder: (context) {
+          return BottomSheet(
+              onClosing: () {},
+              builder: (BuildContext context) {
+                return StatefulBuilder(
+                    builder: (BuildContext context, setState) => isLoading
+                        ? SizedBox()
+                        : Wrap(
+                            children: [
+                              ownerpost
+                                  ? TextButton(
+                                      onPressed: () async {
+                                        if (image.toString() != "null") {
+                                          setState(() {
+                                            isloadingNow(true);
+                                          });
+                                          try {
+                                            await urlToFile(image);
+                                          } finally {
+                                            setState(() {
+                                              isloadingNow(false);
+                                            });
+                                          }
+                                        }
+                                        Navigator.push(context,
+                                            MaterialPageRoute(builder: (_) {
+                                          return EditPostPage(
+                                            content: content,
+                                            images: _image,
+                                            postId: postid,
+                                            userModel: userModel,
+                                            ownerModel: widget.ownerModel,
+                                            roomModel: widget.roomModel,
+                                          );
+                                        }));
+                                      },
+                                      child: themeMoreButton(
+                                          'assets/icons/edit_icon.png',
+                                          'แก้ไข',
+                                          16))
+                                  : SizedBox(),
+                              Container(
+                                  height: 1,
+                                  color: Color.fromRGBO(107, 103, 98, 1.0)),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .push(new MaterialPageRoute(
+                                          builder: (context) => new HistoryPage(
+                                                postid: postid,
+                                              )));
+                                },
+                                child: themeMoreButton(
+                                    'assets/icons/historyPost.png',
+                                    'ดูประวัติการแก้ไข',
+                                    17),
+                              ),
+                              Container(
+                                  height: 1,
+                                  color: Color.fromRGBO(107, 103, 98, 1.0)),
+                              ownerroom || ownerpost || isadmin
+                                  ? TextButton(
+                                      onPressed: () async {
+                                        value = await confirmDialog(context,
+                                            'หากคุณลบโพสต์ของคุณสถิตของโพสต์นี้ของคุณจะหายไป');
+                                        if (value == 'true') {
+                                          print(postid);
+                                          final snackBar = SnackBar(
+                                            content:
+                                                const Text('ลบโพสต์ไม่สำเร็จ'),
+                                          );
 
-                                      setState(() {
-                                        loading = true;
-                                      });
-                                      isloadingNow(true);
-                                      isSuccess = await deletePost(postid);
+                                          setState(() {
+                                            isloadingNow(true);
+                                          });
+                                          isSuccess = await deletePost(postid);
 
-                                      await successDialog(
-                                          context, 'ลบโพสต์สำเร็จ');
+                                          await successDialog(
+                                              context, 'ลบโพสต์สำเร็จ');
 
-                                      if (isSuccess) {
-                                        Navigator.pop(context);
+                                          if (isSuccess) {
+                                            Navigator.pop(context);
+                                            await refreshData();
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+                                          }
 
-                                        await refreshData();
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                      }
-                                      setState(() {
-                                        loading = false;
-                                      });
-                                      isloadingNow(false);
-                                    } else {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  child: themeMoreButton(
-                                      'assets/icons/delete_icon.png', 'ลบ'))
-                              : SizedBox(),
-                          Container(
-                              height: 1,
-                              color: Color.fromRGBO(107, 103, 98, 1.0)),
-                        ],
-                      ),
-                    ),
-                  );
-          });
+                                          setState(() {
+                                            isloadingNow(false);
+                                          });
+                                        } else {
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      child: themeMoreButton(
+                                          'assets/icons/delete_icon.png',
+                                          'ลบ',
+                                          20))
+                                  : SizedBox(),
+                              Container(
+                                  height: 1,
+                                  color: Color.fromRGBO(107, 103, 98, 1.0)),
+                            ],
+                          ));
+              });
         });
   }
 
@@ -589,11 +628,12 @@ class _RoomPageState extends State<RoomPage> {
     // get temporary path from temporary directory.
     String tempPath = tempDir.path;
     // create a new file in temporary path with random file name.
-    File file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
+    File? file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
     // call http.get method and pass imageUrl into it to get response.
     http.Response response = await http.get(Uri.parse(imageUrl));
     await file.writeAsBytes(response.bodyBytes);
     _image = file;
+    file = null;
     return _image;
   }
 

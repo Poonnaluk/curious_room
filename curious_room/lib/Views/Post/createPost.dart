@@ -27,7 +27,7 @@ class CreatePost extends StatefulWidget {
 class _CreatePostState extends State<CreatePost> {
   // ignore: unused_field
   // final _formKey = new GlobalKey<FormState>();
-  String? content;
+  String content = "";
   TextEditingController contentController = TextEditingController();
   bool isTextFiledFocus = false;
   late double screenw;
@@ -85,8 +85,14 @@ class _CreatePostState extends State<CreatePost> {
                           scale: 1.4,
                           child: CircleAvatar(
                             backgroundColor: Color.fromRGBO(255, 255, 255, 0),
-                            backgroundImage:
-                                Image.network(widget.userModel.display).image,
+                            backgroundImage: widget
+                                        .userModel.display.runtimeType
+                                        .toString() ==
+                                    "_File"
+                                ? Image.file(widget.userModel.display).image
+                                : Image.network(
+                                        widget.userModel.display.toString())
+                                    .image,
                             radius: 17,
                           ),
                         ),
@@ -155,6 +161,7 @@ class _CreatePostState extends State<CreatePost> {
                           ),
                         ])
                       : Column(
+                
                           children: [
                             Align(
                               alignment: Alignment.bottomCenter,
@@ -212,15 +219,30 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 
+
+
+  Future chooseImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemporary = File(image.path);
+      setState(() {
+        this.image = imageTemporary;
+      });
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   Widget _buildButtonCreate() {
     return Container(
       padding: EdgeInsets.all(8),
       alignment: Alignment.centerRight,
       child: TextButton(
         style: TextButton.styleFrom(
-            backgroundColor: !isTextFiledFocus
-                ? Color.fromRGBO(237, 237, 237, 1)
-                : Color.fromRGBO(69, 171, 157, 1),
+            backgroundColor: isTextFiledFocus || image != null
+                ? Color.fromRGBO(69, 171, 157, 1)
+                : Color.fromRGBO(237, 237, 237, 1),
             padding: const EdgeInsets.all(10.0),
             primary: Colors.white,
             textStyle: TextStyle(fontSize: 17.sp, fontFamily: 'Prompt'),
@@ -229,7 +251,7 @@ class _CreatePostState extends State<CreatePost> {
             )),
         onPressed: () async {
           print(image);
-          if (content == null && image == null) {
+          if (content == "" && image == null) {
             final snackBar = SnackBar(
               content: const Text('กรุณาเพิ่มเนื้อหา'),
             );
@@ -238,8 +260,10 @@ class _CreatePostState extends State<CreatePost> {
             setState(() {
               isLoading = true;
             });
-            await creatPost(widget.userModel.id, widget.roomModel.id,
-                content!.toString(), image);
+
+            await creatPost(
+                widget.userModel.id, widget.roomModel.id, content, image);
+
             setState(() {
               isLoading = false;
             });
@@ -256,25 +280,12 @@ class _CreatePostState extends State<CreatePost> {
         child: Text(
           'โพสต์',
           style: TextStyle(
-            color: !isTextFiledFocus
-                ? Color.fromRGBO(107, 103, 98, 1)
-                : Colors.white,
+            color: isTextFiledFocus || image != null
+                ? Colors.white
+                : Color.fromRGBO(107, 103, 98, 1),
           ),
         ),
       ),
     );
-  }
-
-  Future chooseImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      final imageTemporary = File(image.path);
-      setState(() {
-        this.image = imageTemporary;
-      });
-    } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
-    }
   }
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-Row themeMoreButton(String image, String name) {
+Row themeMoreButton(String image, String name,double sc) {
   return Row(
     children: [
       Container(
         margin: EdgeInsets.all(14),
         child: Image.asset(
           image,
-          scale: 16,
+          scale: sc,
         ),
       ),
       Text(name,
