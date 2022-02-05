@@ -14,6 +14,7 @@ class CommentModel {
     required this.postId,
     required this.userId,
     required this.statusComment,
+    required this.confirmStatus,
     required this.createdAt,
     required this.updatedAt,
     required this.userComment,
@@ -24,6 +25,7 @@ class CommentModel {
   int postId;
   int userId;
   String statusComment;
+  bool confirmStatus;
   DateTime createdAt;
   DateTime updatedAt;
   UserModel userComment;
@@ -34,6 +36,7 @@ class CommentModel {
         postId: json["postId"],
         userId: json["userId"],
         statusComment: json["statusComment"],
+        confirmStatus: json["confirmStatus"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         userComment: UserModel.fromJson(json["user_comment"]),
@@ -46,6 +49,7 @@ class CommentModel {
         "postId": postId,
         "userId": userId,
         "statusComment": statusComment,
+        "confirmStatus": confirmStatus,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "user_comment": userComment.toJson(),

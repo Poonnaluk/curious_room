@@ -24,7 +24,6 @@ class PostModel {
       this.statusPost,
       this.createdAt,
       this.updatedAt,
-      this.commentId,
       required this.userPost,
       this.postHistory,
       this.statist});
@@ -35,7 +34,6 @@ class PostModel {
   String? statusPost;
   dynamic createdAt;
   DateTime? updatedAt;
-  int? commentId;
   late UserModel userPost;
   List<PostHistoryModel>? postHistory;
   int? statist;
@@ -43,7 +41,6 @@ class PostModel {
 
   factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
         id: json["id"],
-        commentId: json["commentId"],
         userId: json["userId"],
         roomId: json["roomId"],
         statusPost: json["statusPost"],
@@ -68,7 +65,6 @@ class PostModel {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "commentId": commentId,
         "userId": userId,
         "roomId": roomId,
         "statusPost": statusPost,

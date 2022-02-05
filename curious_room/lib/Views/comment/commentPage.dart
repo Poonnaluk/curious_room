@@ -444,6 +444,7 @@ class _CommentPageState extends State<CommentPage> {
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
+                      refreashData();
                       idxEdit = index;
                       _clickChanged = true;
                       editController.text = content;
