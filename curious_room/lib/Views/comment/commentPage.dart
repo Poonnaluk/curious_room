@@ -365,9 +365,10 @@ class _CommentPageState extends State<CommentPage> {
                                               maxLines: 5,
                                             ),
                                             commentlist![index]
-                                                        .userComment
-                                                        .id ==
-                                                    usermodel!.id
+                                                            .userComment
+                                                            .id ==
+                                                        usermodel!.id ||
+                                                    usermodel!.role == 'ADMIN'
                                                 ? IconButton(
                                                     color: Color.fromRGBO(
                                                         124, 124, 124, 1),
@@ -441,16 +442,18 @@ class _CommentPageState extends State<CommentPage> {
             onClosing: () {},
             builder: (BuildContext context) {
               return Wrap(children: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      refreashData();
-                      idxEdit = index;
-                      _clickChanged = true;
-                      editController.text = content;
-                    },
-                    child: themeMoreButton(
-                        'assets/icons/edit_icon.png', 'แก้ไข', 16)),
+                usermodel!.role == 'USER'
+                    ? TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          refreashData();
+                          idxEdit = index;
+                          _clickChanged = true;
+                          editController.text = content;
+                        },
+                        child: themeMoreButton(
+                            'assets/icons/edit_icon.png', 'แก้ไข', 16))
+                    : SizedBox(),
                 Container(height: 1, color: Color.fromRGBO(107, 103, 98, 1.0)),
                 TextButton(
                     onPressed: () async {
