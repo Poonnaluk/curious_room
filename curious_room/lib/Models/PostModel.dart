@@ -15,7 +15,7 @@ String postModelToJson(List<PostModel> data) =>
 class PostModel {
   PostModel(
       {this.id,
-      required this.userId,
+      this.userId,
       this.roomId,
       this.statusPost,
       this.createdAt,
@@ -23,7 +23,10 @@ class PostModel {
       required this.userPost,
       this.postHistory,
       this.statist,
-      this.score});
+      this.countVote,
+      this.downVote,
+      this.upVote,
+      this.listVoteStatus});
 
   int? id;
   dynamic userId;
@@ -34,7 +37,10 @@ class PostModel {
   late UserModel userPost;
   PostHistoryModel? postHistory;
   int? statist;
-  List<int>? score;
+  int? upVote;
+  int? downVote;
+  int? countVote;
+  List<dynamic>? listVoteStatus;
 
   factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
         id: json["id"],
@@ -52,9 +58,12 @@ class PostModel {
         postHistory: PostHistoryModel.fromJson(
             json["post_history"] == null ? {} : json["post_history"]),
         statist: json["statist"],
-        score: json["score"] == null
+        upVote: json["upVote"],
+        downVote: json["downVote"],
+        countVote: json["countVote"],
+        listVoteStatus: json["listVoteStatus"] == null
             ? null
-            : List<int>.from(json["score"].map((x) => x)),
+            : List<dynamic>.from(json["listVoteStatus"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -67,13 +76,18 @@ class PostModel {
         "user_post": userPost.toJson(),
         "post_history": postHistory == null ? null : postHistory!.toJson(),
         "statist": statist,
-        "score":
-            score == null ? null : List<dynamic>.from(score!.map((x) => x)),
+        "upVote": upVote,
+        "downVote": downVote,
+        "countVote": countVote,
+        "listVoteStatus": listVoteStatus == null
+            ? null
+            : List<dynamic>.from(listVoteStatus!.map((x) => x)),
       };
 }
 
-Future<List<PostModel>> getPost(int roomId) async {
-  final String url = "http://147.182.209.40/post/$roomId";
+Future<List<PostModel>> getPost(int roomId, int userid, bool filter) async {
+  final String url = "http://147.182.209.40/post/$roomId/$userid/$filter";
+  print(url);
   final res = await http.get(Uri.parse(url));
   if (res.statusCode == 200) {
     Iterable l = json.decode(res.body);

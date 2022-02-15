@@ -41,6 +41,7 @@ class RoomPage extends StatefulWidget {
 class _RoomPageState extends State<RoomPage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   late Future<List<PostModel>> future;
+  late Future<List<PostModel>> filter;
   late List<PostModel> value;
   late RoomModel room;
   // resposive
@@ -57,27 +58,21 @@ class _RoomPageState extends State<RoomPage> {
   get async => null;
   bool isLoading = false;
   Future<List<PostHistoryModel>> history = Future.value([]);
-  //เก็บสถานะการโหวต
-  List<dynamic> myListVote = [];
 
   @override
-  void initState() {
+  initState() {
     super.initState();
-    future = getPost(widget.roomModel.id);
+    future = getPost(widget.roomModel.id, widget.userModel.id, false);
+    filter = getPost(widget.roomModel.id, widget.userModel.id, true);
     room = widget.roomModel;
-    //เรียกสถานะการโหวตแต่ละโพสต์ของผู้ใช้
-    listStatus(widget.roomModel.id, widget.userModel.id).then((value) => {
-          if (value.listVoteStatus!.isNotEmpty)
-            {myListVote = value.listVoteStatus!}
-        });
   }
 
   Future<dynamic> refreshData() async {
-    myListVote.clear();
     try {
-      future = await Future.value(getPost(widget.roomModel.id));
-      await listStatus(widget.roomModel.id, widget.userModel.id)
-          .then((value) => {myListVote = value.listVoteStatus!});
+      future = await Future.value(
+          getPost(widget.roomModel.id, widget.userModel.id, false));
+      filter = await Future.value(
+          getPost(widget.roomModel.id, widget.userModel.id, true));
     } finally {
       if (mounted) {
         setState(() {});
@@ -86,14 +81,16 @@ class _RoomPageState extends State<RoomPage> {
   }
 
   void isloadingNow(bool loadNow) {
-    if (loadNow) {
-      setState(() {
-        isLoading = loadNow;
-      });
-    } else {
-      setState(() {
-        isLoading = loadNow;
-      });
+    if (mounted) {
+      if (loadNow) {
+        setState(() {
+          isLoading = loadNow;
+        });
+      } else {
+        setState(() {
+          isLoading = loadNow;
+        });
+      }
     }
   }
 
@@ -219,6 +216,8 @@ class _RoomPageState extends State<RoomPage> {
                                     return ListView.builder(
                                         itemCount: value.length - 1,
                                         itemBuilder: (context, index) {
+                                          print(value.last.listVoteStatus!
+                                              .runtimeType);
                                           //เปลี่ยนไทม์โซน
                                           String time = DateFormat('Hm').format(
                                               value[index]
@@ -282,7 +281,7 @@ class _RoomPageState extends State<RoomPage> {
                                                                         .role ==
                                                                     "USER"
                                                                 ? IconButton(
-                                                                    icon: myListVote[index] ==
+                                                                    icon: value.last.listVoteStatus![index] ==
                                                                             1
                                                                         ? Image.asset(
                                                                             'assets/icons/upvote.png')
@@ -314,16 +313,16 @@ class _RoomPageState extends State<RoomPage> {
                                                                               20,
                                                                           right:
                                                                               20),
-                                                              child: Text(value
-                                                                  .last
-                                                                  .score![index]
+                                                              child: Text(value[
+                                                                      index]
+                                                                  .countVote
                                                                   .toString()),
                                                             ),
                                                             widget.userModel
                                                                         .role ==
                                                                     "USER"
                                                                 ? IconButton(
-                                                                    icon: myListVote[index] ==
+                                                                    icon: value.last.listVoteStatus![index] ==
                                                                             0
                                                                         ? Image.asset(
                                                                             'assets/icons/downvote.png')
@@ -401,9 +400,6 @@ class _RoomPageState extends State<RoomPage> {
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                  // isownerpost ||
-                                                                  //         isownerroom ||
-                                                                  //         isAdmin ?
                                                                   IconButton(
                                                                       onPressed:
                                                                           () async {
@@ -544,7 +540,7 @@ class _RoomPageState extends State<RoomPage> {
                                   Duration(milliseconds: 1000));
                             },
                             child: FutureBuilder<List<PostModel>>(
-                                future: future,
+                                future: filter,
                                 builder: (context, snapshot) {
                                   if (snapshot.data.toString() == "[]") {
                                     return Center(
@@ -623,7 +619,7 @@ class _RoomPageState extends State<RoomPage> {
                                                                         .role ==
                                                                     "USER"
                                                                 ? IconButton(
-                                                                    icon: myListVote[index] ==
+                                                                    icon: value.last.listVoteStatus![index] ==
                                                                             1
                                                                         ? Image.asset(
                                                                             'assets/icons/upvote.png')
@@ -655,16 +651,16 @@ class _RoomPageState extends State<RoomPage> {
                                                                               20,
                                                                           right:
                                                                               20),
-                                                              child: Text(value
-                                                                  .last
-                                                                  .score![index]
+                                                              child: Text(value[
+                                                                      index]
+                                                                  .countVote
                                                                   .toString()),
                                                             ),
                                                             widget.userModel
                                                                         .role ==
                                                                     "USER"
                                                                 ? IconButton(
-                                                                    icon: myListVote[index] ==
+                                                                    icon: value.last.listVoteStatus![index] ==
                                                                             0
                                                                         ? Image.asset(
                                                                             'assets/icons/downvote.png')
@@ -742,9 +738,6 @@ class _RoomPageState extends State<RoomPage> {
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                  // isownerpost ||
-                                                                  //         isownerroom ||
-                                                                  //         isAdmin ?
                                                                   IconButton(
                                                                       onPressed:
                                                                           () async {
@@ -876,7 +869,7 @@ class _RoomPageState extends State<RoomPage> {
                                     child: CircularProgressIndicator(),
                                   );
                                 }),
-                          )),
+                          ))
                   ],
                 )),
         )),
@@ -893,7 +886,6 @@ class _RoomPageState extends State<RoomPage> {
       bool ownerroom,
       bool ownerpost,
       bool isadmin) async {
-    bool isSuccess;
     dynamic value;
     return showModalBottomSheet(
         context: context,
@@ -972,20 +964,20 @@ class _RoomPageState extends State<RoomPage> {
                                           setState(() {
                                             isloadingNow(true);
                                           });
-                                          isSuccess = await deletePost(postid);
 
-                                          await successDialog(
-                                              context, 'ลบโพสต์สำเร็จ');
+                                          // isSuccess = await deletePost(postid);
+                                          deletePost(postid)
+                                              .then((isSuccess) async {
+                                            await successDialog(
+                                                context, 'ลบโพสต์สำเร็จ');
+                                            if (isSuccess) {
+                                              Navigator.pop(context);
+                                              await refreshData();
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                            }
 
-                                          if (isSuccess) {
-                                            Navigator.pop(context);
-                                            await refreshData();
-                                          } else {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(snackBar);
-                                          }
-
-                                          setState(() {
                                             isloadingNow(false);
                                           });
                                         } else {
