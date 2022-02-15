@@ -31,26 +31,24 @@ class Login extends StatelessWidget {
   late UserModel ownerModel;
 
   @override
-  Widget build(BuildContext context) {
-    return ResponsiveSizer(
-      builder: (BuildContext, Orientation, ScreenType) {
-        return MultiProvider(
-          providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: LoginPage(),
-            theme: ThemeData(fontFamily: 'Prompt'),
-            initialRoute: '/',
-            routes: {
-              '/firstpage': (context) => FirstPage(),
-              '/roompage': (context) => RoomPage(
-                  userModel: userModel,
-                  roomModel: roomModel,
-                  ownerModel: ownerModel)
-            },
-          ),
-        );
-      },
+   Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: ResponsiveSizer(builder: (BuildContext, Orientation, ScreenType) {
+          return LoginPage();
+        }),
+        theme: ThemeData(fontFamily: 'Prompt'),
+        initialRoute: '/',
+        routes: {
+          '/firstpage': (context) => FirstPage(),
+          '/roompage': (context) => RoomPage(
+              userModel: userModel,
+              roomModel: roomModel,
+              ownerModel: ownerModel)
+        },
+      ),
     );
   }
 }
