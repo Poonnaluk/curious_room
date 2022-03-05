@@ -13,7 +13,14 @@ import 'package:intl/intl.dart';
 
 class CommentPage extends StatefulWidget {
   final int? postId;
-  CommentPage({Key? key, required this.postId}) : super(key: key);
+  final String score;
+  final int ownerId;
+  CommentPage(
+      {Key? key,
+      required this.postId,
+      required this.score,
+      required this.ownerId})
+      : super(key: key);
 
   @override
   _CommentPageState createState() => _CommentPageState();
@@ -28,7 +35,12 @@ class _CommentPageState extends State<CommentPage> {
   late Future<List<CommentModel>> future;
   late List<CommentModel>? commentlist;
   bool _clickChanged = false;
-  late int idxEdit;
+  late int idxEdit = 9999;
+  late int idxConfirm;
+  late bool owner;
+
+  Map<int, bool> selectedFlag = {};
+  bool isSelectionMode = false;
 
   ScrollController _scrollController = ScrollController();
 
@@ -60,12 +72,14 @@ class _CommentPageState extends State<CommentPage> {
   Widget build(BuildContext context) {
     usermodel = context.watch<UserProvider>().userModel;
     FocusScopeNode currentFocus = FocusScope.of(context);
+    owner = widget.ownerId == usermodel!.id ? true : false;
     return Scaffold(
+        floatingActionButton: _buildSelectButton(),
         appBar: AppBar(
           backgroundColor: Colors.white,
           toolbarHeight: screenh(context, 0.080),
           title: Text(
-            "ยอดโหวต  0",
+            "ยอดโหวต ${widget.score}",
           ),
           titleTextStyle: normalTextStyle(20),
           leading: IconButton(
@@ -146,6 +160,60 @@ class _CommentPageState extends State<CommentPage> {
                 : SizedBox()
           ],
         )));
+  }
+
+  Widget _buildSelectButton() {
+    // The button will be visible when the selectionMode is enabled.
+    if (widget.ownerId == usermodel!.id) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 65.0, right: 5.0),
+        child: Transform.scale(
+            scale: 1.2,
+            child: isSelectionMode
+                ? FloatingActionButton.extended(
+                    onPressed: () async {
+                      print(idxEdit);
+                      if (idxEdit != idxConfirm && idxEdit != 9999) {
+                        bool success =
+                            await confirmComment(widget.postId, idxEdit);
+                        refreashData();
+                        if (success) {
+                          refreashData();
+                          setState(() {
+                            isSelectionMode = !isSelectionMode;
+                          });
+                        }
+                      } else {
+                        setState(() {
+                          isSelectionMode = !isSelectionMode;
+                        });
+                      }
+                    },
+                    label: const Text('บันทึก'),
+                    backgroundColor: Colors.green,
+                    icon: const Icon(
+                      Icons.save_outlined,
+                      color: Colors.white,
+                    ),
+                  )
+                : FloatingActionButton.extended(
+                    onPressed: () {
+                      setState(() {
+                        isSelectionMode = !isSelectionMode;
+                      });
+                    },
+                    label: const Text('ยืนยัน',
+                        style: TextStyle(color: Colors.black)),
+                    icon: const Icon(
+                      Icons.done,
+                      color: Colors.black,
+                    ),
+                    backgroundColor: Colors.white,
+                  )),
+      );
+    } else {
+      return SizedBox();
+    }
   }
 
   Widget inputField(TextEditingController controller) {
@@ -259,12 +327,23 @@ class _CommentPageState extends State<CommentPage> {
                   for (int i = 0; i < commentlist!.length; i++) {
                     data.add(commentlist![index].id);
                   }
+                  for (int j = 0; j < commentlist!.length; j++) {
+                    if (commentlist![index].confirmStatus == true) {
+                      idxConfirm = index;
+                    }
+                  }
                   //เปลี่ยนไทม์โซน
                   String time = DateFormat('Hm')
                       .format(commentlist![index].createdAt.toLocal());
                   String date =
                       '${DateFormat.yMMMd().format(commentlist![index].createdAt.toLocal())}';
+                  selectedFlag[index] = selectedFlag[index] ?? false;
+                  bool isSelected = selectedFlag[index]!;
+                  selectedFlag[idxConfirm] = true;
                   return ListTile(
+                    onTap: () {
+                      onTap(isSelected, index, commentlist![index].id);
+                    },
                     visualDensity: VisualDensity(horizontal: -4, vertical: -4),
                     title: Transform.scale(
                       scale: 1,
@@ -287,9 +366,20 @@ class _CommentPageState extends State<CommentPage> {
                                               .toString())
                                       .image,
                                 ),
-                                SizedBox(
-                                  height: 2.h,
-                                ),
+                                isSelectionMode
+                                    ? _buildSelectIcon(isSelected)
+                                    : commentlist![index].confirmStatus == true
+                                        ? Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 20, left: 10),
+                                            child: Image.asset(
+                                              'assets/icons/confirm_icon.png',
+                                              scale: 1.1,
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 2.h,
+                                          ),
                               ],
                             ),
                             SizedBox(
@@ -416,6 +506,33 @@ class _CommentPageState extends State<CommentPage> {
                 )
               ]));
         });
+  }
+
+  Widget _buildSelectIcon(bool isSelected) {
+    if (isSelectionMode) {
+      return Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: Icon(
+            isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+            color: Theme.of(context).primaryColor,
+          ));
+    } else {
+      return SizedBox();
+    }
+  }
+
+  void onTap(bool isSelected, int index, int commentid) async {
+    if (isSelectionMode) {
+      setState(() {
+        selectedFlag[index] = !isSelected;
+        idxEdit = commentid;
+        for (int i = 0; i <= commentlist!.length; i++) {
+          if (i != index) {
+            selectedFlag[i] = false;
+          }
+        }
+      });
+    }
   }
 
   void _buildButtonCreate(TextEditingController contentController) async {

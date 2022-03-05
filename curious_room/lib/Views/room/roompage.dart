@@ -506,8 +506,19 @@ class _RoomPageState extends State<RoomPage> {
                                                                     MaterialPageRoute(
                                                                   builder: (_) {
                                                                     return CommentPage(
-                                                                        postId:
-                                                                            value[index].id);
+                                                                      postId:
+                                                                          value[index]
+                                                                              .id,
+                                                                      score: value
+                                                                          .last
+                                                                          .score![
+                                                                              index]
+                                                                          .toString(),
+                                                                      ownerId: value[
+                                                                              index]
+                                                                          .userPost
+                                                                          .id,
+                                                                    );
                                                                   },
                                                                 ));
                                                               },
@@ -847,8 +858,19 @@ class _RoomPageState extends State<RoomPage> {
                                                                     MaterialPageRoute(
                                                                   builder: (_) {
                                                                     return CommentPage(
-                                                                        postId:
-                                                                            value[index].id);
+                                                                      postId:
+                                                                          value[index]
+                                                                              .id,
+                                                                      score: value
+                                                                          .last
+                                                                          .score![
+                                                                              index]
+                                                                          .toString(),
+                                                                      ownerId: value[
+                                                                              index]
+                                                                          .userPost
+                                                                          .id,
+                                                                    );
                                                                   },
                                                                 ));
                                                               },
