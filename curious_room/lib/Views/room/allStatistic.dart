@@ -72,8 +72,7 @@ class _AllStatisticState extends State<AllStatistic> {
                                                 radius: 18.5,
                                                 backgroundImage: Image.network(
                                                         (value[index]
-                                                                .userPost
-                                                                .display)
+                                                                .userPost.display)
                                                             .toString())
                                                     .image,
                                               ),
