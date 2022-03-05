@@ -151,3 +151,19 @@ Future<bool> editComment(int commentid, String content) async {
     throw Exception('Failed to edit comment.');
   }
 }
+
+Future<bool> confirmComment(int? postid, int commentid) async {
+  final url = "http://172.20.10.2:8000/comment/editConfirm";
+  print(commentid);
+  final body = jsonEncode({"postId": postid, "commentId": commentid});
+  final res = await http.put(Uri.parse(url),
+      body: body,
+      headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
+  if (res.statusCode == 200) {
+    return true;
+  } else if (res.statusCode == 500) {
+    return false;
+  } else {
+    throw Exception('Failed to confirm comment.');
+  }
+}
