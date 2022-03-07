@@ -4,7 +4,10 @@
 import 'package:curious_room/Models/PostModel.dart';
 import 'package:curious_room/Views/room/allStatistic.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class StatisticPage extends StatefulWidget {
   const StatisticPage({Key? key, required this.roomid}) : super(key: key);
@@ -17,9 +20,16 @@ class StatisticPage extends StatefulWidget {
 class _StatisticPageState extends State<StatisticPage> {
   late Future<List<PostModel>> future = Future.value([]);
   late List<PostModel> value = [];
+  late List<GDPData> _chartData;
+  late TooltipBehavior _tooltipBehavior;
   @override
   void initState() {
     super.initState();
+    _chartData = getChartData();
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+      shared: true,
+    );
     print(widget.roomid);
     future = getStatistPost(widget.roomid);
   }
@@ -55,6 +65,55 @@ class _StatisticPageState extends State<StatisticPage> {
         ),
         child: Column(
           children: [
+            Container(
+              height: 30.h,
+              child: SfCartesianChart(
+                tooltipBehavior: _tooltipBehavior,
+                series: <ChartSeries>[
+                  // Renders bar chart
+                  BarSeries<GDPData, String>(
+                      width: 0.6,
+                      // spacing: 0.3,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(15),
+                          bottomRight: Radius.circular(15)),
+                      // borderWidth: 30,
+                      name: "คะแนน",
+                      color: Color.fromRGBO(69, 171, 157, 1),
+                      dataSource: _chartData,
+                      xValueMapper: (GDPData gdp, _) => gdp.continent,
+                      yValueMapper: (GDPData gdp, _) => gdp.gdp,
+                      dataLabelSettings: DataLabelSettings(
+                          // showZeroValue: true,
+                          isVisible: true,
+                          showCumulativeValues: true),
+                      enableTooltip: true),
+                ],
+                enableAxisAnimation: true,
+                primaryXAxis: CategoryAxis(
+                  maximumLabelWidth: 60,
+// labelPosition: ChartDataLabelPosition.outside,
+                  title:
+                      AxisTitle(text: "ลำดับ", alignment: ChartAlignment.far),
+                  //Hide the gridlines of y-axis
+                  majorGridLines: MajorGridLines(width: 0),
+                  //Hide the axis line of y-axis
+                  axisLine: AxisLine(width: 0),
+                ),
+                primaryYAxis: NumericAxis(
+                  title:
+                      AxisTitle(text: "คะแนน", alignment: ChartAlignment.far),
+                  majorGridLines: MajorGridLines(width: 0),
+                  axisLine: AxisLine(width: 0),
+                  // edgeLabelPlacement: EdgeLabelPlacement.shift,
+                  // numberFormat: NumberFormat.simpleCurrency(
+
+                  //   decimalDigits: 0,
+                  // ),
+                  // title: AxisTitle(text: ''),
+                ),
+              ),
+            ),
             Expanded(
                 child: FutureBuilder<List<PostModel>>(
                     future: future,
@@ -98,89 +157,116 @@ class _StatisticPageState extends State<StatisticPage> {
                                               : 3,
                                           itemBuilder: (context, index) {
                                             return ListTile(
-                                              title: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      index == 0
-                                                          ? Column(
-
-                                                              // alignment:
-                                                              //     Alignment
-                                                              //         .topCenter,
-                                                              children: [
-                                                                  Image.asset(
-                                                                    "assets/images/crown.png",
-                                                                    scale: 10,
-                                                                    height: 3.h,
-                                                                  ),
-                                                                  CircleAvatar(
-                                                                    backgroundColor:
-                                                                        Color.fromRGBO(
-                                                                            255,
-                                                                            255,
-                                                                            255,
-                                                                            0),
-                                                                    radius:
-                                                                        18.5,
-                                                                    backgroundImage:
-                                                                        Image.network((value[index].userPost.display).toString())
-                                                                            .image,
-                                                                  ),
-
-                                                                  // CircleAvatar(
-                                                                  //   backgroundColor:
-                                                                  //       Color.fromRGBO(
-                                                                  //           255,
-                                                                  //           255,
-                                                                  //           255,
-                                                                  //           0),
-                                                                  //   radius:
-                                                                  //       18.5,
-                                                                  //   backgroundImage:
-                                                                  //       Image.asset("assets/images/crown.png")
-                                                                  //           .image,
-                                                                  // ),
-                                                                ])
-                                                          : CircleAvatar(
-                                                              backgroundColor:
-                                                                  Color
-                                                                      .fromRGBO(
+                                                title: index == 0
+                                                    ? Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Column(children: [
+                                                                Image.asset(
+                                                                  "assets/images/crown.png",
+                                                                  scale: 10,
+                                                                  height: 3.h,
+                                                                ),
+                                                                CircleAvatar(
+                                                                  backgroundColor:
+                                                                      Color.fromRGBO(
                                                                           255,
                                                                           255,
                                                                           255,
                                                                           0),
-                                                              radius: 18.5,
-                                                              backgroundImage: Image.network((value[
-                                                                              index]
+                                                                  radius: 18.5,
+                                                                  backgroundImage:
+                                                                      Image.network(
+                                                                              (value[index].userPost.display).toString())
+                                                                          .image,
+                                                                ),
+                                                              ]),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 2.w,
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsets
+                                                                        .only(
+                                                                            top:
+                                                                                20),
+                                                                    child: Text(
+                                                                      value[index]
                                                                           .userPost
-                                                                          .display)
-                                                                      .toString())
-                                                                  .image,
+                                                                          .name,
+                                                                      style: mycolor(
+                                                                          17.sp),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 20),
+                                                            child: Text(
+                                                              value[index]
+                                                                  .statist
+                                                                  .toString(),
+                                                              style: mycolor(
+                                                                  17.sp),
                                                             ),
-                                                      SizedBox(
-                                                        width: 2.w,
-                                                      ),
-                                                      Text(
-                                                        value[index]
-                                                            .userPost
-                                                            .name,
-                                                        style: mycolor(17.sp),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Text(
-                                                    value[index]
-                                                        .statist
-                                                        .toString(),
-                                                    style: mycolor(17.sp),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              CircleAvatar(
+                                                                backgroundColor:
+                                                                    Color
+                                                                        .fromRGBO(
+                                                                            255,
+                                                                            255,
+                                                                            255,
+                                                                            0),
+                                                                radius: 18.5,
+                                                                backgroundImage:
+                                                                    Image.network(
+                                                                            (value[index].userPost.display).toString())
+                                                                        .image,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 2.w,
+                                                                  ),
+                                                                  Text(
+                                                                    value[index]
+                                                                        .userPost
+                                                                        .name,
+                                                                    style: mycolor(
+                                                                        17.sp),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Text(
+                                                            value[index]
+                                                                .statist
+                                                                .toString(),
+                                                            style:
+                                                                mycolor(17.sp),
+                                                          ),
+                                                        ],
+                                                      ));
                                           }),
                                     ),
                                     TextButton(
@@ -201,9 +287,9 @@ class _StatisticPageState extends State<StatisticPage> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 40.h,
-                            )
+                            // SizedBox(
+                            //   height: 40.h,
+                            // )
                           ],
                         );
                       }
@@ -220,4 +306,19 @@ class _StatisticPageState extends State<StatisticPage> {
   TextStyle mycolor(double s) {
     return TextStyle(color: Colors.white, fontSize: s);
   }
+
+  List<GDPData> getChartData() {
+    final List<GDPData> chartData = [
+      GDPData('Poonnaluk', 20),
+      GDPData('Siriwika', 15),
+      GDPData('Kamonchanok', 10),
+    ];
+    return chartData;
+  }
+}
+
+class GDPData {
+  GDPData(this.continent, this.gdp);
+  final String continent;
+  final double gdp;
 }
