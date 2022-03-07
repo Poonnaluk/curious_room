@@ -216,8 +216,8 @@ class _RoomPageState extends State<RoomPage> {
                               return ListView.builder(
                                   itemCount: value.length - 1,
                                   itemBuilder: (context, index) {
-                                    print(
-                                        value.last.listVoteStatus!.runtimeType);
+                                    // print(
+                                    //     value.last.listVoteStatus!.runtimeType);
                                     //เปลี่ยนไทม์โซน
                                     String time = DateFormat('Hm').format(
                                         value[index].createdAt!.toLocal());
@@ -280,15 +280,19 @@ class _RoomPageState extends State<RoomPage> {
                                                               onPressed:
                                                                   () async {
                                                                 //ส่งค่าการโหวตแล้วรีเฟรข
-                                                                await voteScore(
-                                                                        1,
-                                                                        widget
-                                                                            .userModel
-                                                                            .id,
-                                                                        value[index]
-                                                                            .id)
-                                                                    .then((value) =>
-                                                                        refreshData());
+                                                                value.last.listVoteStatus![
+                                                                            index] ==
+                                                                        1
+                                                                    // ignore: unnecessary_statements
+                                                                    ? {}
+                                                                    : await voteScore(
+                                                                            1,
+                                                                            widget
+                                                                                .userModel.id,
+                                                                            value[index]
+                                                                                .id)
+                                                                        .then((value) =>
+                                                                            refreshData());
                                                               },
                                                             )
                                                           : SizedBox(),
@@ -318,15 +322,19 @@ class _RoomPageState extends State<RoomPage> {
                                                               onPressed:
                                                                   () async {
                                                                 //ส่งค่าการโหวตแล้วรีเฟรข
-                                                                await voteScore(
-                                                                        0,
-                                                                        widget
-                                                                            .userModel
-                                                                            .id,
-                                                                        value[index]
-                                                                            .id)
-                                                                    .then((value) =>
-                                                                        refreshData());
+                                                                value.last.listVoteStatus![
+                                                                            index] ==
+                                                                        0
+                                                                    // ignore: unnecessary_statements
+                                                                    ? {}
+                                                                    : await voteScore(
+                                                                            0,
+                                                                            widget
+                                                                                .userModel.id,
+                                                                            value[index]
+                                                                                .id)
+                                                                        .then((value) =>
+                                                                            refreshData());
                                                               },
                                                             )
                                                           : SizedBox(),
@@ -505,17 +513,18 @@ class _RoomPageState extends State<RoomPage> {
                                                               MaterialPageRoute(
                                                             builder: (_) {
                                                               return CommentPage(
-                                                                      postId:
-                                                                          value[index]
-                                                                              .id,
-                                                                      score: value[
-                                                                              index].countVote
-                                                                          .toString(),
-                                                                      ownerId: value[
-                                                                              index]
-                                                                          .userPost
-                                                                          .id,
-                                                                );
+                                                                postId:
+                                                                    value[index]
+                                                                        .id,
+                                                                score: value[
+                                                                        index]
+                                                                    .countVote
+                                                                    .toString(),
+                                                                ownerId: value[
+                                                                        index]
+                                                                    .userPost
+                                                                    .id,
+                                                              );
                                                             },
                                                           ));
                                                         },
