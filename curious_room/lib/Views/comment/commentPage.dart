@@ -35,8 +35,8 @@ class _CommentPageState extends State<CommentPage> {
   late Future<List<CommentModel>> future;
   late List<CommentModel>? commentlist;
   bool _clickChanged = false;
-  late int idxEdit = 9999;
-  late int idxConfirm;
+  late int idxEdit, idxCheck = 9999;
+  late int idxConfirm = 9999;
   late bool owner;
 
   Map<int, bool> selectedFlag = {};
@@ -74,6 +74,7 @@ class _CommentPageState extends State<CommentPage> {
     FocusScopeNode currentFocus = FocusScope.of(context);
     owner = widget.ownerId == usermodel!.id ? true : false;
     return Scaffold(
+        // backgroundColor: Colors,
         floatingActionButton: _buildSelectButton(),
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -172,11 +173,19 @@ class _CommentPageState extends State<CommentPage> {
             child: isSelectionMode
                 ? FloatingActionButton.extended(
                     onPressed: () async {
-                      print(idxEdit);
-                      if (idxEdit != idxConfirm && idxEdit != 9999) {
+                      if (idxCheck != idxConfirm && idxEdit != 9999) {
+                        print("idxCheck = $idxCheck");
+                        print("idxConfirm = $idxConfirm");
                         bool success =
                             await confirmComment(widget.postId, idxEdit);
-                        refreashData();
+                        if (success) {
+                          refreashData();
+                          setState(() {
+                            isSelectionMode = !isSelectionMode;
+                          });
+                        }
+                      } else if (idxCheck == idxConfirm) {
+                        bool success = await unConfirmComment(idxEdit);
                         if (success) {
                           refreashData();
                           setState(() {
@@ -198,6 +207,9 @@ class _CommentPageState extends State<CommentPage> {
                   )
                 : FloatingActionButton.extended(
                     onPressed: () {
+                      if (idxConfirm != 9999) {
+                        selectedFlag[idxConfirm] = true;
+                      }
                       setState(() {
                         isSelectionMode = !isSelectionMode;
                       });
@@ -339,7 +351,7 @@ class _CommentPageState extends State<CommentPage> {
                       '${DateFormat.yMMMd().format(commentlist![index].createdAt.toLocal())}';
                   selectedFlag[index] = selectedFlag[index] ?? false;
                   bool isSelected = selectedFlag[index]!;
-                  selectedFlag[idxConfirm] = true;
+
                   return ListTile(
                     onTap: () {
                       onTap(isSelected, index, commentlist![index].id);
@@ -390,7 +402,7 @@ class _CommentPageState extends State<CommentPage> {
                               decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),
-                                  color: Colors.white70),
+                                  color: Colors.white),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -478,7 +490,7 @@ class _CommentPageState extends State<CommentPage> {
                                                               .content);
                                                     },
                                                   )
-                                                : SizedBox()
+                                                : SizedBox(),
                                           ],
                                         )
                                 ],
@@ -526,6 +538,7 @@ class _CommentPageState extends State<CommentPage> {
       setState(() {
         selectedFlag[index] = !isSelected;
         idxEdit = commentid;
+        idxCheck = index;
         for (int i = 0; i <= commentlist!.length; i++) {
           if (i != index) {
             selectedFlag[i] = false;

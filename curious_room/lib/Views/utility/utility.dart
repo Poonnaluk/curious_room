@@ -45,7 +45,7 @@ class MyMenuState extends State<MyMenu> {
     String imge = userModel!.display.toString();
     future = getMyRoom(userModel!.id);
     return SafeArea(
-      child: Drawer(   
+      child: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [

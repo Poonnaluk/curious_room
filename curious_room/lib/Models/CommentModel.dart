@@ -153,7 +153,7 @@ Future<bool> editComment(int commentid, String content) async {
 }
 
 Future<bool> confirmComment(int? postid, int commentid) async {
-  final url = "http://172.20.10.2:8000/comment/editConfirm";
+  final url = "http://157.230.240.207:8000/comment/editConfirm";
   print(commentid);
   final body = jsonEncode({"postId": postid, "commentId": commentid});
   final res = await http.put(Uri.parse(url),
@@ -165,5 +165,18 @@ Future<bool> confirmComment(int? postid, int commentid) async {
     return false;
   } else {
     throw Exception('Failed to confirm comment.');
+  }
+}
+
+Future<bool> unConfirmComment(int commentid) async {
+  final url = "http://192.168.43.94:8000/comment/confirm/$commentid";
+  print(commentid);
+  final res = await http.put(Uri.parse(url));
+  if (res.statusCode == 200) {
+    return true;
+  } else if (res.statusCode == 500) {
+    return false;
+  } else {
+    throw Exception('Failed to un confirm comment.');
   }
 }
