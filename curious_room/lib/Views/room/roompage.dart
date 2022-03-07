@@ -101,6 +101,7 @@ class _RoomPageState extends State<RoomPage> {
     String subname;
     int nameLenght;
     _image = null;
+    print(room.name);
 
     {
       return Scaffold(
@@ -505,17 +506,18 @@ class _RoomPageState extends State<RoomPage> {
                                                               MaterialPageRoute(
                                                             builder: (_) {
                                                               return CommentPage(
-                                                                      postId:
-                                                                          value[index]
-                                                                              .id,
-                                                                      score: value[
-                                                                              index].countVote
-                                                                          .toString(),
-                                                                      ownerId: value[
-                                                                              index]
-                                                                          .userPost
-                                                                          .id,
-                                                                );
+                                                                postId:
+                                                                    value[index]
+                                                                        .id,
+                                                                score: value[
+                                                                        index]
+                                                                    .countVote
+                                                                    .toString(),
+                                                                ownerId: value[
+                                                                        index]
+                                                                    .userPost
+                                                                    .id,
+                                                              );
                                                             },
                                                           ));
                                                         },
