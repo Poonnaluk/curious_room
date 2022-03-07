@@ -169,7 +169,7 @@ Future<bool> confirmComment(int? postid, int commentid) async {
 }
 
 Future<bool> unConfirmComment(int commentid) async {
-  final url = "http://192.168.43.94:8000/comment/confirm/$commentid";
+  final url = "http://157.230.240.207:8000/comment/confirm/$commentid";
   print(commentid);
   final res = await http.put(Uri.parse(url));
   if (res.statusCode == 200) {
