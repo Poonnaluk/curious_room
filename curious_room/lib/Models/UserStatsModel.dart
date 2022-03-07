@@ -39,7 +39,7 @@ class UserStatsModel {
 }
 
 Future<UserStatsModel> getStats(int userId, String role) async {
-  final apiUrl = 'http://147.182.209.40/user/stat/all';
+  final apiUrl = 'http://157.230.240.207:8000/user/stat/all';
   final body = jsonEncode({"id": userId, "role": role});
   final res = await http.post(Uri.parse(apiUrl),
       body: body,

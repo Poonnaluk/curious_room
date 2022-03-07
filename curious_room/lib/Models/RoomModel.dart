@@ -57,7 +57,7 @@ class RoomModel {
 }
 
 Future<RoomModel> createRoom(String name, int userid) async {
-  final String apiUrl = "http://147.182.209.40/room";
+  final String apiUrl = "http://157.230.240.207:8000/room";
   final body = jsonEncode({
     "room": {"name": name, "userId": userid}
   });
@@ -72,7 +72,7 @@ Future<RoomModel> createRoom(String name, int userid) async {
 }
 
 Future<RoomModel> getRoom(int roomid) async {
-  final String apiUrl = "http://147.182.209.40/room/$roomid";
+  final String apiUrl = "http://157.230.240.207:8000/room/$roomid";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     return RoomModel.fromJson(jsonDecode(response.body));
@@ -82,7 +82,7 @@ Future<RoomModel> getRoom(int roomid) async {
 }
 
 Future<List<RoomModel>> getMyRoom(int userid) async {
-  final String apiUrl = "http://147.182.209.40/room/user/$userid";
+  final String apiUrl = "http://157.230.240.207:8000/room/user/$userid";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     Iterable l = json.decode(response.body);
@@ -96,7 +96,7 @@ Future<List<RoomModel>> getMyRoom(int userid) async {
 }
 
 Future<RoomModel> updateRoom(String name, int id) async {
-  final String apiUrl = "http://147.182.209.40/room/$id";
+  final String apiUrl = "http://157.230.240.207:8000/room/$id";
   final body = jsonEncode(<String, String>{
     'name': name,
   });
@@ -113,7 +113,7 @@ Future<RoomModel> updateRoom(String name, int id) async {
 }
 
 Future<List<RoomModel>> getAllRooms() async {
-  final String apiUrl = "http://147.182.209.40/room";
+  final String apiUrl = "http://157.230.240.207:8000/room";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     Iterable l = json.decode(response.body);
@@ -125,7 +125,7 @@ Future<List<RoomModel>> getAllRooms() async {
 }
 
 Future<dynamic> getRoomByCode(String code) async {
-  final String apiUrl = "http://147.182.209.40/room/$code";
+  final String apiUrl = "http://157.230.240.207:8000/room/$code";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     Iterable l = json.decode(response.body);
@@ -140,7 +140,7 @@ Future<dynamic> getRoomByCode(String code) async {
 }
 
 Future<dynamic> deleteMyRoom(int id) async {
-  final String apiUrl = "http://147.182.209.40/room/delete/$id";
+  final String apiUrl = "http://157.230.240.207:8000/room/delete/$id";
   final response = await http.put(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     print(response.body);

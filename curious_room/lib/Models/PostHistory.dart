@@ -49,9 +49,9 @@ class PostHistoryModel {
       };
 }
 
-// http://147.182.209.40/post/history/
+// http://157.230.240.207:8000/post/history/
 Future<List<PostHistoryModel>> getPostHistory(int postid) async {
-  final String apiUrl = "http://147.182.209.40/post/history/$postid";
+  final String apiUrl = "http://157.230.240.207:8000/post/history/$postid";
   final res = await http.get(Uri.parse(apiUrl));
   if (res.statusCode == 200) {
     Iterable l = json.decode(res.body);
