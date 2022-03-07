@@ -46,7 +46,7 @@ class VoteModel {
 }
 
 Future<String> voteScore(int status, int userId, postId) async {
-  final apiUrl = 'http://147.182.209.40/vote';
+  final apiUrl = 'http://157.230.240.207:8000/vote';
   final body = jsonEncode(
       <String, int>{"status": status, "userId": userId, "postId": postId});
   final res =

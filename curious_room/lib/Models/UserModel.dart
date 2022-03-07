@@ -56,7 +56,7 @@ class UserModel {
 
 Future<dynamic> regischeck(String uEmail) async {
   //นำค่าเเป็น Params
-  final pramsUrl = Uri.parse('http://147.182.209.40/user/$uEmail');
+  final pramsUrl = Uri.parse('http://157.230.240.207:8000/user/$uEmail');
   print(pramsUrl);
   final res = await http.get(pramsUrl);
   if (res.statusCode == 200) {
@@ -71,7 +71,7 @@ Future<dynamic> regischeck(String uEmail) async {
 // ignore: non_constant_identifier_names
 Future<UserModel?> createUser(
     String googleName, String email, String imageUrl) async {
-  final String apiUrl = "http://147.182.209.40/user";
+  final String apiUrl = "http://157.230.240.207:8000/user";
   final bodyregis =
       jsonEncode({"name": googleName, "email": email, "display": imageUrl});
   final response = await http.post(Uri.parse(apiUrl),
@@ -86,7 +86,7 @@ Future<UserModel?> createUser(
 }
 
 Future<dynamic> updateUserName(int id, String name, dynamic img) async {
-  final String apiUrl = "http://147.182.209.40/user/$id";
+  final String apiUrl = "http://157.230.240.207:8000/user/$id";
 
   // ignore: avoid_init_to_null
   dynamic file = null;

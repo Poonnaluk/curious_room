@@ -64,7 +64,7 @@ class ParticipateModel {
 }
 
 Future<List<ParticipateModel>> getParticipate(int roomid) async {
-  final String apiUrl = "http://147.182.209.40/participate/$roomid";
+  final String apiUrl = "http://157.230.240.207:8000/participate/$roomid";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     Iterable l = json.decode(response.body);
@@ -79,7 +79,7 @@ Future<List<ParticipateModel>> getParticipate(int roomid) async {
 }
 
 Future<List<ParticipateModel>> getRoomParticipate(int userid) async {
-  final String apiUrl = "http://147.182.209.40/participate/room/$userid";
+  final String apiUrl = "http://157.230.240.207:8000/participate/room/$userid";
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     Iterable l = json.decode(response.body);
@@ -94,7 +94,7 @@ Future<List<ParticipateModel>> getRoomParticipate(int userid) async {
 }
 
 Future<dynamic> deleteParti(int roomid, int userid) async {
-  final String apiUrl = "http://147.182.209.40/participate/$roomid";
+  final String apiUrl = "http://157.230.240.207:8000/participate/$roomid";
   final body = jsonEncode({
     'userid': userid,
   });
@@ -110,7 +110,7 @@ Future<dynamic> deleteParti(int roomid, int userid) async {
 }
 
 Future<dynamic> createParticipate(int userId, int roomId) async {
-  final String apiUrl = "http://147.182.209.40/participate";
+  final String apiUrl = "http://157.230.240.207:8000/participate";
   final body = jsonEncode({"userId": userId, "roomId": roomId});
   final response = await http.post(Uri.parse(apiUrl),
       body: body,

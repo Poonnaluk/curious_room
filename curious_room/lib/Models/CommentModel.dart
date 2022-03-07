@@ -95,7 +95,7 @@ class CommentHistory {
 }
 
 Future<List<CommentModel>> getComment(int postId) async {
-  final String url = "http://147.182.209.40/comment/$postId";
+  final String url = "http://157.230.240.207:8000/comment/$postId";
   print(url);
   final res = await http.get(Uri.parse(url));
   if (res.statusCode == 200) {
@@ -111,7 +111,7 @@ Future<List<CommentModel>> getComment(int postId) async {
 }
 
 Future<dynamic> createComment(int? postid, int userid, String content) async {
-  final url = "http://147.182.209.40/comment";
+  final url = "http://157.230.240.207:8000/comment";
   print(url);
   final body =
       jsonEncode({"postId": postid, "userId": userid, "content": content});
@@ -126,7 +126,7 @@ Future<dynamic> createComment(int? postid, int userid, String content) async {
 }
 
 Future<bool> delComment(int commentid) async {
-  final url = "http://147.182.209.40/comment/delete/$commentid";
+  final url = "http://157.230.240.207:8000/comment/delete/$commentid";
   final res = await http.put(Uri.parse(url));
   if (res.statusCode == 200) {
     return true;
@@ -138,7 +138,7 @@ Future<bool> delComment(int commentid) async {
 }
 
 Future<bool> editComment(int commentid, String content) async {
-  final url = "http://147.182.209.40/comment/edit";
+  final url = "http://157.230.240.207:8000/comment/edit";
   final body = jsonEncode({"commentId": commentid, "content": content});
   final res = await http.put(Uri.parse(url),
       body: body,

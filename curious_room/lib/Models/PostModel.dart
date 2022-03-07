@@ -86,7 +86,7 @@ class PostModel {
 }
 
 Future<List<PostModel>> getPost(int roomId, int userid, bool filter) async {
-  final String url = "http://147.182.209.40/post/$roomId/$userid/$filter";
+  final String url = "http://157.230.240.207:8000/post/$roomId/$userid/$filter";
   print(url);
   final res = await http.get(Uri.parse(url));
   if (res.statusCode == 200) {
@@ -102,7 +102,7 @@ Future<List<PostModel>> getPost(int roomId, int userid, bool filter) async {
 
 Future<void> creatPost(
     int userId, int roomId, String content, dynamic img) async {
-  final String url = "http://147.182.209.40/post";
+  final String url = "http://157.230.240.207:8000/post";
   // ignore: avoid_init_to_null
   dynamic file = null;
   if (img != null) {
@@ -141,7 +141,7 @@ Future<void> creatPost(
 }
 
 Future<bool> editPost(int postId, String content, dynamic img) async {
-  final String url = "http://147.182.209.40/post/edit";
+  final String url = "http://157.230.240.207:8000/post/edit";
   // ignore: avoid_init_to_null
   dynamic file = null;
   if (img != null) {
@@ -178,7 +178,7 @@ Future<bool> editPost(int postId, String content, dynamic img) async {
 }
 
 Future<bool> deletePost(int postid) async {
-  final String apiUrl = "http://147.182.209.40/post/delete/$postid";
+  final String apiUrl = "http://157.230.240.207:8000/post/delete/$postid";
   final res = await http.put(Uri.parse(apiUrl));
   if (res.statusCode == 200) {
     return true;
@@ -190,7 +190,7 @@ Future<bool> deletePost(int postid) async {
 }
 
 Future<List<PostModel>> getStatistPost(int roomid) async {
-  String apiUrl = "http://147.182.209.40/room/stat/$roomid";
+  String apiUrl = "http://157.230.240.207:8000/room/stat/$roomid";
 
   var res = await http.get(Uri.parse(apiUrl));
   if (res.statusCode == 200) {

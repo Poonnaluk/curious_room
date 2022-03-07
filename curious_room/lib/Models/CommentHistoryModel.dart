@@ -46,7 +46,7 @@ class CommentHistoryModel {
 }
 
 Future<List<CommentHistoryModel>> getCommentHistory(int commentid) async {
-  final String apiUrl = "http://147.182.209.40/comment/history/$commentid";
+  final String apiUrl = "http://157.230.240.207:8000/comment/history/$commentid";
   final res = await http.get(Uri.parse(apiUrl));
   if (res.statusCode == 200) {
     Iterable l = json.decode(res.body);
