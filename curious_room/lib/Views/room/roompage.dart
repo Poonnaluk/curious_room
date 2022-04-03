@@ -58,6 +58,7 @@ class _RoomPageState extends State<RoomPage> {
   get async => null;
   bool isLoading = false;
   Future<List<PostHistoryModel>> history = Future.value([]);
+  late List<RoomModel> _chartData = [];
 
   @override
   initState() {
@@ -65,6 +66,7 @@ class _RoomPageState extends State<RoomPage> {
     future = getPost(widget.roomModel.id, widget.userModel.id, false);
     filter = getPost(widget.roomModel.id, widget.userModel.id, true);
     room = widget.roomModel;
+    getChart(widget.roomModel.id).then((value) => _chartData = value);
   }
 
   Future<dynamic> refreshData() async {

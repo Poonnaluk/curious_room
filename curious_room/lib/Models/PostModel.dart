@@ -188,18 +188,3 @@ Future<bool> deletePost(int postid) async {
     throw Exception('Failed to delete post');
   }
 }
-
-Future<List<PostModel>> getStatistPost(int roomid) async {
-  String apiUrl = "http://157.230.240.207:8000/room/stat/$roomid";
-
-  var res = await http.get(Uri.parse(apiUrl));
-  if (res.statusCode == 200) {
-    Iterable l = json.decode(res.body);
-    List<PostModel> postModel = l.map((g) => PostModel.fromJson(g)).toList();
-    return postModel;
-  } else if (res.statusCode == 500) {
-    return [];
-  } else {
-    throw Exception('Failed to delete post');
-  }
-}
