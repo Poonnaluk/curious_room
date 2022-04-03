@@ -171,7 +171,7 @@ Future<dynamic> deleteMyRoom(int id) async {
 }
 
 Future<List<RoomModel>> getStatistPost(int roomid) async {
-  String apiUrl = "http://192.168.1.108:8000/room/stat/post/$roomid";
+  String apiUrl = "http://157.230.240.207:8000/room/stat/post/$roomid";
   var res = await http.get(Uri.parse(apiUrl));
   if (res.statusCode == 200) {
     Iterable l = json.decode(res.body);
@@ -185,7 +185,7 @@ Future<List<RoomModel>> getStatistPost(int roomid) async {
 }
 
 Future<List<RoomModel>> getStatistAns(int roomid) async {
-  String apiUrl = "http://192.168.1.108:8000/room/stat/ans/$roomid";
+  String apiUrl = "http://157.230.240.207:8000/room/stat/ans/$roomid";
   var res = await http.get(Uri.parse(apiUrl));
   if (res.statusCode == 200) {
     Iterable l = json.decode(res.body);
@@ -199,7 +199,7 @@ Future<List<RoomModel>> getStatistAns(int roomid) async {
 }
 
 Future<List<RoomModel>> getChart(int roomid) async {
-  String apiUrl = "http://192.168.1.108:8000/room/statChart/$roomid";
+  String apiUrl = "http://157.230.240.207:8000/room/statChart/$roomid";
   var res = await http.get(Uri.parse(apiUrl));
   if (res.statusCode == 200) {
     Iterable l = json.decode(res.body);
