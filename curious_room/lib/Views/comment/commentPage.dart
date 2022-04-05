@@ -35,7 +35,8 @@ class _CommentPageState extends State<CommentPage> {
   late Future<List<CommentModel>> future;
   late List<CommentModel>? commentlist;
   bool _clickChanged = false;
-  late int idxEdit, idxCheck = 9999;
+  late int idxEdit = 9999;
+  late int idxCheck = 9999;
   late int idxConfirm = 9999;
   late bool owner;
 
@@ -184,7 +185,7 @@ class _CommentPageState extends State<CommentPage> {
                             isSelectionMode = !isSelectionMode;
                           });
                         }
-                      } else if (idxCheck == idxConfirm) {
+                      } else if (idxCheck == idxConfirm && idxEdit != 9999) {
                         bool success = await unConfirmComment(idxEdit);
                         if (success) {
                           refreashData();
@@ -359,145 +360,137 @@ class _CommentPageState extends State<CommentPage> {
                     visualDensity: VisualDensity(horizontal: -4, vertical: -4),
                     title: Transform.scale(
                       scale: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
-                        child: Row(
-                          children: [
-                            Column(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Color.fromRGBO(255, 255, 255, 0),
-                                  radius: 4.w,
-                                  backgroundImage: Image.network(
-                                          (commentlist![index]
-                                                  .userComment
-                                                  .display)
-                                              .toString())
-                                      .image,
-                                ),
-                                isSelectionMode
-                                    ? _buildSelectIcon(isSelected)
-                                    : commentlist![index].confirmStatus == true
-                                        ? Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 20, left: 10),
-                                            child: Image.asset(
-                                              'assets/icons/confirm_icon.png',
-                                              scale: 1.1,
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            height: 2.h,
+                      child: Row(
+                        children: [
+                          Column(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor:
+                                    Color.fromRGBO(255, 255, 255, 0),
+                                radius: 4.w,
+                                backgroundImage: Image.network(
+                                        (commentlist![index]
+                                                .userComment
+                                                .display)
+                                            .toString())
+                                    .image,
+                              ),
+                              isSelectionMode
+                                  ? _buildSelectIcon(isSelected)
+                                  : commentlist![index].confirmStatus == true
+                                      ? Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 20, left: 10),
+                                          child: Image.asset(
+                                            'assets/icons/confirm_icon.png',
+                                            scale: 1.1,
                                           ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 4.w,
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
-                                  color: Colors.white),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 1.h,
-                                  ),
-                                  Text(
-                                    commentlist![index].userComment.name,
-                                    style: normalTextStyle(17.sp),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        date,
-                                        style: normalTextStyle(15.sp),
-                                      ),
-                                      SizedBox(
-                                        width: 2.w,
-                                      ),
-                                      Text(
-                                        time,
-                                        style: normalTextStyle(15.sp),
-                                      ),
-                                      SizedBox(
-                                        width: 2.w,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                              new MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      new CommentHistoryPage(
-                                                        commentid:
-                                                            commentlist![index]
-                                                                .id,
-                                                      )));
-                                        },
-                                        child: Text(
-                                          'ประวัติแก้ไข',
-                                          style: normalTextStyle(15.sp),
+                                        )
+                                      : SizedBox(
+                                          height: 2.h,
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                  _clickChanged && idxEdit == index
-                                      ? buildDisplayNameField(
-                                          commentlist![index].id,
-                                          commentlist![index]
-                                              .commentHistory
-                                              .first
-                                              .content)
-                                      : Row(
-                                          children: [
-                                            Text(
-                                              commentlist![index]
-                                                  .commentHistory
-                                                  .first
-                                                  .content,
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16.sp),
-                                              maxLines: 5,
-                                            ),
-                                            commentlist![index]
-                                                            .userComment
-                                                            .id ==
-                                                        usermodel!.id ||
-                                                    usermodel!.role == 'ADMIN'
-                                                ? IconButton(
-                                                    color: Color.fromRGBO(
-                                                        124, 124, 124, 1),
-                                                    icon: Icon(
-                                                      Icons.edit,
-                                                      size: 5.w,
-                                                    ),
-                                                    onPressed: () {
-                                                      moreButton(
-                                                          context,
-                                                          index,
+                            ],
+                          ),
+                          SizedBox(
+                            width: 4.w,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                color: Colors.white),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 1.h,
+                                ),
+                                Text(
+                                  commentlist![index].userComment.name,
+                                  style: normalTextStyle(17.sp),
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      date,
+                                      style: normalTextStyle(15.sp),
+                                    ),
+                                    SizedBox(
+                                      width: 2.w,
+                                    ),
+                                    Text(
+                                      time,
+                                      style: normalTextStyle(15.sp),
+                                    ),
+                                    SizedBox(
+                                      width: 2.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            new MaterialPageRoute(
+                                                builder: (context) =>
+                                                    new CommentHistoryPage(
+                                                      commentid:
                                                           commentlist![index]
                                                               .id,
-                                                          commentlist![index]
-                                                              .commentHistory
-                                                              .first
-                                                              .content);
-                                                    },
-                                                  )
-                                                : SizedBox(),
-                                          ],
-                                        )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                                                    )));
+                                      },
+                                      child: Text(
+                                        'ประวัติแก้ไข',
+                                        style: normalTextStyle(15.sp),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                _clickChanged && idxEdit == index
+                                    ? buildDisplayNameField(
+                                        commentlist![index].id,
+                                        commentlist![index]
+                                            .commentHistory
+                                            .first
+                                            .content)
+                                    : Row(
+                                        children: [
+                                          Text(
+                                            commentlist![index]
+                                                .commentHistory
+                                                .first
+                                                .content,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16.sp),
+                                            maxLines: 5,
+                                          ),
+                                          commentlist![index].userComment.id ==
+                                                      usermodel!.id ||
+                                                  usermodel!.role == 'ADMIN'
+                                              ? IconButton(
+                                                  color: Color.fromRGBO(
+                                                      124, 124, 124, 1),
+                                                  icon: Icon(
+                                                    Icons.edit,
+                                                    size: 5.w,
+                                                  ),
+                                                  onPressed: () {
+                                                    moreButton(
+                                                        context,
+                                                        index,
+                                                        commentlist![index].id,
+                                                        commentlist![index]
+                                                            .commentHistory
+                                                            .first
+                                                            .content);
+                                                  },
+                                                )
+                                              : SizedBox(),
+                                        ],
+                                      )
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
