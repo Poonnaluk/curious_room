@@ -118,17 +118,11 @@ class _StatisticPageState extends State<StatisticPage> {
                   axisLine: AxisLine(width: 0),
                 ),
                 primaryYAxis: NumericAxis(
-                  title:
-                      AxisTitle(text: "คะแนน", alignment: ChartAlignment.far),
-                  majorGridLines: MajorGridLines(width: 0),
-                  axisLine: AxisLine(width: 0),
-                  // edgeLabelPlacement: EdgeLabelPlacement.shift,
-                  // numberFormat: NumberFormat.simpleCurrency(
-
-                  //   decimalDigits: 0,
-                  // ),
-                  // title: AxisTitle(text: ''),
-                ),
+                    title:
+                        AxisTitle(text: "คะแนน", alignment: ChartAlignment.far),
+                    majorGridLines: MajorGridLines(width: 0),
+                    axisLine: AxisLine(width: 0),
+                    decimalPlaces: 0),
               ),
             ),
             Align(

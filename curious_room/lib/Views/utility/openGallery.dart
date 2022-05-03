@@ -17,7 +17,7 @@ Future chooseImage() async {
 }
 
 cropImage(BuildContext context, File _image) async {
-  File? cropped = await ImageCropper.cropImage(
+  File? cropped = await ImageCropper().cropImage(
       sourcePath: _image.path,
       cropStyle: CropStyle.circle,
       androidUiSettings: AndroidUiSettings(
