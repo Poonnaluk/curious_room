@@ -19,6 +19,7 @@ class CommentModel {
     required this.updatedAt,
     required this.userComment,
     required this.commentHistory,
+    required this.roomId,
   });
 
   int id;
@@ -30,6 +31,7 @@ class CommentModel {
   DateTime updatedAt;
   UserModel userComment;
   List<CommentHistory> commentHistory;
+  int roomId;
 
   factory CommentModel.fromJson(Map<String, dynamic> json) => CommentModel(
         id: json["id"],
@@ -42,6 +44,7 @@ class CommentModel {
         userComment: UserModel.fromJson(json["user_comment"]),
         commentHistory: List<CommentHistory>.from(
             json["comment_history"].map((x) => CommentHistory.fromJson(x))),
+        roomId: json["roomId"] == null ? 0 : json["roomId"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -55,6 +58,7 @@ class CommentModel {
         "user_comment": userComment.toJson(),
         "comment_history":
             List<dynamic>.from(commentHistory.map((x) => x.toJson())),
+        "roomId": roomId == null ? null : roomId.toInt(),
       };
 }
 
