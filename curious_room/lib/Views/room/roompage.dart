@@ -527,6 +527,9 @@ class _RoomPageState extends State<RoomPage> {
                                                                         index]
                                                                     .userPost
                                                                     .id,
+                                                                roomId: widget
+                                                                    .roomModel
+                                                                    .id,
                                                               );
                                                             },
                                                           ));
