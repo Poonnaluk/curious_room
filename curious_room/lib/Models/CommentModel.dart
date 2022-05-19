@@ -114,11 +114,16 @@ Future<List<CommentModel>> getComment(int postId) async {
   }
 }
 
-Future<dynamic> createComment(int? postid, int userid, String content) async {
+Future<dynamic> createComment(
+    int? postid, int userid, String content, int roomId) async {
   final url = "http://157.230.240.207:8000/comment";
   print(url);
-  final body =
-      jsonEncode({"postId": postid, "userId": userid, "content": content});
+  final body = jsonEncode({
+    "postId": postid,
+    "userId": userid,
+    "content": content,
+    "roomId": roomId
+  });
   final response = await http.post(Uri.parse(url),
       body: body,
       headers: {'Content-Type': 'application/json', 'Accept': '*/*'});
