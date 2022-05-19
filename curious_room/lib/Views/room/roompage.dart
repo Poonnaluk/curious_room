@@ -524,15 +524,41 @@ class _RoomPageState extends State<RoomPage> {
                                                 },
                                                 child: Row(
                                                   children: [
-                                                    Text(
-                                                      'เพิ่มคำตอบของคุณ...',
-                                                      style: TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              176,
-                                                              162,
-                                                              148,
-                                                              1)),
-                                                    )
+                                                    GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                            builder: (_) {
+                                                              return CommentPage(
+                                                                postId:
+                                                                    value[index]
+                                                                        .id,
+                                                                score: value[
+                                                                        index]
+                                                                    .countVote
+                                                                    .toString(),
+                                                                ownerId: value[
+                                                                        index]
+                                                                    .userPost
+                                                                    .id,
+                                                                roomId: widget
+                                                                    .roomModel
+                                                                    .id,
+                                                              );
+                                                            },
+                                                          ));
+                                                        },
+                                                        child: Text(
+                                                          'เพิ่มคำตอบของคุณ...',
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      176,
+                                                                      162,
+                                                                      148,
+                                                                      1)),
+                                                        ))
                                                   ],
                                                 ),
                                               )

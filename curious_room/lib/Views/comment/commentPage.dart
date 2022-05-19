@@ -15,11 +15,13 @@ class CommentPage extends StatefulWidget {
   final int? postId;
   final String score;
   final int ownerId;
+  final int roomId;
   CommentPage(
       {Key? key,
       required this.postId,
       required this.score,
-      required this.ownerId})
+      required this.ownerId,
+      required this.roomId})
       : super(key: key);
 
   @override
@@ -553,7 +555,7 @@ class _CommentPageState extends State<CommentPage> {
   void _buildButtonCreate(TextEditingController contentController) async {
     if (contentController.text != "") {
       await createComment(
-          widget.postId!, usermodel!.id, contentController.text);
+          widget.postId!, usermodel!.id, contentController.text, widget.roomId);
       contentController.text = "";
       try {
         _scrollToBottom();
