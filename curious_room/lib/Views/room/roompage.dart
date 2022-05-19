@@ -518,6 +518,8 @@ class _RoomPageState extends State<RoomPage> {
                                                         ownerId: value[index]
                                                             .userPost
                                                             .id,
+                                                        roomId:
+                                                            widget.roomModel.id,
                                                       );
                                                     },
                                                   ));
