@@ -506,7 +506,22 @@ class _RoomPageState extends State<RoomPage> {
                                                     176, 162, 148, 1),
                                               ),
                                               TextButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                    builder: (_) {
+                                                      return CommentPage(
+                                                        postId: value[index].id,
+                                                        score: value[index]
+                                                            .countVote
+                                                            .toString(),
+                                                        ownerId: value[index]
+                                                            .userPost
+                                                            .id,
+                                                      );
+                                                    },
+                                                  ));
+                                                },
                                                 child: Row(
                                                   children: [
                                                     GestureDetector(
